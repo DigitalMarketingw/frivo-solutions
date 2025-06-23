@@ -42,81 +42,110 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">
-            {isLogin ? 'Welcome Back' : 'Join JobPortal'}
-          </CardTitle>
-          <CardDescription>
-            {isLogin 
-              ? 'Sign in to access your dashboard' 
-              : 'Create an account to start your career journey'
-            }
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 px-4">
+      <div className="w-full max-w-md">
+        {/* Logo Header */}
+        <div className="text-center mb-8">
+          <img 
+            src="/frivo-logo.png" 
+            alt="Frivo Solutions" 
+            className="h-12 w-auto mx-auto mb-4"
+          />
+          <h1 className="text-2xl font-bold text-primary">Frivo Solutions</h1>
+        </div>
+
+        <Card className="border-0 shadow-2xl">
+          <CardHeader className="text-center pb-6">
+            <CardTitle className="text-3xl font-bold text-primary">
+              {isLogin ? 'Welcome Back' : 'Join Frivo Solutions'}
+            </CardTitle>
+            <CardDescription className="text-lg">
+              {isLogin 
+                ? 'Sign in to access your career dashboard' 
+                : 'Create your account and start your career journey'
+              }
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {!isLogin && (
+                <div className="space-y-2">
+                  <Label htmlFor="fullName" className="text-primary font-medium">Full Name</Label>
+                  <Input
+                    id="fullName"
+                    name="fullName"
+                    type="text"
+                    placeholder="Enter your full name"
+                    value={formData.fullName}
+                    onChange={handleInputChange}
+                    className="h-12 border-slate-300 focus:border-primary"
+                    required
+                  />
+                </div>
+              )}
+              
               <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label htmlFor="email" className="text-primary font-medium">Email Address</Label>
                 <Input
-                  id="fullName"
-                  name="fullName"
-                  type="text"
-                  placeholder="Enter your full name"
-                  value={formData.fullName}
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="Enter your email address"
+                  value={formData.email}
                   onChange={handleInputChange}
+                  className="h-12 border-slate-300 focus:border-primary"
                   required
                 />
               </div>
-            )}
-            
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="Enter your email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="Enter your password"
-                value={formData.password}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Sign Up')}
-            </Button>
-          </form>
-          
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              {isLogin ? "Don't have an account? " : "Already have an account? "}
-              <button
-                type="button"
-                onClick={() => setIsLogin(!isLogin)}
-                className="text-primary hover:underline font-medium"
+              
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-primary font-medium">Password</Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="h-12 border-slate-300 focus:border-primary"
+                  required
+                />
+              </div>
+              
+              <Button 
+                type="submit" 
+                className="w-full h-12 text-lg font-medium" 
+                disabled={loading}
               >
-                {isLogin ? 'Sign up' : 'Sign in'}
-              </button>
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+                {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
+              </Button>
+            </form>
+            
+            <div className="text-center pt-4 border-t border-slate-200">
+              <p className="text-muted-foreground">
+                {isLogin ? "Don't have an account? " : "Already have an account? "}
+                <button
+                  type="button"
+                  onClick={() => setIsLogin(!isLogin)}
+                  className="text-primary hover:text-accent font-medium hover:underline transition-colors"
+                >
+                  {isLogin ? 'Sign up here' : 'Sign in here'}
+                </button>
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Back to Home */}
+        <div className="text-center mt-6">
+          <a 
+            href="/" 
+            className="text-muted-foreground hover:text-primary transition-colors"
+          >
+            ← Back to Home
+          </a>
+        </div>
+      </div>
     </div>
   );
 };
