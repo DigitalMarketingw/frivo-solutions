@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -62,7 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         id: data.id,
         full_name: data.full_name,
         phone: data.phone,
-        skills: Array.isArray(data.skills) ? data.skills : [],
+        skills: Array.isArray(data.skills) ? data.skills.map((skill: any) => String(skill)) : [],
         resume_url: data.resume_url,
         employment_history: Array.isArray(data.employment_history) ? data.employment_history : [],
         role: data.role as 'user' | 'admin',
