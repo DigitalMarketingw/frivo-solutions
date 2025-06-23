@@ -3,11 +3,11 @@ import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { LogOut, User, Briefcase, TrendingUp, CheckCircle2, Clock } from 'lucide-react';
+import { LogOut, User, Briefcase, TrendingUp, CheckCircle2, Clock, Settings, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
-  const { user, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
@@ -45,11 +45,68 @@ const Dashboard = () => {
         <div className="mb-12">
           <h2 className="text-4xl font-bold text-primary mb-3">
             Welcome back, {user?.user_metadata?.full_name || user?.email?.split('@')[0]}!
+            {profile?.role === 'admin' && (
+              <span className="ml-3 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-800">
+                <Shield className="h-4 w-4 mr-1" />
+                Admin
+              </span>
+            )}
           </h2>
           <p className="text-xl text-muted-foreground">
-            Ready to take the next step in your career journey?
+            {profile?.role === 'admin' 
+              ? "Manage the platform and explore opportunities" 
+              : "Ready to take the next step in your career journey?"
+            }
           </p>
         </div>
+
+        {/* Admin Navigation Options */}
+        {profile?.role === 'admin' && (
+          <div className="mb-12">
+            <h3 className="text-2xl font-bold text-primary mb-6">Admin Options</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-l-amber-500">
+                <CardHeader className="pb-4">
+                  <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center mb-4">
+                    <Shield className="h-6 w-6 text-amber-600" />
+                  </div>
+                  <CardTitle className="text-2xl text-primary">Admin Dashboard</CardTitle>
+                  <CardDescription className="text-lg">
+                    Manage users, jobs, applications, and platform settings with full administrative control.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button asChild className="w-full h-12 text-lg bg-amber-600 hover:bg-amber-700">
+                    <Link to="/admin">
+                      <Settings className="h-5 w-5 mr-2" />
+                      Go to Admin Dashboard
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+              
+              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-l-primary">
+                <CardHeader className="pb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                    <Briefcase className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle className="text-2xl text-primary">Job Portal</CardTitle>
+                  <CardDescription className="text-lg">
+                    Browse and explore job opportunities as a regular user would see them.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button variant="outline" asChild className="w-full h-12 text-lg">
+                    <Link to="/jobs">
+                      <Briefcase className="h-5 w-5 mr-2" />
+                      View Job Portal
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        )}
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
