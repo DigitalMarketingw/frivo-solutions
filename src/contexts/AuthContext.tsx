@@ -57,7 +57,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
 
-      setProfile(data);
+      // Convert the database data to match UserProfile interface
+      const profileData: UserProfile = {
+        id: data.id,
+        full_name: data.full_name,
+        phone: data.phone,
+        skills: Array.isArray(data.skills) ? data.skills : [],
+        resume_url: data.resume_url,
+        employment_history: Array.isArray(data.employment_history) ? data.employment_history : [],
+        role: data.role as 'user' | 'admin',
+        created_at: data.created_at,
+        updated_at: data.updated_at,
+      };
+
+      setProfile(profileData);
     } catch (error) {
       console.error('Error fetching profile:', error);
     }
