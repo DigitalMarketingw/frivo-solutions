@@ -9,7 +9,235 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      applications: {
+        Row: {
+          applied_at: string | null
+          assignment_completed: boolean | null
+          assignment_status: string | null
+          enrollment_id: string
+          hackerrank_link: string | null
+          id: string
+          job_id: string
+          status: Database["public"]["Enums"]["application_status"] | null
+          test_results: Json | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          applied_at?: string | null
+          assignment_completed?: boolean | null
+          assignment_status?: string | null
+          enrollment_id: string
+          hackerrank_link?: string | null
+          id?: string
+          job_id: string
+          status?: Database["public"]["Enums"]["application_status"] | null
+          test_results?: Json | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          applied_at?: string | null
+          assignment_completed?: boolean | null
+          assignment_status?: string | null
+          enrollment_id?: string
+          hackerrank_link?: string | null
+          id?: string
+          job_id?: string
+          status?: Database["public"]["Enums"]["application_status"] | null
+          test_results?: Json | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "applications_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "enrollments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      enrollments: {
+        Row: {
+          enrolled_at: string | null
+          enrollment_status:
+            | Database["public"]["Enums"]["enrollment_status"]
+            | null
+          id: string
+          job_id: string
+          paid: boolean | null
+          payment_date: string | null
+          payment_id: string | null
+          user_id: string
+        }
+        Insert: {
+          enrolled_at?: string | null
+          enrollment_status?:
+            | Database["public"]["Enums"]["enrollment_status"]
+            | null
+          id?: string
+          job_id: string
+          paid?: boolean | null
+          payment_date?: string | null
+          payment_id?: string | null
+          user_id: string
+        }
+        Update: {
+          enrolled_at?: string | null
+          enrollment_status?:
+            | Database["public"]["Enums"]["enrollment_status"]
+            | null
+          id?: string
+          job_id?: string
+          paid?: boolean | null
+          payment_date?: string | null
+          payment_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enrollments_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jobs: {
+        Row: {
+          company: string
+          created_at: string | null
+          description: string
+          field: string
+          id: string
+          location: string
+          posted_by: string | null
+          posted_date: string | null
+          requirements: Json | null
+          status: Database["public"]["Enums"]["job_status"] | null
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          company: string
+          created_at?: string | null
+          description: string
+          field: string
+          id?: string
+          location: string
+          posted_by?: string | null
+          posted_date?: string | null
+          requirements?: Json | null
+          status?: Database["public"]["Enums"]["job_status"] | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          company?: string
+          created_at?: string | null
+          description?: string
+          field?: string
+          id?: string
+          location?: string
+          posted_by?: string | null
+          posted_date?: string | null
+          requirements?: Json | null
+          status?: Database["public"]["Enums"]["job_status"] | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string | null
+          currency: string | null
+          enrollment_id: string
+          id: string
+          status: Database["public"]["Enums"]["payment_status"] | null
+          stripe_payment_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string | null
+          currency?: string | null
+          enrollment_id: string
+          id?: string
+          status?: Database["public"]["Enums"]["payment_status"] | null
+          stripe_payment_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          currency?: string | null
+          enrollment_id?: string
+          id?: string
+          status?: Database["public"]["Enums"]["payment_status"] | null
+          stripe_payment_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "enrollments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          employment_history: Json | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          resume_url: string | null
+          role: Database["public"]["Enums"]["user_role"] | null
+          skills: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          employment_history?: Json | null
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          resume_url?: string | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+          skills?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          employment_history?: Json | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          resume_url?: string | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+          skills?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +246,17 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      application_status:
+        | "applied"
+        | "under_review"
+        | "test_assigned"
+        | "test_completed"
+        | "approved"
+        | "rejected"
+      enrollment_status: "pending" | "enrolled" | "cancelled"
+      job_status: "open" | "closed" | "under_review" | "filled"
+      payment_status: "pending" | "completed" | "failed" | "refunded"
+      user_role: "user" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -133,6 +371,19 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      application_status: [
+        "applied",
+        "under_review",
+        "test_assigned",
+        "test_completed",
+        "approved",
+        "rejected",
+      ],
+      enrollment_status: ["pending", "enrolled", "cancelled"],
+      job_status: ["open", "closed", "under_review", "filled"],
+      payment_status: ["pending", "completed", "failed", "refunded"],
+      user_role: ["user", "admin"],
+    },
   },
 } as const
