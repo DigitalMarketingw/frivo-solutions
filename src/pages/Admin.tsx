@@ -70,7 +70,7 @@ const Admin = () => {
 
   const userColumns = [
     { key: 'full_name', label: 'Name', render: (value: string, user: User) => value || 'Not provided' },
-    { key: 'id', label: 'Email/ID' },
+    { key: 'id', label: 'User ID' },
     { key: 'role', label: 'Role', render: (value: string) => <StatusBadge status={value} type="user" /> },
     { key: 'phone', label: 'Phone', render: (value: string) => value || 'Not provided' },
     { key: 'created_at', label: 'Joined', render: (value: string) => new Date(value).toLocaleDateString() },
@@ -167,7 +167,7 @@ const Admin = () => {
                 search={{
                   value: usersParams.search,
                   onChange: (value) => setUsersParams(prev => ({ ...prev, search: value, page: 1 })),
-                  placeholder: "Search users by name or email..."
+                  placeholder: "Search users by name or ID..."
                 }}
                 pagination={{
                   currentPage: users.page,

@@ -12,7 +12,6 @@ export interface AdminStats {
 export interface User {
   id: string;
   full_name: string | null;
-  email: string;
   phone: string | null;
   role: 'user' | 'admin';
   created_at: string;
