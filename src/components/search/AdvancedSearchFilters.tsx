@@ -9,7 +9,6 @@ import { Badge } from '@/components/ui/badge';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Slider } from '@/components/ui/slider';
 import { CalendarIcon, X, Search, Filter } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -222,7 +221,7 @@ export const AdvancedSearchFilters: React.FC<AdvancedSearchFiltersProps> = ({
                     initialFocus
                     mode="range"
                     defaultMonth={filters.dateRange.from}
-                    selected={filters.dateRange}
+                    selected={filters.dateRange.from && filters.dateRange.to ? { from: filters.dateRange.from, to: filters.dateRange.to } : undefined}
                     onSelect={(range) => updateFilters({ dateRange: range || {} })}
                     numberOfMonths={2}
                   />

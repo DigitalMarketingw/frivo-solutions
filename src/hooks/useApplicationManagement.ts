@@ -33,8 +33,8 @@ export const useApplicationManagement = () => {
         .from('applications')
         .select(`
           *,
-          profiles!inner(full_name, phone),
-          jobs!inner(title, company, location)
+          profiles!applications_user_id_fkey(full_name, phone),
+          jobs!applications_job_id_fkey(title, company, location)
         `);
 
       if (filters.status) {

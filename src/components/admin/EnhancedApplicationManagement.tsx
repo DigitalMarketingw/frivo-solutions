@@ -1,28 +1,29 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useApplicationManagement } from '@/hooks/useApplicationManagement';
 import { AdvancedSearchFilters } from '@/components/search/AdvancedSearchFilters';
 import { BulkApplicationActions } from './BulkApplicationActions';
 import { DataTable } from './DataTable';
-import { Download, Search, Filter, RefreshCw } from 'lucide-react';
+import { Download, RefreshCw } from 'lucide-react';
+import { Database } from '@/integrations/supabase/types';
+
+type ApplicationStatus = Database['public']['Enums']['application_status'];
 
 export const EnhancedApplicationManagement: React.FC = () => {
   const [selectedApplications, setSelectedApplications] = useState<string[]>([]);
   const [searchFilters, setSearchFilters] = useState({
     search: '',
-    status: [],
-    field: [],
+    status: [] as string[],
+    field: [] as string[],
     company: '',
     location: '',
-    dateRange: {},
-    paymentRequired: null,
-    assignmentCompleted: null,
+    dateRange: {} as { from?: Date; to?: Date },
+    paymentRequired: null as boolean | null,
+    assignmentCompleted: null as boolean | null,
     sortBy: 'applied_at',
     sortOrder: 'desc' as 'asc' | 'desc',
   });
@@ -44,7 +45,7 @@ export const EnhancedApplicationManagement: React.FC = () => {
   const handleFiltersChange = (newFilters: any) => {
     setSearchFilters(newFilters);
     setFilters({
-      status: newFilters.status.length > 0 ? newFilters.status[0] : undefined,
+      status: newFilters.status.length > 0 ? newFilters.status[0] as ApplicationStatus : undefined,
       search: newFilters.search,
       dateRange: newFilters.dateRange.from && newFilters.dateRange.to ? {
         from: newFilters.dateRange.from,
@@ -74,9 +75,9 @@ export const EnhancedApplicationManagement: React.FC = () => {
     const csvContent = [
       ['Applicant', 'Job', 'Company', 'Status', 'Applied Date', 'Assignment', 'Payment'].join(','),
       ...applications.map(app => [
-        app.profiles?.full_name || 'N/A',
-        app.jobs?.title || 'N/A',
-        app.jobs?.company || 'N/A',
+        (app.profiles as any)?.full_name || 'N/A',
+        (app.jobs as any)?.title || 'N/A',
+        (app.jobs as any)?.company || 'N/A',
         app.status,
         new Date(app.applied_at).toLocaleDateString(),
         app.assignment_completed ? 'Completed' : 'Pending',
@@ -93,15 +94,31 @@ export const EnhancedApplicationManagement: React.FC = () => {
     window.URL.revokeObjectURL(url);
   };
 
+  const handleRefresh = () => {
+    refetch();
+  };
+
+  const handleBulkUpdate = async (status: ApplicationStatus) => {
+    await bulkUpdateStatus(selectedApplications, status);
+    setSelectedApplications([]);
+  };
+
+  const handleBulkEmail = async (subject: string, message: string) => {
+    await sendBulkEmail(selectedApplications, subject, message);
+  };
+
+  const availableFields = [...new Set(applications.map(app => (app.jobs as any)?.title).filter(Boolean))];
+  const availableCompanies = [...new Set(applications.map(app => (app.jobs as any)?.company).filter(Boolean))];
+
   const columns = [
     {
-      id: 'select',
+      key: 'select',
+      label: 'Select',
       header: ({ table }: any) => (
         <input
           type="checkbox"
-          checked={table.getIsAllPageRowsSelected()}
+          checked={table?.getIsAllPageRowsSelected?.() || false}
           onChange={(e) => {
-            table.toggleAllPageRowsSelected(e.target.checked);
             if (e.target.checked) {
               setSelectedApplications(applications.map(app => app.id));
             } else {
@@ -125,21 +142,29 @@ export const EnhancedApplicationManagement: React.FC = () => {
       ),
     },
     {
+      key: 'applicant',
+      label: 'Applicant',
       accessorKey: 'profiles.full_name',
       header: 'Applicant',
-      cell: ({ row }: any) => row.original.profiles?.full_name || 'N/A',
+      cell: ({ row }: any) => (row.original.profiles as any)?.full_name || 'N/A',
     },
     {
+      key: 'job',
+      label: 'Job Title',
       accessorKey: 'jobs.title',
       header: 'Job Title',
-      cell: ({ row }: any) => row.original.jobs?.title || 'N/A',
+      cell: ({ row }: any) => (row.original.jobs as any)?.title || 'N/A',
     },
     {
+      key: 'company',
+      label: 'Company',
       accessorKey: 'jobs.company',
       header: 'Company',
-      cell: ({ row }: any) => row.original.jobs?.company || 'N/A',
+      cell: ({ row }: any) => (row.original.jobs as any)?.company || 'N/A',
     },
     {
+      key: 'status',
+      label: 'Status',
       accessorKey: 'status',
       header: 'Status',
       cell: ({ row }: any) => (
@@ -152,11 +177,15 @@ export const EnhancedApplicationManagement: React.FC = () => {
       ),
     },
     {
+      key: 'applied_at',
+      label: 'Applied Date',
       accessorKey: 'applied_at',
       header: 'Applied Date',
       cell: ({ row }: any) => new Date(row.original.applied_at).toLocaleDateString(),
     },
     {
+      key: 'assignment',
+      label: 'Assignment',
       accessorKey: 'assignment_completed',
       header: 'Assignment',
       cell: ({ row }: any) => (
@@ -166,13 +195,14 @@ export const EnhancedApplicationManagement: React.FC = () => {
       ),
     },
     {
-      id: 'actions',
+      key: 'actions',
+      label: 'Actions',
       header: 'Actions',
       cell: ({ row }: any) => (
         <div className="flex gap-2">
           <Select
             value={row.original.status}
-            onValueChange={(value) => updateApplicationStatus(row.original.id, value)}
+            onValueChange={(value: ApplicationStatus) => updateApplicationStatus(row.original.id, value)}
           >
             <SelectTrigger className="w-32">
               <SelectValue />
@@ -204,7 +234,7 @@ export const EnhancedApplicationManagement: React.FC = () => {
             <Download className="h-4 w-4 mr-2" />
             Export CSV
           </Button>
-          <Button variant="outline" onClick={refetch}>
+          <Button variant="outline" onClick={handleRefresh}>
             <RefreshCw className="h-4 w-4 mr-2" />
             Refresh
           </Button>
@@ -214,71 +244,36 @@ export const EnhancedApplicationManagement: React.FC = () => {
       {/* Statistics Cards */}
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-          <Card>
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold">{stats.total}</div>
-              <div className="text-sm text-muted-foreground">Total</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-blue-600">{stats.applied}</div>
-              <div className="text-sm text-muted-foreground">Applied</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-yellow-600">{stats.under_review}</div>
-              <div className="text-sm text-muted-foreground">Under Review</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-purple-600">{stats.test_assigned}</div>
-              <div className="text-sm text-muted-foreground">Test Assigned</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-cyan-600">{stats.test_completed}</div>
-              <div className="text-sm text-muted-foreground">Test Completed</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-green-600">{stats.approved}</div>
-              <div className="text-sm text-muted-foreground">Approved</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-red-600">{stats.rejected}</div>
-              <div className="text-sm text-muted-foreground">Rejected</div>
-            </CardContent>
-          </Card>
+          {Object.entries(stats).map(([key, value]) => (
+            <Card key={key}>
+              <CardContent className="p-4 text-center">
+                <div className="text-2xl font-bold">{value}</div>
+                <div className="text-sm text-muted-foreground capitalize">
+                  {key.replace('_', ' ')}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       )}
 
-      {/* Advanced Search and Filters */}
       <AdvancedSearchFilters
         filters={searchFilters}
         onFiltersChange={handleFiltersChange}
         onClearFilters={handleClearFilters}
-        availableFields={[...new Set(applications.map(app => app.jobs?.title).filter(Boolean))]}
-        availableCompanies={[...new Set(applications.map(app => app.jobs?.company).filter(Boolean))]}
+        availableFields={availableFields}
+        availableCompanies={availableCompanies}
       />
 
-      {/* Bulk Actions */}
       {selectedApplications.length > 0 && (
         <BulkApplicationActions
-          selectedCount={selectedApplications.length}
-          onBulkUpdate={(status) => bulkUpdateStatus(selectedApplications, status)}
-          onBulkEmail={(subject, message) => sendBulkEmail(selectedApplications, subject, message)}
+          selectedApplicationIds={selectedApplications}
+          onBulkUpdate={handleBulkUpdate}
+          onBulkEmail={handleBulkEmail}
           onClearSelection={() => setSelectedApplications([])}
         />
       )}
 
-      {/* Applications Table */}
       <Card>
         <CardHeader>
           <CardTitle>Applications ({applications.length})</CardTitle>

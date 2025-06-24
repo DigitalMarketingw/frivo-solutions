@@ -8,10 +8,32 @@ interface AnalyticsFilters {
   jobField?: string;
 }
 
+interface AnalyticsData {
+  total_applications: number;
+  status_breakdown: Array<{ status: string; count: number }>;
+  field_breakdown: Array<{ field: string; count: number }>;
+  daily_applications: Array<{ date: string; count: number }>;
+  conversion_rate: number;
+}
+
+interface UserPerformanceData {
+  total_applications: number;
+  approved_applications: number;
+  pending_applications: number;
+  success_rate: number;
+  applications_by_field: Array<{ field: string; count: number }>;
+  recent_activity: Array<{
+    job_title: string;
+    company: string;
+    status: string;
+    applied_at: string;
+  }>;
+}
+
 export const useApplicationAnalytics = (filters: AnalyticsFilters = {}) => {
   return useQuery({
     queryKey: ['application-analytics', filters],
-    queryFn: async () => {
+    queryFn: async (): Promise<AnalyticsData> => {
       const { data, error } = await supabase.rpc('get_application_stats', {
         start_date: filters.startDate?.toISOString(),
         end_date: filters.endDate?.toISOString(),
@@ -19,7 +41,8 @@ export const useApplicationAnalytics = (filters: AnalyticsFilters = {}) => {
       });
 
       if (error) throw error;
-      return data;
+      
+      return data as AnalyticsData;
     },
   });
 };
@@ -27,21 +50,23 @@ export const useApplicationAnalytics = (filters: AnalyticsFilters = {}) => {
 export const useUserPerformanceMetrics = (userId?: string) => {
   return useQuery({
     queryKey: ['user-performance', userId],
-    queryFn: async () => {
-      if (!userId) {
+    queryFn: async (): Promise<UserPerformanceData> => {
+      let targetUserId = userId;
+      
+      if (!targetUserId) {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error('No authenticated user');
-        userId = user.id;
+        targetUserId = user.id;
       }
 
       const { data, error } = await supabase.rpc('get_user_performance_metrics', {
-        user_uuid: userId,
+        user_uuid: targetUserId,
       });
 
       if (error) throw error;
-      return data;
+      
+      return data as UserPerformanceData;
     },
-    enabled: !!userId,
   });
 };
 
