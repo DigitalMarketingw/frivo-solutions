@@ -33,8 +33,8 @@ export const useApplicationManagement = () => {
         .from('applications')
         .select(`
           *,
-          profiles!applications_user_id_fkey(full_name, phone),
-          jobs!applications_job_id_fkey(title, company, location)
+          profiles:user_id(full_name, phone),
+          jobs:job_id(title, company, location)
         `);
 
       if (filters.status) {
@@ -42,11 +42,41 @@ export const useApplicationManagement = () => {
       }
 
       if (filters.search) {
-        query = query.or(
-          `profiles.full_name.ilike.%${filters.search}%,` +
-          `jobs.title.ilike.%${filters.search}%,` +
-          `jobs.company.ilike.%${filters.search}%`
-        );
+        // For search, we'll need to join and filter
+        const { data: searchData, error: searchError } = await supabase
+          .from('applications')
+          .select(`
+            *,
+            profiles:user_id(full_name, phone),
+            jobs:job_id(title, company, location)
+          `)
+          .or(
+            `profiles.full_name.ilike.%${filters.search}%,` +
+            `jobs.title.ilike.%${filters.search}%,` +
+            `jobs.company.ilike.%${filters.search}%`
+          );
+
+        if (searchError) throw searchError;
+        
+        // Apply other filters to search results
+        let filteredData = searchData || [];
+        
+        if (filters.status) {
+          filteredData = filteredData.filter(app => app.status === filters.status);
+        }
+        
+        if (filters.jobId) {
+          filteredData = filteredData.filter(app => app.job_id === filters.jobId);
+        }
+        
+        if (filters.dateRange) {
+          filteredData = filteredData.filter(app => {
+            const appliedAt = new Date(app.applied_at);
+            return appliedAt >= filters.dateRange!.from && appliedAt <= filters.dateRange!.to;
+          });
+        }
+        
+        return filteredData.sort((a, b) => new Date(b.applied_at).getTime() - new Date(a.applied_at).getTime());
       }
 
       if (filters.jobId) {

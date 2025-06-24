@@ -17,6 +17,7 @@ const Jobs = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredJobs, setFilteredJobs] = useState<any[]>([]);
+  const [applying, setApplying] = useState<string | null>(null);
 
   useEffect(() => {
     fetchJobs();
@@ -38,6 +39,7 @@ const Jobs = () => {
         .from('jobs')
         .select('*')
         .eq('status', 'open')
+        .is('deleted_at', null)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -63,10 +65,91 @@ const Jobs = () => {
       return;
     }
 
-    toast({
-      title: "Application Started",
-      description: "This would redirect to the enrollment and payment process.",
-    });
+    setApplying(jobId);
+
+    try {
+      // Check if user already has an enrollment for this job
+      const { data: existingEnrollment, error: enrollmentCheckError } = await supabase
+        .from('enrollments')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('job_id', jobId)
+        .single();
+
+      if (enrollmentCheckError && enrollmentCheckError.code !== 'PGRST116') {
+        throw enrollmentCheckError;
+      }
+
+      let enrollmentId;
+
+      if (existingEnrollment) {
+        enrollmentId = existingEnrollment.id;
+      } else {
+        // Create enrollment first
+        const { data: enrollment, error: enrollmentError } = await supabase
+          .from('enrollments')
+          .insert({
+            user_id: user.id,
+            job_id: jobId,
+            enrollment_status: 'pending'
+          })
+          .select('id')
+          .single();
+
+        if (enrollmentError) throw enrollmentError;
+        enrollmentId = enrollment.id;
+      }
+
+      // Check if application already exists
+      const { data: existingApplication, error: applicationCheckError } = await supabase
+        .from('applications')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('job_id', jobId)
+        .single();
+
+      if (applicationCheckError && applicationCheckError.code !== 'PGRST116') {
+        throw applicationCheckError;
+      }
+
+      if (existingApplication) {
+        toast({
+          title: "Already Applied",
+          description: "You have already applied for this position.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Create application
+      const { error: applicationError } = await supabase
+        .from('applications')
+        .insert({
+          user_id: user.id,
+          job_id: jobId,
+          enrollment_id: enrollmentId,
+          status: 'applied',
+          payment_required: true,
+          payment_amount: 49900 // $499 in cents
+        });
+
+      if (applicationError) throw applicationError;
+
+      toast({
+        title: "Application Submitted",
+        description: "Your application has been submitted successfully. You will be contacted soon with next steps.",
+      });
+
+    } catch (error: any) {
+      console.error('Application error:', error);
+      toast({
+        title: "Application Failed",
+        description: error.message || "Failed to submit application. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setApplying(null);
+    }
   };
 
   if (loading) {
@@ -154,8 +237,11 @@ const Jobs = () => {
                         <DollarSign className="h-4 w-4" />
                         Premium Placement Program
                       </div>
-                      <Button onClick={() => handleApply(job.id)}>
-                        Apply Now
+                      <Button 
+                        onClick={() => handleApply(job.id)}
+                        disabled={applying === job.id}
+                      >
+                        {applying === job.id ? 'Applying...' : 'Apply Now'}
                       </Button>
                     </div>
                   </div>
