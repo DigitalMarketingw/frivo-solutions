@@ -9,9 +9,10 @@ interface AdminLayoutProps {
   children: React.ReactNode;
   title: string;
   description: string;
+  actions?: React.ReactNode;
 }
 
-export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title, description }) => {
+export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title, description, actions }) => {
   const { signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -35,10 +36,13 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title, descr
                 <h1 className="text-xl font-bold text-primary">Admin Panel</h1>
               </div>
             </div>
-            <Button variant="outline" onClick={signOut}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
-            </Button>
+            <div className="flex items-center space-x-4">
+              {actions}
+              <Button variant="outline" onClick={signOut}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
           </div>
         </div>
       </header>
