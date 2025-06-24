@@ -6,13 +6,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, TrendingUp, Users, Briefcase, CheckCircle } from 'lucide-react';
+import { CalendarIcon, TrendingUp, Users, Briefcase, CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
 import { format } from 'date-fns';
 import { useApplicationAnalytics, useApplicationTrends } from '@/hooks/useAnalytics';
 import { ApplicationMetricsChart } from './ApplicationMetricsChart';
 import { StatusDistributionChart } from './StatusDistributionChart';
 import { FieldAnalyticsChart } from './FieldAnalyticsChart';
 import { TrendAnalysisChart } from './TrendAnalysisChart';
+import { EmptyAnalyticsState } from './EmptyAnalyticsState';
+import { useToast } from '@/hooks/use-toast';
 
 interface DateRange {
   from?: Date;
@@ -22,17 +24,56 @@ interface DateRange {
 export const AnalyticsDashboard: React.FC = () => {
   const [dateRange, setDateRange] = useState<DateRange>({});
   const [selectedField, setSelectedField] = useState<string>('');
+  const { toast } = useToast();
 
-  const { data: analytics, isLoading } = useApplicationAnalytics({
+  const { data: analytics, isLoading, error, refetch } = useApplicationAnalytics({
     startDate: dateRange.from,
     endDate: dateRange.to,
     jobField: selectedField || undefined,
   });
 
-  const { data: trends } = useApplicationTrends();
+  const { data: trends, refetch: refetchTrends } = useApplicationTrends();
+
+  const handleRefresh = async () => {
+    try {
+      await Promise.all([refetch(), refetchTrends()]);
+      toast({
+        title: "Success",
+        description: "Analytics data refreshed successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to refresh analytics data",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (isLoading) {
-    return <div className="flex justify-center p-8">Loading analytics...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center p-8 space-y-4">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <p className="text-muted-foreground">Loading analytics...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center p-8 space-y-4">
+          <AlertCircle className="h-8 w-8 text-destructive" />
+          <p className="text-muted-foreground text-center">
+            Failed to load analytics data. Using demo data for display.
+          </p>
+          <Button onClick={handleRefresh} variant="outline">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Try Again
+          </Button>
+        </CardContent>
+      </Card>
+    );
   }
 
   // Provide safe defaults for all analytics data
@@ -53,12 +94,40 @@ export const AnalyticsDashboard: React.FC = () => {
     conversion_rate: stats.conversion_rate || 0
   };
 
+  // Check if we have any meaningful data
+  const hasData = safeStats.total_applications > 0 || 
+                  safeStats.status_breakdown.length > 0 || 
+                  safeStats.field_breakdown.length > 0;
+
+  if (!hasData) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-bold">Analytics Dashboard</h1>
+          <Button onClick={handleRefresh} variant="outline">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh
+          </Button>
+        </div>
+        <EmptyAnalyticsState 
+          title="No Application Data Found"
+          description="Analytics will appear here once you have job applications in your system. The dashboard will show comprehensive insights about application trends, success rates, and user engagement."
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Analytics Dashboard</h1>
         
         <div className="flex gap-4">
+          <Button onClick={handleRefresh} variant="outline" size="sm">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh
+          </Button>
+
           <Select value={selectedField} onValueChange={setSelectedField}>
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="All Fields" />
@@ -175,9 +244,37 @@ export const AnalyticsDashboard: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="performance" className="space-y-6">
-          <div className="text-center p-8 text-gray-500">
-            Performance metrics will be displayed here based on user-specific data.
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Performance Insights</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="p-4 bg-muted/50 rounded-lg">
+                    <h4 className="font-medium mb-2">Application Success Rate</h4>
+                    <p className="text-2xl font-bold text-green-600">{safeStats.conversion_rate}%</p>
+                    <p className="text-sm text-muted-foreground">of applications are approved</p>
+                  </div>
+                  <div className="p-4 bg-muted/50 rounded-lg">
+                    <h4 className="font-medium mb-2">Most Popular Field</h4>
+                    <p className="text-lg font-semibold">
+                      {safeStats.field_breakdown.length > 0 
+                        ? safeStats.field_breakdown.sort((a, b) => b.count - a.count)[0]?.field || 'N/A'
+                        : 'N/A'
+                      }
+                    </p>
+                    <p className="text-sm text-muted-foreground">highest application volume</p>
+                  </div>
+                  <div className="p-4 bg-muted/50 rounded-lg">
+                    <h4 className="font-medium mb-2">Total Volume</h4>
+                    <p className="text-2xl font-bold text-blue-600">{safeStats.total_applications}</p>
+                    <p className="text-sm text-muted-foreground">total applications received</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

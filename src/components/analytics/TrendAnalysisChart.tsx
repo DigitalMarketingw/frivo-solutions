@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Legend } from 'recharts';
 import { format } from 'date-fns';
 
 interface TrendAnalysisChartProps {
@@ -30,10 +30,26 @@ export const TrendAnalysisChart: React.FC<TrendAnalysisChartProps> = ({ data }) 
     date: format(new Date(item.date), 'MMM dd'),
   }));
 
+  if (!data || data.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Application Trends</CardTitle>
+        </CardHeader>
+        <CardContent className="flex items-center justify-center h-[300px]">
+          <div className="text-center text-muted-foreground">
+            <p className="mb-2">No trend data available</p>
+            <p className="text-sm">Application trends will appear as data accumulates over time</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Application Trends Analysis</CardTitle>
+        <CardTitle>Application Trends Over Time</CardTitle>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[400px]">
@@ -50,26 +66,30 @@ export const TrendAnalysisChart: React.FC<TrendAnalysisChartProps> = ({ data }) 
               axisLine={false}
             />
             <ChartTooltip content={<ChartTooltipContent />} />
-            <Line 
-              type="monotone" 
-              dataKey="total" 
-              stroke="#3b82f6" 
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="total"
+              stroke="#3b82f6"
               strokeWidth={2}
-              dot={{ r: 4 }}
+              dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
+              name="Total Applications"
             />
-            <Line 
-              type="monotone" 
-              dataKey="approved" 
-              stroke="#10b981" 
+            <Line
+              type="monotone"
+              dataKey="approved"
+              stroke="#10b981"
               strokeWidth={2}
-              dot={{ r: 4 }}
+              dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }}
+              name="Approved"
             />
-            <Line 
-              type="monotone" 
-              dataKey="rejected" 
-              stroke="#ef4444" 
+            <Line
+              type="monotone"
+              dataKey="rejected"
+              stroke="#ef4444"
               strokeWidth={2}
-              dot={{ r: 4 }}
+              dot={{ fill: '#ef4444', strokeWidth: 2, r: 4 }}
+              name="Rejected"
             />
           </LineChart>
         </ChartContainer>

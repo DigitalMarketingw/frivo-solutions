@@ -1,56 +1,101 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
-import { TrendingUp, Award, Clock, CheckCircle, Target } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
 import { useUserPerformanceMetrics } from '@/hooks/useAnalytics';
+import { EmptyAnalyticsState } from './EmptyAnalyticsState';
+import { User, TrendingUp, CheckCircle, Clock, RefreshCw } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
-interface UserPerformanceMetricsProps {
-  userId?: string;
-}
+export const UserPerformanceMetrics: React.FC = () => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const { data: metrics, isLoading, error, refetch } = useUserPerformanceMetrics(user?.id);
 
-const FIELD_COLORS = [
-  '#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#06b6d4'
-];
-
-export const UserPerformanceMetrics: React.FC<UserPerformanceMetricsProps> = ({ userId }) => {
-  const { data: metrics, isLoading } = useUserPerformanceMetrics(userId);
+  const handleRefresh = async () => {
+    try {
+      await refetch();
+      toast({
+        title: "Success",
+        description: "Performance metrics refreshed successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to refresh performance metrics",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (isLoading) {
-    return <div className="flex justify-center p-4">Loading performance metrics...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center p-8 space-y-4">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <p className="text-muted-foreground">Loading your performance metrics...</p>
+      </div>
+    );
   }
 
-  if (!metrics) {
+  if (error || !metrics) {
     return (
       <Card>
-        <CardContent className="p-6 text-center">
-          <p className="text-gray-600">No performance data available</p>
+        <CardContent className="flex flex-col items-center justify-center p-8 space-y-4">
+          <User className="h-8 w-8 text-destructive" />
+          <p className="text-muted-foreground text-center">
+            Failed to load your performance metrics
+          </p>
+          <Button onClick={handleRefresh} variant="outline">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Try Again
+          </Button>
         </CardContent>
       </Card>
     );
   }
 
-  const fieldData = (metrics.applications_by_field || []).map((item: any, index: number) => ({
-    ...item,
-    fill: FIELD_COLORS[index % FIELD_COLORS.length],
-  }));
+  const hasData = metrics.total_applications > 0 || metrics.applications_by_field.length > 0;
+
+  if (!hasData) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold">My Performance</h2>
+          <Button onClick={handleRefresh} variant="outline">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh
+          </Button>
+        </div>
+        <EmptyAnalyticsState 
+          title="No Personal Data Available"
+          description="Your personal performance metrics will appear here once you start applying for jobs. Track your application success rate, popular fields, and recent activity."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Performance Metrics</h2>
-      
-      {/* Key Performance Indicators */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">My Performance</h2>
+        <Button onClick={handleRefresh} variant="outline" size="sm">
+          <RefreshCw className="h-4 w-4 mr-2" />
+          Refresh
+        </Button>
+      </div>
+
+      {/* Performance Overview Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Applications</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
+            <User className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{metrics.total_applications}</div>
+            <p className="text-xs text-muted-foreground">applications submitted</p>
           </CardContent>
         </Card>
 
@@ -61,7 +106,7 @@ export const UserPerformanceMetrics: React.FC<UserPerformanceMetricsProps> = ({ 
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{metrics.success_rate}%</div>
-            <Progress value={metrics.success_rate} className="mt-2" />
+            <p className="text-xs text-muted-foreground">applications approved</p>
           </CardContent>
         </Card>
 
@@ -72,6 +117,7 @@ export const UserPerformanceMetrics: React.FC<UserPerformanceMetricsProps> = ({ 
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">{metrics.approved_applications}</div>
+            <p className="text-xs text-muted-foreground">successful applications</p>
           </CardContent>
         </Card>
 
@@ -82,90 +128,61 @@ export const UserPerformanceMetrics: React.FC<UserPerformanceMetricsProps> = ({ 
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-yellow-600">{metrics.pending_applications}</div>
+            <p className="text-xs text-muted-foreground">awaiting response</p>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Applications by Field */}
-        {fieldData.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Applications by Field</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={fieldData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={120}
-                      paddingAngle={5}
-                      dataKey="count"
-                    >
-                      {fieldData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.fill} />
-                      ))}
-                    </Pie>
-                    <ChartTooltip 
-                      content={({ active, payload }) => {
-                        if (active && payload && payload[0]) {
-                          const data = payload[0].payload;
-                          return (
-                            <div className="bg-white p-2 border rounded shadow">
-                              <p className="font-medium">{data.field}</p>
-                              <p className="text-sm">Applications: {data.count}</p>
-                            </div>
-                          );
-                        }
-                        return null;
-                      }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Recent Activity */}
+      {/* Applications by Field */}
+      {metrics.applications_by_field.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Award className="h-5 w-5" />
-              Recent Activity
-            </CardTitle>
+            <CardTitle>Applications by Field</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {metrics.recent_activity?.map((activity: any, index: number) => (
-                <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div>
-                    <p className="font-medium">{activity.job_title}</p>
-                    <p className="text-sm text-gray-600">{activity.company}</p>
-                    <p className="text-xs text-gray-500">
-                      Applied: {new Date(activity.applied_at).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <Badge 
-                    variant={
-                      activity.status === 'approved' ? 'default' :
-                      activity.status === 'rejected' ? 'destructive' : 'secondary'
-                    }
-                  >
-                    {activity.status.replace('_', ' ').toUpperCase()}
-                  </Badge>
+            <div className="space-y-3">
+              {metrics.applications_by_field.map((field, index) => (
+                <div key={index} className="flex items-center justify-between">
+                  <span className="font-medium">{field.field}</span>
+                  <Badge variant="secondary">{field.count} applications</Badge>
                 </div>
-              )) || (
-                <p className="text-center text-gray-500 py-4">No recent activity</p>
-              )}
+              ))}
             </div>
           </CardContent>
         </Card>
-      </div>
+      )}
+
+      {/* Recent Activity */}
+      {metrics.recent_activity.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Activity</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {metrics.recent_activity.map((activity, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                  <div>
+                    <p className="font-medium">{activity.job_title}</p>
+                    <p className="text-sm text-muted-foreground">{activity.company}</p>
+                  </div>
+                  <div className="text-right">
+                    <Badge 
+                      variant={activity.status === 'approved' ? 'default' : 
+                              activity.status === 'rejected' ? 'destructive' : 'secondary'}
+                    >
+                      {activity.status}
+                    </Badge>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {new Date(activity.applied_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

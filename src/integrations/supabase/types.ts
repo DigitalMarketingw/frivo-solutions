@@ -427,6 +427,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_demo_application_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       get_user_performance_metrics: {
         Args: { user_uuid: string }
         Returns: Json
