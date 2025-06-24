@@ -4,26 +4,36 @@ import { AdminLayout } from '@/components/admin/AdminLayout';
 import { DataTable } from '@/components/admin/DataTable';
 import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
 import { StatusBadge } from '@/components/admin/StatusBadge';
+import { NotificationCenter } from '@/components/admin/NotificationCenter';
+import { LiveStatusIndicator } from '@/components/admin/LiveStatusIndicator';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { useAdminStats } from '@/hooks/useAdminStats';
 import { useAdminUsers } from '@/hooks/useAdminUsers';
 import { useAdminJobs } from '@/hooks/useAdminJobs';
-import { Users, Briefcase, FileText, DollarSign, Edit, Trash2 } from 'lucide-react';
+import { useRealTimeUpdates } from '@/hooks/useRealTimeUpdates';
+import { Users, Briefcase, FileText, DollarSign, Edit, Trash2, RefreshCw } from 'lucide-react';
 import { User, Job } from '@/types/admin';
 
 const Admin = () => {
-  const { stats, loading: statsLoading } = useAdminStats();
+  const { stats, loading: statsLoading, refetch: refetchStats } = useAdminStats();
   
   // Users state
   const [usersParams, setUsersParams] = useState({ page: 1, limit: 10, search: '' });
-  const { users, loading: usersLoading, updateUserRole } = useAdminUsers(usersParams);
+  const { users, loading: usersLoading, updateUserRole, refetch: refetchUsers } = useAdminUsers(usersParams);
   
   // Jobs state  
   const [jobsParams, setJobsParams] = useState({ page: 1, limit: 10, search: '' });
-  const { jobs, loading: jobsLoading, deleteJob, updateJobStatus } = useAdminJobs(jobsParams);
+  const { jobs, loading: jobsLoading, deleteJob, updateJobStatus, refetch: refetchJobs } = useAdminJobs(jobsParams);
   
+  // Real-time updates
+  useRealTimeUpdates({
+    onUserUpdate: refetchUsers,
+    onJobUpdate: refetchJobs,
+    onStatsUpdate: refetchStats,
+  });
+
   // Confirm dialog state
   const [confirmDialog, setConfirmDialog] = useState<{
     open: boolean;
@@ -68,6 +78,12 @@ const Admin = () => {
     });
   };
 
+  const handleManualRefresh = () => {
+    refetchStats();
+    refetchUsers();
+    refetchJobs();
+  };
+
   const userColumns = [
     { key: 'full_name', label: 'Name', render: (value: string, user: User) => value || 'Not provided' },
     { key: 'id', label: 'User ID' },
@@ -86,7 +102,25 @@ const Admin = () => {
   ];
 
   return (
-    <AdminLayout title="Admin Dashboard" description="Manage users, jobs, and applications">
+    <AdminLayout 
+      title="Admin Dashboard" 
+      description="Manage users, jobs, and applications"
+      actions={
+        <div className="flex items-center gap-2">
+          <LiveStatusIndicator />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleManualRefresh}
+            disabled={statsLoading || usersLoading || jobsLoading}
+          >
+            <RefreshCw className={`h-4 w-4 ${(statsLoading || usersLoading || jobsLoading) ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+          <NotificationCenter />
+        </div>
+      }
+    >
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <Card>
