@@ -14,7 +14,7 @@ const Index = () => {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
               <img 
-                src="/lovable-uploads/2f3c626a-f04b-488a-8711-bd0932156754.png" 
+                src="/lovable-uploads/5e550e9d-5865-4e41-bf94-3e957f814d97.png" 
                 alt="Frivo Solutions" 
                 className="h-10 w-auto"
               />
@@ -230,9 +230,9 @@ const Index = () => {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-3 mb-6 md:mb-0">
               <img 
-                src="/lovable-uploads/2f3c626a-f04b-488a-8711-bd0932156754.png" 
+                src="/lovable-uploads/5e550e9d-5865-4e41-bf94-3e957f814d97.png" 
                 alt="Frivo Solutions" 
-                className="h-10 w-auto filter brightness-0 invert"
+                className="h-10 w-auto"
               />
               <div className="text-xl font-bold">Frivo Solutions</div>
             </div>

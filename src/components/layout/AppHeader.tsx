@@ -60,7 +60,7 @@ export const AppHeader: React.FC = () => {
           <div className="flex items-center space-x-4">
             <Link to="/dashboard" className="flex items-center space-x-3 group">
               <img 
-                src="/lovable-uploads/2f3c626a-f04b-488a-8711-bd0932156754.png" 
+                src="/lovable-uploads/5e550e9d-5865-4e41-bf94-3e957f814d97.png" 
                 alt="Frivo Solutions" 
                 className="h-8 w-auto group-hover:scale-105 transition-transform duration-200"
               />
