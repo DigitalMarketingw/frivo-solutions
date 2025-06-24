@@ -1,19 +1,20 @@
 
 import React, { useState } from 'react';
 import { AdminLayout } from '@/components/admin/AdminLayout';
-import { DataTable } from '@/components/admin/DataTable';
+import { AdminStatsCards } from '@/components/admin/AdminStatsCards';
+import { AdminUserManagement } from '@/components/admin/AdminUserManagement';
+import { AdminJobManagement } from '@/components/admin/AdminJobManagement';
+import { AdminApplicationManagement } from '@/components/admin/AdminApplicationManagement';
 import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
-import { StatusBadge } from '@/components/admin/StatusBadge';
 import { NotificationCenter } from '@/components/admin/NotificationCenter';
 import { LiveStatusIndicator } from '@/components/admin/LiveStatusIndicator';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { useAdminStats } from '@/hooks/useAdminStats';
 import { useAdminUsers } from '@/hooks/useAdminUsers';
 import { useAdminJobs } from '@/hooks/useAdminJobs';
 import { useRealTimeUpdates } from '@/hooks/useRealTimeUpdates';
-import { Users, Briefcase, FileText, DollarSign, Edit, Trash2, RefreshCw } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { User, Job } from '@/types/admin';
 
 const Admin = () => {
@@ -25,7 +26,7 @@ const Admin = () => {
   
   // Jobs state  
   const [jobsParams, setJobsParams] = useState({ page: 1, limit: 10, search: '' });
-  const { jobs, loading: jobsLoading, deleteJob, updateJobStatus, refetch: refetchJobs } = useAdminJobs(jobsParams);
+  const { jobs, loading: jobsLoading, deleteJob, refetch: refetchJobs } = useAdminJobs(jobsParams);
   
   // Real-time updates
   useRealTimeUpdates({
@@ -84,23 +85,6 @@ const Admin = () => {
     refetchJobs();
   };
 
-  const userColumns = [
-    { key: 'full_name', label: 'Name', render: (value: string, user: User) => value || 'Not provided' },
-    { key: 'id', label: 'User ID' },
-    { key: 'role', label: 'Role', render: (value: string) => <StatusBadge status={value} type="user" /> },
-    { key: 'phone', label: 'Phone', render: (value: string) => value || 'Not provided' },
-    { key: 'created_at', label: 'Joined', render: (value: string) => new Date(value).toLocaleDateString() },
-  ];
-
-  const jobColumns = [
-    { key: 'title', label: 'Title' },
-    { key: 'company', label: 'Company' },
-    { key: 'location', label: 'Location' },
-    { key: 'field', label: 'Field' },
-    { key: 'status', label: 'Status', render: (value: string) => <StatusBadge status={value} type="job" /> },
-    { key: 'created_at', label: 'Posted', render: (value: string) => new Date(value).toLocaleDateString() },
-  ];
-
   return (
     <AdminLayout 
       title="Admin Dashboard" 
@@ -121,65 +105,7 @@ const Admin = () => {
         </div>
       }
     >
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {statsLoading ? '...' : stats?.total_users || 0}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {statsLoading ? '...' : stats?.admin_users || 0} admins
-            </p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Jobs</CardTitle>
-            <Briefcase className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {statsLoading ? '...' : stats?.active_jobs || 0}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              of {statsLoading ? '...' : stats?.total_jobs || 0} total
-            </p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Applications</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {statsLoading ? '...' : stats?.total_applications || 0}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {statsLoading ? '...' : stats?.pending_applications || 0} pending
-            </p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Enrollments</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {statsLoading ? '...' : stats?.total_enrollments || 0}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <AdminStatsCards stats={stats} loading={statsLoading} />
 
       <Tabs defaultValue="users" className="space-y-4">
         <TabsList>
@@ -189,95 +115,31 @@ const Admin = () => {
         </TabsList>
 
         <TabsContent value="users">
-          <Card>
-            <CardHeader>
-              <CardTitle>User Management</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <DataTable
-                data={users.data}
-                columns={userColumns}
-                loading={usersLoading}
-                search={{
-                  value: usersParams.search,
-                  onChange: (value) => setUsersParams(prev => ({ ...prev, search: value, page: 1 })),
-                  placeholder: "Search users by name or ID..."
-                }}
-                pagination={{
-                  currentPage: users.page,
-                  totalPages: users.totalPages,
-                  totalItems: users.total,
-                  pageSize: users.limit,
-                  onPageChange: (page) => setUsersParams(prev => ({ ...prev, page })),
-                  onPageSizeChange: (limit) => setUsersParams(prev => ({ ...prev, limit, page: 1 })),
-                }}
-                actions={(user: User) => (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleUpdateUserRole(user)}
-                  >
-                    {user.role === 'admin' ? 'Make User' : 'Make Admin'}
-                  </Button>
-                )}
-              />
-            </CardContent>
-          </Card>
+          <AdminUserManagement
+            users={users}
+            loading={usersLoading}
+            searchParams={usersParams}
+            onSearchChange={(value) => setUsersParams(prev => ({ ...prev, search: value, page: 1 }))}
+            onPageChange={(page) => setUsersParams(prev => ({ ...prev, page }))}
+            onPageSizeChange={(limit) => setUsersParams(prev => ({ ...prev, limit, page: 1 }))}
+            onUpdateUserRole={handleUpdateUserRole}
+          />
         </TabsContent>
 
         <TabsContent value="jobs">
-          <Card>
-            <CardHeader>
-              <CardTitle>Job Management</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <DataTable
-                data={jobs.data}
-                columns={jobColumns}
-                loading={jobsLoading}
-                search={{
-                  value: jobsParams.search,
-                  onChange: (value) => setJobsParams(prev => ({ ...prev, search: value, page: 1 })),
-                  placeholder: "Search jobs by title, company, or location..."
-                }}
-                pagination={{
-                  currentPage: jobs.page,
-                  totalPages: jobs.totalPages,
-                  totalItems: jobs.total,
-                  pageSize: jobs.limit,
-                  onPageChange: (page) => setJobsParams(prev => ({ ...prev, page })),
-                  onPageSizeChange: (limit) => setJobsParams(prev => ({ ...prev, limit, page: 1 })),
-                }}
-                actions={(job: Job) => (
-                  <>
-                    <Button variant="outline" size="sm">
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleDeleteJob(job)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </>
-                )}
-              />
-            </CardContent>
-          </Card>
+          <AdminJobManagement
+            jobs={jobs}
+            loading={jobsLoading}
+            searchParams={jobsParams}
+            onSearchChange={(value) => setJobsParams(prev => ({ ...prev, search: value, page: 1 }))}
+            onPageChange={(page) => setJobsParams(prev => ({ ...prev, page }))}
+            onPageSizeChange={(limit) => setJobsParams(prev => ({ ...prev, limit, page: 1 }))}
+            onDeleteJob={handleDeleteJob}
+          />
         </TabsContent>
 
         <TabsContent value="applications">
-          <Card>
-            <CardHeader>
-              <CardTitle>Application Management</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                Application management coming soon...
-              </div>
-            </CardContent>
-          </Card>
+          <AdminApplicationManagement />
         </TabsContent>
       </Tabs>
 
