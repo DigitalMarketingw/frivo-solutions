@@ -35,12 +35,22 @@ export const AnalyticsDashboard: React.FC = () => {
     return <div className="flex justify-center p-8">Loading analytics...</div>;
   }
 
+  // Provide safe defaults for all analytics data
   const stats = analytics || {
     total_applications: 0,
     status_breakdown: [],
     field_breakdown: [],
     daily_applications: [],
     conversion_rate: 0
+  };
+
+  // Ensure all arrays are properly initialized
+  const safeStats = {
+    total_applications: stats.total_applications || 0,
+    status_breakdown: Array.isArray(stats.status_breakdown) ? stats.status_breakdown : [],
+    field_breakdown: Array.isArray(stats.field_breakdown) ? stats.field_breakdown : [],
+    daily_applications: Array.isArray(stats.daily_applications) ? stats.daily_applications : [],
+    conversion_rate: stats.conversion_rate || 0
   };
 
   return (
@@ -55,7 +65,7 @@ export const AnalyticsDashboard: React.FC = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="">All Fields</SelectItem>
-              {stats.field_breakdown.map((field: any) => (
+              {safeStats.field_breakdown.map((field: any) => (
                 <SelectItem key={field.field} value={field.field}>
                   {field.field}
                 </SelectItem>
@@ -103,7 +113,7 @@ export const AnalyticsDashboard: React.FC = () => {
             <Briefcase className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.total_applications}</div>
+            <div className="text-2xl font-bold">{safeStats.total_applications}</div>
           </CardContent>
         </Card>
 
@@ -113,7 +123,7 @@ export const AnalyticsDashboard: React.FC = () => {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.conversion_rate}%</div>
+            <div className="text-2xl font-bold">{safeStats.conversion_rate}%</div>
           </CardContent>
         </Card>
 
@@ -124,7 +134,7 @@ export const AnalyticsDashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {stats.status_breakdown.find((s: any) => s.status === 'approved')?.count || 0}
+              {safeStats.status_breakdown.find((s: any) => s.status === 'approved')?.count || 0}
             </div>
           </CardContent>
         </Card>
@@ -135,7 +145,7 @@ export const AnalyticsDashboard: React.FC = () => {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.total_applications}</div>
+            <div className="text-2xl font-bold">{safeStats.total_applications}</div>
           </CardContent>
         </Card>
       </div>
@@ -151,8 +161,8 @@ export const AnalyticsDashboard: React.FC = () => {
 
         <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <StatusDistributionChart data={stats.status_breakdown} />
-            <ApplicationMetricsChart data={stats.daily_applications} />
+            <StatusDistributionChart data={safeStats.status_breakdown} />
+            <ApplicationMetricsChart data={safeStats.daily_applications} />
           </div>
         </TabsContent>
 
@@ -161,7 +171,7 @@ export const AnalyticsDashboard: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="fields" className="space-y-6">
-          <FieldAnalyticsChart data={stats.field_breakdown} />
+          <FieldAnalyticsChart data={safeStats.field_breakdown} />
         </TabsContent>
 
         <TabsContent value="performance" className="space-y-6">
