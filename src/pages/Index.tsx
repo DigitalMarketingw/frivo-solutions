@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -173,68 +172,293 @@ const Index = () => {
       </section>
 
       {/* Enhanced Features Section */}
-      <section className="py-32 bg-white/50 backdrop-blur-sm">
+      <section className="py-32 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section Header */}
           <div className="text-center mb-20">
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 text-primary font-medium text-sm mb-6">
+            <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-purple-100 to-blue-100 border border-purple-200/50 text-purple-700 font-semibold text-sm shadow-sm mb-8">
               <Trophy className="h-4 w-4 mr-2" />
               Why Choose Us
             </div>
-            <h2 className="text-5xl md:text-6xl font-bold text-slate-900 mb-8">
-              Why Choose 
-              <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent"> Frivo Solutions?</span>
+            <h2 className="text-5xl md:text-6xl font-bold text-slate-900 mb-8 leading-tight">
+              Three Reasons to 
+              <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent"> Choose Frivo</span>
             </h2>
             <p className="text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed font-light">
-              We provide a comprehensive solution for career advancement with premium features 
-              and personalized support throughout your professional journey.
+              Discover why thousands of professionals trust Frivo Solutions for their career advancement journey.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
-            <Card className="text-center border-0 bg-white/80 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-500 group hover:-translate-y-2">
-              <CardHeader className="pb-6">
-                <div className="mx-auto w-20 h-20 bg-gradient-to-br from-primary/10 to-blue-500/10 rounded-3xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
-                  <Briefcase className="h-10 w-10 text-primary" />
+          {/* Feature Section 1 - Premium Job Listings */}
+          <div className="mb-32">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+              <div className="space-y-8">
+                <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200/30 text-purple-600 font-medium text-sm">
+                  <Briefcase className="h-4 w-4 mr-2" />
+                  Premium Access
                 </div>
-                <CardTitle className="text-2xl text-slate-900 mb-4">Premium Job Listings</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-lg leading-relaxed text-slate-600">
-                  Access exclusive job opportunities from top-tier companies 
-                  that you won't find on traditional job boards.
-                </CardDescription>
-              </CardContent>
-            </Card>
+                <div>
+                  <h3 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-6 leading-tight">
+                    Exclusive Job
+                    <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent"> Opportunities</span>
+                  </h3>
+                  <p className="text-xl text-slate-600 leading-relaxed mb-8 font-light">
+                    Access premium job listings from Fortune 500 companies and innovative startups. 
+                    Our curated opportunities are exclusively available to Frivo members, giving you 
+                    a competitive edge in your job search.
+                  </p>
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-3">
+                      <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                      <span className="text-slate-700">Verified company profiles and salary ranges</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                      <span className="text-slate-700">Direct connection with hiring managers</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                      <span className="text-slate-700">Priority application processing</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="relative">
+                <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-2xl rounded-3xl overflow-hidden transform hover:scale-105 transition-all duration-500">
+                  <CardHeader className="bg-gradient-to-br from-purple-50 to-blue-50 p-8">
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-blue-600 rounded-2xl flex items-center justify-center">
+                          <Briefcase className="h-7 w-7 text-white" />
+                        </div>
+                        <div>
+                          <CardTitle className="text-2xl text-slate-900">Job Board</CardTitle>
+                          <CardDescription className="text-slate-600 text-lg">Premium listings</CardDescription>
+                        </div>
+                      </div>
+                      <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+                        New
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-8 space-y-6">
+                    <div className="space-y-4">
+                      <div className="p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl">
+                        <div className="flex justify-between items-center">
+                          <span className="font-semibold text-slate-800">Senior Developer</span>
+                          <span className="text-2xl font-bold text-purple-600">$120K</span>
+                        </div>
+                        <p className="text-slate-600 text-sm mt-1">Tech Startup • Remote</p>
+                      </div>
+                      <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl">
+                        <div className="flex justify-between items-center">
+                          <span className="font-semibold text-slate-800">Product Manager</span>
+                          <span className="text-2xl font-bold text-blue-600">$95K</span>
+                        </div>
+                        <p className="text-slate-600 text-sm mt-1">Fortune 500 • Hybrid</p>
+                      </div>
+                      <div className="p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl">
+                        <div className="flex justify-between items-center">
+                          <span className="font-semibold text-slate-800">UX Designer</span>
+                          <span className="text-2xl font-bold text-indigo-600">$85K</span>
+                        </div>
+                        <p className="text-slate-600 text-sm mt-1">Design Agency • On-site</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                <div className="absolute -top-6 -right-6 bg-gradient-to-r from-green-400 to-emerald-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+                  500+ Jobs
+                </div>
+              </div>
+            </div>
+          </div>
 
-            <Card className="text-center border-0 bg-white/80 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-500 group hover:-translate-y-2">
-              <CardHeader className="pb-6">
-                <div className="mx-auto w-20 h-20 bg-gradient-to-br from-amber-500/10 to-orange-500/10 rounded-3xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
-                  <Award className="h-10 w-10 text-amber-600" />
+          {/* Feature Section 2 - Skill Assessments */}
+          <div className="mb-32">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+              <div className="relative order-2 lg:order-1">
+                <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-2xl rounded-3xl overflow-hidden transform hover:scale-105 transition-all duration-500">
+                  <CardHeader className="bg-gradient-to-br from-amber-50 to-orange-50 p-8">
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-14 h-14 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center">
+                          <Award className="h-7 w-7 text-white" />
+                        </div>
+                        <div>
+                          <CardTitle className="text-2xl text-slate-900">Skill Assessment</CardTitle>
+                          <CardDescription className="text-slate-600 text-lg">Prove your expertise</CardDescription>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                        <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                        <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                        <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                        <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-8 space-y-6">
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-700 font-medium">JavaScript</span>
+                        <div className="flex items-center space-x-2">
+                          <div className="w-24 bg-slate-200 rounded-full h-2">
+                            <div className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full" style={{width: '92%'}}></div>
+                          </div>
+                          <span className="text-sm font-semibold text-green-600">92%</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-700 font-medium">React</span>
+                        <div className="flex items-center space-x-2">
+                          <div className="w-24 bg-slate-200 rounded-full h-2">
+                            <div className="bg-gradient-to-r from-blue-400 to-blue-600 h-2 rounded-full" style={{width: '88%'}}></div>
+                          </div>
+                          <span className="text-sm font-semibold text-blue-600">88%</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-700 font-medium">Python</span>
+                        <div className="flex items-center space-x-2">
+                          <div className="w-24 bg-slate-200 rounded-full h-2">
+                            <div className="bg-gradient-to-r from-purple-400 to-purple-600 h-2 rounded-full" style={{width: '85%'}}></div>
+                          </div>
+                          <span className="text-sm font-semibold text-purple-600">85%</span>
+                        </div>
+                      </div>
+                      <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl text-center">
+                        <p className="text-green-700 font-semibold">Certified Expert Level</p>
+                        <p className="text-green-600 text-sm">Top 10% of all candidates</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                <div className="absolute -top-6 -left-6 bg-gradient-to-r from-amber-400 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+                  Expert Level
                 </div>
-                <CardTitle className="text-2xl text-slate-900 mb-4">Skill Assessments</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-lg leading-relaxed text-slate-600">
-                  Complete comprehensive assessments and coding challenges 
-                  to demonstrate your expertise to potential employers.
-                </CardDescription>
-              </CardContent>
-            </Card>
+              </div>
+              <div className="space-y-8 order-1 lg:order-2">
+                <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/30 text-amber-600 font-medium text-sm">
+                  <Award className="h-4 w-4 mr-2" />
+                  Skill Validation
+                </div>
+                <div>
+                  <h3 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-6 leading-tight">
+                    Comprehensive
+                    <span className="bg-gradient-to-r from-amber-500 to-orange-600 bg-clip-text text-transparent"> Assessments</span>
+                  </h3>
+                  <p className="text-xl text-slate-600 leading-relaxed mb-8 font-light">
+                    Demonstrate your technical expertise through industry-standard assessments and coding challenges. 
+                    Our comprehensive evaluation system helps employers understand your true capabilities and 
+                    gives you the recognition you deserve.
+                  </p>
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-3">
+                      <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                      <span className="text-slate-700">Industry-standard coding challenges</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                      <span className="text-slate-700">Real-time performance analytics</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                      <span className="text-slate-700">Verified skill certifications</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-            <Card className="text-center border-0 bg-white/80 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-500 group hover:-translate-y-2">
-              <CardHeader className="pb-6">
-                <div className="mx-auto w-20 h-20 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-3xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
-                  <Users className="h-10 w-10 text-emerald-600" />
+          {/* Feature Section 3 - Expert Support */}
+          <div className="mb-20">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+              <div className="space-y-8">
+                <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/30 text-emerald-600 font-medium text-sm">
+                  <Users className="h-4 w-4 mr-2" />
+                  Expert Guidance
                 </div>
-                <CardTitle className="text-2xl text-slate-900 mb-4">Expert Support</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-lg leading-relaxed text-slate-600">
-                  Receive dedicated career guidance and support throughout 
-                  your application process and professional development.
-                </CardDescription>
-              </CardContent>
-            </Card>
+                <div>
+                  <h3 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-6 leading-tight">
+                    Dedicated Career
+                    <span className="bg-gradient-to-r from-emerald-500 to-teal-600 bg-clip-text text-transparent"> Support</span>
+                  </h3>
+                  <p className="text-xl text-slate-600 leading-relaxed mb-8 font-light">
+                    Get personalized guidance from industry experts and career coaches. Our dedicated support team 
+                    is available 24/7 to help you navigate your career journey and achieve your professional goals.
+                  </p>
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-3">
+                      <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                      <span className="text-slate-700">One-on-one career coaching sessions</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                      <span className="text-slate-700">Resume and portfolio optimization</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                      <span className="text-slate-700">24/7 expert support availability</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="relative">
+                <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-2xl rounded-3xl overflow-hidden transform hover:scale-105 transition-all duration-500">
+                  <CardHeader className="bg-gradient-to-br from-emerald-50 to-teal-50 p-8">
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center">
+                          <Users className="h-7 w-7 text-white" />
+                        </div>
+                        <div>
+                          <CardTitle className="text-2xl text-slate-900">Support Team</CardTitle>
+                          <CardDescription className="text-slate-600 text-lg">Expert guidance</CardDescription>
+                        </div>
+                      </div>
+                      <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-8 space-y-6">
+                    <div className="space-y-4">
+                      <div className="flex items-start space-x-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                          SC
+                        </div>
+                        <div className="flex-1 bg-emerald-50 rounded-2xl p-4">
+                          <p className="text-slate-700 text-sm">Great work on your profile! I've reviewed your resume and have some suggestions to improve your interview success rate.</p>
+                          <p className="text-emerald-600 text-xs mt-2 font-medium">Sarah - Career Coach</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start space-x-3 justify-end">
+                        <div className="flex-1 bg-blue-50 rounded-2xl p-4 max-w-xs">
+                          <p className="text-slate-700 text-sm">Thank you! When can we schedule our next session?</p>
+                          <p className="text-blue-600 text-xs mt-2 font-medium text-right">You</p>
+                        </div>
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                          Y
+                        </div>
+                      </div>
+                      <div className="flex items-start space-x-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                          SC
+                        </div>
+                        <div className="flex-1 bg-emerald-50 rounded-2xl p-4">
+                          <p className="text-slate-700 text-sm">How about tomorrow at 2 PM? I'll send you a calendar invite.</p>
+                          <p className="text-emerald-600 text-xs mt-2 font-medium">Sarah - Career Coach</p>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                <div className="absolute -top-6 -right-6 bg-gradient-to-r from-emerald-400 to-teal-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+                  24/7 Support
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Enhanced Success Metrics */}
