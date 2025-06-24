@@ -20,8 +20,8 @@ export const useAdminStats = () => {
 
       if (error) throw error;
 
-      // Type cast the Json response to AdminStats
-      setStats(data as AdminStats);
+      // Type cast the Json response to AdminStats via unknown
+      setStats(data as unknown as AdminStats);
     } catch (err: any) {
       const errorMessage = err.message || 'Failed to fetch admin statistics';
       setError(errorMessage);
