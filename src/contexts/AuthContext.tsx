@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -37,86 +37,93 @@ export const useAuth = () => {
   return context;
 };
 
+// Request deduplication cache
+const pendingRequests = new Map<string, Promise<any>>();
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [profileLoading, setProfileLoading] = useState(false);
   const { toast } = useToast();
 
+  // Debounced profile fetch with request deduplication
   const fetchProfile = useCallback(async (userId: string, retryCount = 0) => {
-    if (profileLoading) return; // Prevent concurrent requests
+    const cacheKey = `profile-${userId}-${retryCount}`;
     
-    try {
-      setProfileLoading(true);
-      console.log('Fetching profile for user:', userId);
-      
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .maybeSingle(); // Use maybeSingle instead of single to prevent errors
+    // Return existing promise if request is already in flight
+    if (pendingRequests.has(cacheKey)) {
+      return pendingRequests.get(cacheKey);
+    }
 
-      if (error) {
-        console.error('Error fetching profile:', error);
+    const fetchPromise = (async () => {
+      try {
+        console.log('Fetching profile for user:', userId);
         
-        // If profile doesn't exist, create one (only retry once)
-        if (error.code === 'PGRST116' && retryCount === 0) {
-          console.log('Profile not found, creating default profile');
-          const { data: userData } = await supabase.auth.getUser();
-          const user = userData.user;
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .maybeSingle();
+
+        if (error) {
+          console.error('Error fetching profile:', error);
           
-          if (user) {
-            const { error: insertError } = await supabase
-              .from('profiles')
-              .insert({
-                id: user.id,
-                full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || '',
-                role: 'user'
-              })
-              .select()
-              .single();
+          if (error.code === 'PGRST116' && retryCount === 0) {
+            console.log('Profile not found, creating default profile');
+            const { data: userData } = await supabase.auth.getUser();
+            const user = userData.user;
             
-            if (insertError) {
-              console.error('Error creating profile:', insertError);
-              return;
-            } else {
-              // Retry fetching the profile once
-              await fetchProfile(userId, 1);
-              return;
+            if (user) {
+              const { error: insertError } = await supabase
+                .from('profiles')
+                .insert({
+                  id: user.id,
+                  full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || '',
+                  role: 'user'
+                })
+                .select()
+                .single();
+              
+              if (!insertError) {
+                return fetchProfile(userId, 1);
+              }
             }
           }
+          return null;
         }
-        return;
-      }
 
-      if (data) {
-        // Convert the database data to match UserProfile interface
-        const profileData: UserProfile = {
-          id: data.id,
-          full_name: data.full_name,
-          phone: data.phone,
-          skills: Array.isArray(data.skills) ? data.skills.map((skill: any) => String(skill)) : [],
-          resume_url: data.resume_url,
-          employment_history: Array.isArray(data.employment_history) ? data.employment_history : [],
-          role: data.role as 'user' | 'admin',
-          created_at: data.created_at,
-          updated_at: data.updated_at,
-        };
+        if (data) {
+          const profileData: UserProfile = {
+            id: data.id,
+            full_name: data.full_name,
+            phone: data.phone,
+            skills: Array.isArray(data.skills) ? data.skills.map((skill: any) => String(skill)) : [],
+            resume_url: data.resume_url,
+            employment_history: Array.isArray(data.employment_history) ? data.employment_history : [],
+            role: data.role as 'user' | 'admin',
+            created_at: data.created_at,
+            updated_at: data.updated_at,
+          };
 
-        console.log('Profile fetched successfully:', profileData);
-        setProfile(profileData);
-      } else {
-        console.log('No profile data found');
+          console.log('Profile fetched successfully:', profileData);
+          setProfile(profileData);
+          return profileData;
+        }
+        
         setProfile(null);
+        return null;
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        return null;
+      } finally {
+        pendingRequests.delete(cacheKey);
       }
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-    } finally {
-      setProfileLoading(false);
-    }
-  }, [profileLoading]);
+    })();
+
+    pendingRequests.set(cacheKey, fetchPromise);
+    return fetchPromise;
+  }, []);
 
   const refreshProfile = useCallback(async () => {
     if (user) {
@@ -124,85 +131,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [user, fetchProfile]);
 
-  useEffect(() => {
-    let mounted = true;
-    let timeoutId: NodeJS.Timeout;
-
-    // Get initial session with timeout
-    const getInitialSession = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          console.error('Error getting session:', error);
-        }
-        
-        if (mounted) {
-          setSession(session);
-          setUser(session?.user ?? null);
-          
-          if (session?.user) {
-            // Fetch profile with slight delay to ensure database is ready
-            timeoutId = setTimeout(() => {
-              if (mounted) {
-                fetchProfile(session.user.id);
-              }
-            }, 100);
-          } else {
-            setProfile(null);
-          }
-          
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error('Error in getInitialSession:', error);
-        if (mounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    // Set up auth state listener with debouncing
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
-        
-        if (mounted) {
-          setSession(session);
-          setUser(session?.user ?? null);
-          
-          if (session?.user && event !== 'SIGNED_OUT') {
-            // Clear any existing timeout
-            if (timeoutId) clearTimeout(timeoutId);
-            
-            // Delay profile fetch slightly to ensure database is ready
-            timeoutId = setTimeout(() => {
-              if (mounted) {
-                fetchProfile(session.user.id);
-              }
-            }, 200);
-          } else {
-            setProfile(null);
-          }
-          
-          // Set loading to false after handling auth state
-          if (event !== 'INITIAL_SESSION') {
-            setLoading(false);
-          }
-        }
-      }
-    );
-
-    // Get initial session
-    getInitialSession();
-
-    return () => {
-      mounted = false;
-      if (timeoutId) clearTimeout(timeoutId);
-      subscription.unsubscribe();
-    };
-  }, [fetchProfile]);
-
+  // Memoized auth functions to prevent re-renders
   const signUp = useCallback(async (email: string, password: string, fullName: string) => {
     setLoading(true);
     const redirectUrl = `${window.location.origin}/dashboard`;
@@ -262,7 +191,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     await supabase.auth.signOut();
     
-    // Clear state
     setUser(null);
     setSession(null);
     setProfile(null);
@@ -275,16 +203,90 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(false);
   }, [toast]);
 
-  const value = {
+  useEffect(() => {
+    let mounted = true;
+    let timeoutId: NodeJS.Timeout;
+
+    const getInitialSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Error getting session:', error);
+        }
+        
+        if (mounted) {
+          setSession(session);
+          setUser(session?.user ?? null);
+          
+          if (session?.user) {
+            timeoutId = setTimeout(() => {
+              if (mounted) {
+                fetchProfile(session.user.id);
+              }
+            }, 100);
+          } else {
+            setProfile(null);
+          }
+          
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Error in getInitialSession:', error);
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email);
+        
+        if (mounted) {
+          setSession(session);
+          setUser(session?.user ?? null);
+          
+          if (session?.user && event !== 'SIGNED_OUT') {
+            if (timeoutId) clearTimeout(timeoutId);
+            
+            timeoutId = setTimeout(() => {
+              if (mounted) {
+                fetchProfile(session.user.id);
+              }
+            }, 200);
+          } else {
+            setProfile(null);
+          }
+          
+          if (event !== 'INITIAL_SESSION') {
+            setLoading(false);
+          }
+        }
+      }
+    );
+
+    getInitialSession();
+
+    return () => {
+      mounted = false;
+      if (timeoutId) clearTimeout(timeoutId);
+      subscription.unsubscribe();
+      pendingRequests.clear();
+    };
+  }, [fetchProfile]);
+
+  // Memoize the context value to prevent unnecessary re-renders
+  const value = useMemo(() => ({
     user,
     session,
     profile,
-    loading: loading || profileLoading, // Include profile loading state
+    loading,
     signUp,
     signIn,
     signOut,
     refreshProfile,
-  };
+  }), [user, session, profile, loading, signUp, signIn, signOut, refreshProfile]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

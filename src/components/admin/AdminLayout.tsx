@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { LogOut, ArrowLeft } from 'lucide-react';
+import { LogOut, ArrowLeft, Eye } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -29,7 +29,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title, descr
               </Button>
               <div className="flex items-center space-x-3">
                 <img 
-                  src="/lovable-uploads/3af85896-dbf9-4973-ac54-215e10c5b479.png" 
+                  src="/lovable-uploads/8ef7b6c8-b414-448f-a8d4-e649b0c29c49.png" 
                   alt="Frivo Solutions" 
                   className="h-8 w-auto"
                 />
@@ -37,6 +37,12 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title, descr
               </div>
             </div>
             <div className="flex items-center space-x-4">
+              <Button variant="outline" asChild>
+                <Link to="/jobs" target="_blank" rel="noopener noreferrer">
+                  <Eye className="h-4 w-4 mr-2" />
+                  View Live Portal
+                </Link>
+              </Button>
               {actions}
               <Button variant="outline" onClick={signOut}>
                 <LogOut className="h-4 w-4 mr-2" />
