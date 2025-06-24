@@ -27,8 +27,7 @@ export const UserDashboard: React.FC = () => {
         .from('applications')
         .select(`
           *,
-          jobs!inner(title, company, field),
-          application_timeline(status, message, created_at)
+          jobs!applications_job_id_fkey(title, company, field)
         `)
         .eq('user_id', user.id)
         .order('applied_at', { ascending: false });
@@ -138,10 +137,10 @@ export const UserDashboard: React.FC = () => {
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <div>
-                        <CardTitle className="text-lg">{application.jobs.title}</CardTitle>
-                        <p className="text-sm text-gray-600">{application.jobs.company}</p>
+                        <CardTitle className="text-lg">{application.jobs?.title}</CardTitle>
+                        <p className="text-sm text-gray-600">{application.jobs?.company}</p>
                         <Badge variant="outline" className="mt-1">
-                          {application.jobs.field}
+                          {application.jobs?.field}
                         </Badge>
                       </div>
                       <div className="flex items-center gap-2">

@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Clock, CheckCircle, XCircle, AlertCircle, User } from 'lucide-react';
+import { Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -16,10 +16,7 @@ export const ApplicationTimeline: React.FC<ApplicationTimelineProps> = ({ applic
     queryFn: async () => {
       const { data, error } = await supabase
         .from('application_timeline')
-        .select(`
-          *,
-          profiles!application_timeline_created_by_fkey(full_name)
-        `)
+        .select('*')
         .eq('application_id', applicationId)
         .order('created_at', { ascending: false });
 
@@ -73,12 +70,6 @@ export const ApplicationTimeline: React.FC<ApplicationTimelineProps> = ({ applic
                 </div>
                 {entry.message && (
                   <p className="text-sm text-gray-700 mb-2">{entry.message}</p>
-                )}
-                {entry.profiles && (
-                  <div className="flex items-center gap-1 text-xs text-gray-500">
-                    <User className="h-3 w-3" />
-                    <span>by {entry.profiles.full_name}</span>
-                  </div>
                 )}
               </div>
             </div>
