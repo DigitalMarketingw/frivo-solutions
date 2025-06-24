@@ -17,12 +17,12 @@ import { NotificationCenter } from '@/components/user/NotificationCenter';
 import { Bell, Menu, User, LogOut, Settings, Shield } from 'lucide-react';
 
 export const AppHeader: React.FC = () => {
-  const { user, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const isAdmin = user?.user_metadata?.role === 'admin';
+  const isAdmin = profile?.role === 'admin';
   
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: '🏠' },
@@ -41,8 +41,8 @@ export const AppHeader: React.FC = () => {
   };
 
   const getUserInitials = () => {
-    if (user?.user_metadata?.full_name) {
-      return user.user_metadata.full_name
+    if (profile?.full_name) {
+      return profile.full_name
         .split(' ')
         .map((name: string) => name[0])
         .join('')
@@ -115,7 +115,7 @@ export const AppHeader: React.FC = () => {
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <div className="flex flex-col space-y-1 p-2">
                   <p className="text-sm font-medium leading-none">
-                    {user?.user_metadata?.full_name || 'User'}
+                    {profile?.full_name || user?.user_metadata?.full_name || 'User'}
                   </p>
                   <p className="text-xs leading-none text-muted-foreground">
                     {user?.email}
@@ -134,6 +134,14 @@ export const AppHeader: React.FC = () => {
                     Profile
                   </Link>
                 </DropdownMenuItem>
+                {isAdmin && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/admin" className="cursor-pointer">
+                      <Shield className="mr-2 h-4 w-4" />
+                      Admin Panel
+                    </Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem>
                   <Settings className="mr-2 h-4 w-4" />
                   Settings
@@ -163,8 +171,14 @@ export const AppHeader: React.FC = () => {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="font-medium">{user?.user_metadata?.full_name || 'User'}</p>
+                      <p className="font-medium">{profile?.full_name || user?.user_metadata?.full_name || 'User'}</p>
                       <p className="text-sm text-muted-foreground">{user?.email}</p>
+                      {isAdmin && (
+                        <Badge variant="secondary" className="text-xs mt-1">
+                          <Shield className="h-3 w-3 mr-1" />
+                          Admin
+                        </Badge>
+                      )}
                     </div>
                   </div>
                   
