@@ -1,4 +1,3 @@
-
 export interface AdminStats {
   total_users: number;
   total_jobs: number;
@@ -43,6 +42,10 @@ export interface Application {
   assignment_status: string | null;
   hackerrank_link: string | null;
   test_results: any;
+  payment_required?: boolean;
+  payment_amount?: number;
+  payment_status?: string;
+  payment_due_date?: string;
   profiles?: {
     full_name: string;
   };
@@ -50,6 +53,27 @@ export interface Application {
     title: string;
     company: string;
   };
+}
+
+export interface Notification {
+  id: string;
+  user_id: string;
+  title: string;
+  message: string;
+  type: string;
+  read: boolean;
+  action_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApplicationTimelineEntry {
+  id: string;
+  application_id: string;
+  status: string;
+  message: string | null;
+  created_by: string | null;
+  created_at: string;
 }
 
 export interface PaginationParams {

@@ -9,6 +9,41 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      application_timeline: {
+        Row: {
+          application_id: string
+          created_at: string | null
+          created_by: string | null
+          id: string
+          message: string | null
+          status: string
+        }
+        Insert: {
+          application_id: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          message?: string | null
+          status: string
+        }
+        Update: {
+          application_id?: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          message?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "application_timeline_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       applications: {
         Row: {
           applied_at: string | null
@@ -18,6 +53,10 @@ export type Database = {
           hackerrank_link: string | null
           id: string
           job_id: string
+          payment_amount: number | null
+          payment_due_date: string | null
+          payment_required: boolean | null
+          payment_status: string | null
           status: Database["public"]["Enums"]["application_status"] | null
           test_results: Json | null
           updated_at: string | null
@@ -31,6 +70,10 @@ export type Database = {
           hackerrank_link?: string | null
           id?: string
           job_id: string
+          payment_amount?: number | null
+          payment_due_date?: string | null
+          payment_required?: boolean | null
+          payment_status?: string | null
           status?: Database["public"]["Enums"]["application_status"] | null
           test_results?: Json | null
           updated_at?: string | null
@@ -44,6 +87,10 @@ export type Database = {
           hackerrank_link?: string | null
           id?: string
           job_id?: string
+          payment_amount?: number | null
+          payment_due_date?: string | null
+          payment_required?: boolean | null
+          payment_status?: string | null
           status?: Database["public"]["Enums"]["application_status"] | null
           test_results?: Json | null
           updated_at?: string | null
@@ -182,6 +229,42 @@ export type Database = {
           tags?: string[] | null
           title?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          action_url: string | null
+          created_at: string | null
+          id: string
+          message: string
+          read: boolean | null
+          title: string
+          type: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          created_at?: string | null
+          id?: string
+          message: string
+          read?: boolean | null
+          title: string
+          type?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          action_url?: string | null
+          created_at?: string | null
+          id?: string
+          message?: string
+          read?: boolean | null
+          title?: string
+          type?: string | null
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
