@@ -117,6 +117,7 @@ export type Database = {
         Row: {
           company: string
           created_at: string | null
+          deleted_at: string | null
           description: string
           field: string
           id: string
@@ -132,6 +133,7 @@ export type Database = {
         Insert: {
           company: string
           created_at?: string | null
+          deleted_at?: string | null
           description: string
           field: string
           id?: string
@@ -147,6 +149,7 @@ export type Database = {
         Update: {
           company?: string
           created_at?: string | null
+          deleted_at?: string | null
           description?: string
           field?: string
           id?: string
@@ -243,7 +246,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_admin_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      soft_delete_job: {
+        Args: { job_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       application_status:

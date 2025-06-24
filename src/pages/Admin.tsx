@@ -1,355 +1,262 @@
 
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState } from 'react';
+import { AdminLayout } from '@/components/admin/AdminLayout';
+import { DataTable } from '@/components/admin/DataTable';
+import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
+import { StatusBadge } from '@/components/admin/StatusBadge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-import { Users, Briefcase, FileText, DollarSign, Plus, Edit, Trash2 } from 'lucide-react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-
-interface AdminStats {
-  totalUsers: number;
-  totalJobs: number;
-  totalApplications: number;
-  totalEnrollments: number;
-}
+import { Button } from '@/components/ui/button';
+import { useAdminStats } from '@/hooks/useAdminStats';
+import { useAdminUsers } from '@/hooks/useAdminUsers';
+import { useAdminJobs } from '@/hooks/useAdminJobs';
+import { Users, Briefcase, FileText, DollarSign, Edit, Trash2 } from 'lucide-react';
+import { User, Job } from '@/types/admin';
 
 const Admin = () => {
-  const { profile } = useAuth();
-  const { toast } = useToast();
-  const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState<AdminStats>({
-    totalUsers: 0,
-    totalJobs: 0,
-    totalApplications: 0,
-    totalEnrollments: 0,
+  const { stats, loading: statsLoading } = useAdminStats();
+  
+  // Users state
+  const [usersParams, setUsersParams] = useState({ page: 1, limit: 10, search: '' });
+  const { users, loading: usersLoading, updateUserRole } = useAdminUsers(usersParams);
+  
+  // Jobs state  
+  const [jobsParams, setJobsParams] = useState({ page: 1, limit: 10, search: '' });
+  const { jobs, loading: jobsLoading, deleteJob, updateJobStatus } = useAdminJobs(jobsParams);
+  
+  // Confirm dialog state
+  const [confirmDialog, setConfirmDialog] = useState<{
+    open: boolean;
+    title: string;
+    description: string;
+    onConfirm: () => void;
+    loading: boolean;
+  }>({
+    open: false,
+    title: '',
+    description: '',
+    onConfirm: () => {},
+    loading: false,
   });
-  const [users, setUsers] = useState<any[]>([]);
-  const [jobs, setJobs] = useState<any[]>([]);
-  const [applications, setApplications] = useState<any[]>([]);
 
-  useEffect(() => {
-    if (profile?.role === 'admin') {
-      fetchAdminData();
-    }
-  }, [profile]);
-
-  const fetchAdminData = async () => {
-    try {
-      setLoading(true);
-
-      // Fetch stats
-      const [usersCount, jobsCount, applicationsCount, enrollmentsCount] = await Promise.all([
-        supabase.from('profiles').select('*', { count: 'exact', head: true }),
-        supabase.from('jobs').select('*', { count: 'exact', head: true }),
-        supabase.from('applications').select('*', { count: 'exact', head: true }),
-        supabase.from('enrollments').select('*', { count: 'exact', head: true }),
-      ]);
-
-      setStats({
-        totalUsers: usersCount.count || 0,
-        totalJobs: jobsCount.count || 0,
-        totalApplications: applicationsCount.count || 0,
-        totalEnrollments: enrollmentsCount.count || 0,
-      });
-
-      // Fetch detailed data
-      const [usersData, jobsData, applicationsData] = await Promise.all([
-        supabase.from('profiles').select('*').order('created_at', { ascending: false }),
-        supabase.from('jobs').select('*').order('created_at', { ascending: false }),
-        supabase.from('applications').select(`
-          *,
-          jobs(title, company),
-          profiles!applications_user_id_fkey(full_name)
-        `).order('applied_at', { ascending: false }),
-      ]);
-
-      if (usersData.error) throw usersData.error;
-      if (jobsData.error) throw jobsData.error;
-      if (applicationsData.error) throw applicationsData.error;
-
-      setUsers(usersData.data || []);
-      setJobs(jobsData.data || []);
-      setApplications(applicationsData.data || []);
-
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
+  const handleDeleteJob = (job: Job) => {
+    setConfirmDialog({
+      open: true,
+      title: 'Delete Job',
+      description: `Are you sure you want to delete "${job.title}" at ${job.company}? This action cannot be undone.`,
+      onConfirm: async () => {
+        setConfirmDialog(prev => ({ ...prev, loading: true }));
+        await deleteJob(job.id);
+        setConfirmDialog(prev => ({ ...prev, open: false, loading: false }));
+      },
+      loading: false,
+    });
   };
 
-  const deleteJob = async (jobId: string) => {
-    try {
-      const { error } = await supabase
-        .from('jobs')
-        .delete()
-        .eq('id', jobId);
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "Job deleted successfully",
-      });
-      
-      fetchAdminData();
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
+  const handleUpdateUserRole = (user: User) => {
+    const newRole = user.role === 'admin' ? 'user' : 'admin';
+    setConfirmDialog({
+      open: true,
+      title: 'Update User Role',
+      description: `Are you sure you want to ${newRole === 'admin' ? 'promote' : 'demote'} ${user.full_name || user.id} to ${newRole}?`,
+      onConfirm: async () => {
+        setConfirmDialog(prev => ({ ...prev, loading: true }));
+        await updateUserRole(user.id, newRole);
+        setConfirmDialog(prev => ({ ...prev, open: false, loading: false }));
+      },
+      loading: false,
+    });
   };
 
-  const updateUserRole = async (userId: string, newRole: 'user' | 'admin') => {
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ role: newRole })
-        .eq('id', userId);
+  const userColumns = [
+    { key: 'full_name', label: 'Name', render: (value: string, user: User) => value || 'Not provided' },
+    { key: 'id', label: 'Email/ID' },
+    { key: 'role', label: 'Role', render: (value: string) => <StatusBadge status={value} type="user" /> },
+    { key: 'phone', label: 'Phone', render: (value: string) => value || 'Not provided' },
+    { key: 'created_at', label: 'Joined', render: (value: string) => new Date(value).toLocaleDateString() },
+  ];
 
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "User role updated successfully",
-      });
-      
-      fetchAdminData();
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
+  const jobColumns = [
+    { key: 'title', label: 'Title' },
+    { key: 'company', label: 'Company' },
+    { key: 'location', label: 'Location' },
+    { key: 'field', label: 'Field' },
+    { key: 'status', label: 'Status', render: (value: string) => <StatusBadge status={value} type="job" /> },
+    { key: 'created_at', label: 'Posted', render: (value: string) => new Date(value).toLocaleDateString() },
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h1 className="text-3xl font-bold text-primary">Admin Dashboard</h1>
-              <p className="text-muted-foreground mt-2">Manage users, jobs, and applications</p>
+    <AdminLayout title="Admin Dashboard" description="Manage users, jobs, and applications">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {statsLoading ? '...' : stats?.total_users || 0}
             </div>
-          </div>
-
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.totalUsers}</div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Jobs</CardTitle>
-                <Briefcase className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.totalJobs}</div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Applications</CardTitle>
-                <FileText className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.totalApplications}</div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Enrollments</CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.totalEnrollments}</div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Tabs defaultValue="users" className="space-y-4">
-            <TabsList>
-              <TabsTrigger value="users">Users</TabsTrigger>
-              <TabsTrigger value="jobs">Jobs</TabsTrigger>
-              <TabsTrigger value="applications">Applications</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="users">
-              <Card>
-                <CardHeader>
-                  <CardTitle>User Management</CardTitle>
-                  <CardDescription>View and manage all registered users</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Role</TableHead>
-                        <TableHead>Phone</TableHead>
-                        <TableHead>Joined</TableHead>
-                        <TableHead>Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {users.map((user) => (
-                        <TableRow key={user.id}>
-                          <TableCell>{user.full_name || 'Not provided'}</TableCell>
-                          <TableCell>{user.id}</TableCell>
-                          <TableCell>
-                            <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
-                              {user.role}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>{user.phone || 'Not provided'}</TableCell>
-                          <TableCell>{new Date(user.created_at).toLocaleDateString()}</TableCell>
-                          <TableCell>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => updateUserRole(user.id, user.role === 'admin' ? 'user' : 'admin')}
-                            >
-                              {user.role === 'admin' ? 'Make User' : 'Make Admin'}
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="jobs">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Job Management</CardTitle>
-                  <CardDescription>View and manage job postings</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Title</TableHead>
-                        <TableHead>Company</TableHead>
-                        <TableHead>Location</TableHead>
-                        <TableHead>Field</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Posted</TableHead>
-                        <TableHead>Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {jobs.map((job) => (
-                        <TableRow key={job.id}>
-                          <TableCell className="font-medium">{job.title}</TableCell>
-                          <TableCell>{job.company}</TableCell>
-                          <TableCell>{job.location}</TableCell>
-                          <TableCell>{job.field}</TableCell>
-                          <TableCell>
-                            <Badge variant={job.status === 'open' ? 'default' : 'secondary'}>
-                              {job.status}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>{new Date(job.created_at).toLocaleDateString()}</TableCell>
-                          <TableCell>
-                            <div className="flex gap-2">
-                              <Button variant="outline" size="sm">
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button 
-                                variant="outline" 
-                                size="sm"
-                                onClick={() => deleteJob(job.id)}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="applications">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Application Management</CardTitle>
-                  <CardDescription>View and manage job applications</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Applicant</TableHead>
-                        <TableHead>Job</TableHead>
-                        <TableHead>Company</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Applied</TableHead>
-                        <TableHead>Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {applications.map((application) => (
-                        <TableRow key={application.id}>
-                          <TableCell>{application.profiles?.full_name || 'Unknown'}</TableCell>
-                          <TableCell>{application.jobs?.title}</TableCell>
-                          <TableCell>{application.jobs?.company}</TableCell>
-                          <TableCell>
-                            <Badge variant="secondary">
-                              {application.status}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>{new Date(application.applied_at).toLocaleDateString()}</TableCell>
-                          <TableCell>
-                            <Button variant="outline" size="sm">
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
+            <p className="text-xs text-muted-foreground">
+              {statsLoading ? '...' : stats?.admin_users || 0} admins
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Jobs</CardTitle>
+            <Briefcase className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {statsLoading ? '...' : stats?.active_jobs || 0}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              of {statsLoading ? '...' : stats?.total_jobs || 0} total
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Applications</CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {statsLoading ? '...' : stats?.total_applications || 0}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {statsLoading ? '...' : stats?.pending_applications || 0} pending
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Enrollments</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {statsLoading ? '...' : stats?.total_enrollments || 0}
+            </div>
+          </CardContent>
+        </Card>
       </div>
-    </div>
+
+      <Tabs defaultValue="users" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="users">Users</TabsTrigger>
+          <TabsTrigger value="jobs">Jobs</TabsTrigger>
+          <TabsTrigger value="applications">Applications</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="users">
+          <Card>
+            <CardHeader>
+              <CardTitle>User Management</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <DataTable
+                data={users.data}
+                columns={userColumns}
+                loading={usersLoading}
+                search={{
+                  value: usersParams.search,
+                  onChange: (value) => setUsersParams(prev => ({ ...prev, search: value, page: 1 })),
+                  placeholder: "Search users by name or email..."
+                }}
+                pagination={{
+                  currentPage: users.page,
+                  totalPages: users.totalPages,
+                  totalItems: users.total,
+                  pageSize: users.limit,
+                  onPageChange: (page) => setUsersParams(prev => ({ ...prev, page })),
+                  onPageSizeChange: (limit) => setUsersParams(prev => ({ ...prev, limit, page: 1 })),
+                }}
+                actions={(user: User) => (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleUpdateUserRole(user)}
+                  >
+                    {user.role === 'admin' ? 'Make User' : 'Make Admin'}
+                  </Button>
+                )}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="jobs">
+          <Card>
+            <CardHeader>
+              <CardTitle>Job Management</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <DataTable
+                data={jobs.data}
+                columns={jobColumns}
+                loading={jobsLoading}
+                search={{
+                  value: jobsParams.search,
+                  onChange: (value) => setJobsParams(prev => ({ ...prev, search: value, page: 1 })),
+                  placeholder: "Search jobs by title, company, or location..."
+                }}
+                pagination={{
+                  currentPage: jobs.page,
+                  totalPages: jobs.totalPages,
+                  totalItems: jobs.total,
+                  pageSize: jobs.limit,
+                  onPageChange: (page) => setJobsParams(prev => ({ ...prev, page })),
+                  onPageSizeChange: (limit) => setJobsParams(prev => ({ ...prev, limit, page: 1 })),
+                }}
+                actions={(job: Job) => (
+                  <>
+                    <Button variant="outline" size="sm">
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleDeleteJob(job)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </>
+                )}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="applications">
+          <Card>
+            <CardHeader>
+              <CardTitle>Application Management</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8 text-muted-foreground">
+                Application management coming soon...
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      <ConfirmDialog
+        open={confirmDialog.open}
+        onOpenChange={(open) => setConfirmDialog(prev => ({ ...prev, open }))}
+        title={confirmDialog.title}
+        description={confirmDialog.description}
+        onConfirm={confirmDialog.onConfirm}
+        loading={confirmDialog.loading}
+        variant="destructive"
+      />
+    </AdminLayout>
   );
 };
 
