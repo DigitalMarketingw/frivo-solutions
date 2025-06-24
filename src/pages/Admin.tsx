@@ -12,7 +12,7 @@ import { useAdminStats } from '@/hooks/useAdminStats';
 import { useAdminJobs } from '@/hooks/useAdminJobs';
 import { useAdminUsers } from '@/hooks/useAdminUsers';
 import { useRealTimeUpdates } from '@/hooks/useRealTimeUpdates';
-import { Job } from '@/types/admin';
+import { Job, User } from '@/types/admin';
 
 const Admin = () => {
   // Search and pagination states
@@ -39,7 +39,8 @@ const Admin = () => {
   const { 
     users, 
     loading: usersLoading, 
-    refetch: refetchUsers 
+    refetch: refetchUsers,
+    updateUserRole 
   } = useAdminUsers(userSearchParams);
 
   // Real-time updates
@@ -77,6 +78,11 @@ const Admin = () => {
 
   const handleUserPageSizeChange = (limit: number) => {
     setUserSearchParams(prev => ({ ...prev, limit, page: 1 }));
+  };
+
+  const handleUpdateUserRole = async (user: User) => {
+    const newRole = user.role === 'admin' ? 'user' : 'admin';
+    await updateUserRole(user.id, newRole);
   };
 
   return (
@@ -127,6 +133,7 @@ const Admin = () => {
               onSearchChange={handleUserSearchChange}
               onPageChange={handleUserPageChange}
               onPageSizeChange={handleUserPageSizeChange}
+              onUpdateUserRole={handleUpdateUserRole}
             />
           </TabsContent>
         </Tabs>

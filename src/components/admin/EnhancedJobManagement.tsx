@@ -120,12 +120,7 @@ export const EnhancedJobManagement: React.FC<EnhancedJobManagementProps> = ({
   const jobColumns = [
     {
       key: 'select',
-      label: (
-        <Checkbox
-          checked={selectedJobs.length === jobs.data.length && jobs.data.length > 0}
-          onCheckedChange={handleSelectAll}
-        />
-      ),
+      label: 'Select',
       render: (value: any, job: Job) => (
         <Checkbox
           checked={selectedJobs.includes(job.id)}
@@ -287,7 +282,7 @@ export const EnhancedJobManagement: React.FC<EnhancedJobManagementProps> = ({
         title="Delete Job"
         description={`Are you sure you want to delete "${jobToDelete?.title}"? This action cannot be undone.`}
         onConfirm={handleDelete}
-        destructive
+        variant="destructive"
       />
     </div>
   );

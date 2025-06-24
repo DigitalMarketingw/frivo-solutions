@@ -27,6 +27,7 @@ export interface Job {
   status: 'open' | 'closed' | 'under_review' | 'filled';
   description: string;
   requirements: any;
+  tags: string[];
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
