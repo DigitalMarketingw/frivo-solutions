@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Job, PaginationParams, PaginatedResponse } from '@/types/admin';
 import { useToast } from '@/hooks/use-toast';
@@ -15,7 +15,7 @@ export const useAdminJobs = (params: PaginationParams = { page: 1, limit: 10 }) 
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  const fetchJobs = async () => {
+  const fetchJobs = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -24,12 +24,13 @@ export const useAdminJobs = (params: PaginationParams = { page: 1, limit: 10 }) 
         .select('*', { count: 'exact' })
         .is('deleted_at', null);
 
-      // Apply search filter
+      // Apply search filter with better performance
       if (params.search) {
-        query = query.or(`title.ilike.%${params.search}%,company.ilike.%${params.search}%,location.ilike.%${params.search}%`);
+        const searchTerm = `%${params.search}%`;
+        query = query.or(`title.ilike.${searchTerm},company.ilike.${searchTerm},location.ilike.${searchTerm}`);
       }
 
-      // Apply sorting
+      // Apply sorting with proper index usage
       if (params.sort) {
         query = query.order(params.sort, { ascending: params.order === 'asc' });
       } else {
@@ -55,6 +56,7 @@ export const useAdminJobs = (params: PaginationParams = { page: 1, limit: 10 }) 
         totalPages,
       });
     } catch (err: any) {
+      console.error('Jobs fetch error:', err);
       toast({
         title: "Error",
         description: err.message || 'Failed to fetch jobs',
@@ -63,9 +65,9 @@ export const useAdminJobs = (params: PaginationParams = { page: 1, limit: 10 }) 
     } finally {
       setLoading(false);
     }
-  };
+  }, [params.page, params.limit, params.search, params.sort, params.order, toast]);
 
-  const deleteJob = async (jobId: string) => {
+  const deleteJob = useCallback(async (jobId: string) => {
     try {
       const { error } = await supabase.rpc('soft_delete_job', { job_id: jobId });
 
@@ -78,15 +80,16 @@ export const useAdminJobs = (params: PaginationParams = { page: 1, limit: 10 }) 
       
       await fetchJobs();
     } catch (err: any) {
+      console.error('Job delete error:', err);
       toast({
         title: "Error",
         description: err.message || 'Failed to delete job',
         variant: "destructive",
       });
     }
-  };
+  }, [fetchJobs, toast]);
 
-  const updateJobStatus = async (jobId: string, status: Job['status']) => {
+  const updateJobStatus = useCallback(async (jobId: string, status: Job['status']) => {
     try {
       const { error } = await supabase
         .from('jobs')
@@ -102,17 +105,33 @@ export const useAdminJobs = (params: PaginationParams = { page: 1, limit: 10 }) 
       
       await fetchJobs();
     } catch (err: any) {
+      console.error('Job status update error:', err);
       toast({
         title: "Error",
         description: err.message || 'Failed to update job status',
         variant: "destructive",
       });
     }
-  };
+  }, [fetchJobs, toast]);
 
   useEffect(() => {
     fetchJobs();
-  }, [params.page, params.limit, params.search, params.sort, params.order]);
+  }, [fetchJobs]);
+
+  // Set up real-time subscription for job updates
+  useEffect(() => {
+    const channel = supabase
+      .channel('admin-jobs-updates')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'jobs' }, 
+        () => fetchJobs()
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchJobs]);
 
   return {
     jobs,

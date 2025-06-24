@@ -64,6 +64,20 @@ export type Database = {
             referencedRelation: "jobs"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "fk_applications_enrollment_id"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "enrollments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_applications_job_id"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
         ]
       }
       enrollments: {
@@ -106,6 +120,13 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "enrollments_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_enrollments_job_id"
             columns: ["job_id"]
             isOneToOne: false
             referencedRelation: "jobs"
@@ -197,6 +218,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_payments_enrollment_id"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "enrollments"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "payments_enrollment_id_fkey"
             columns: ["enrollment_id"]
             isOneToOne: false
@@ -213,7 +241,7 @@ export type Database = {
           id: string
           phone: string | null
           resume_url: string | null
-          role: Database["public"]["Enums"]["user_role"] | null
+          role: Database["public"]["Enums"]["user_role"]
           skills: Json | null
           updated_at: string | null
         }
@@ -224,7 +252,7 @@ export type Database = {
           id: string
           phone?: string | null
           resume_url?: string | null
-          role?: Database["public"]["Enums"]["user_role"] | null
+          role?: Database["public"]["Enums"]["user_role"]
           skills?: Json | null
           updated_at?: string | null
         }
@@ -235,7 +263,7 @@ export type Database = {
           id?: string
           phone?: string | null
           resume_url?: string | null
-          role?: Database["public"]["Enums"]["user_role"] | null
+          role?: Database["public"]["Enums"]["user_role"]
           skills?: Json | null
           updated_at?: string | null
         }
@@ -249,6 +277,10 @@ export type Database = {
       get_admin_stats: {
         Args: Record<PropertyKey, never>
         Returns: Json
+      }
+      get_current_user_role: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       soft_delete_job: {
         Args: { job_id: string }

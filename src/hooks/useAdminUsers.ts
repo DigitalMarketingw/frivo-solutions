@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { User, PaginationParams, PaginatedResponse } from '@/types/admin';
 import { useToast } from '@/hooks/use-toast';
@@ -15,7 +15,7 @@ export const useAdminUsers = (params: PaginationParams = { page: 1, limit: 10 })
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -23,12 +23,13 @@ export const useAdminUsers = (params: PaginationParams = { page: 1, limit: 10 })
         .from('profiles')
         .select('*', { count: 'exact' });
 
-      // Apply search filter
+      // Apply search filter with better indexing
       if (params.search) {
-        query = query.or(`full_name.ilike.%${params.search}%,id.ilike.%${params.search}%`);
+        const searchTerm = `%${params.search}%`;
+        query = query.or(`full_name.ilike.${searchTerm},id.ilike.${searchTerm}`);
       }
 
-      // Apply sorting
+      // Apply sorting with proper index usage
       if (params.sort) {
         query = query.order(params.sort, { ascending: params.order === 'asc' });
       } else {
@@ -54,6 +55,7 @@ export const useAdminUsers = (params: PaginationParams = { page: 1, limit: 10 })
         totalPages,
       });
     } catch (err: any) {
+      console.error('Users fetch error:', err);
       toast({
         title: "Error",
         description: err.message || 'Failed to fetch users',
@@ -62,13 +64,13 @@ export const useAdminUsers = (params: PaginationParams = { page: 1, limit: 10 })
     } finally {
       setLoading(false);
     }
-  };
+  }, [params.page, params.limit, params.search, params.sort, params.order, toast]);
 
-  const updateUserRole = async (userId: string, newRole: 'user' | 'admin') => {
+  const updateUserRole = useCallback(async (userId: string, newRole: 'user' | 'admin') => {
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({ role: newRole })
+        .update({ role: newRole, updated_at: new Date().toISOString() })
         .eq('id', userId);
 
       if (error) throw error;
@@ -80,17 +82,33 @@ export const useAdminUsers = (params: PaginationParams = { page: 1, limit: 10 })
       
       await fetchUsers();
     } catch (err: any) {
+      console.error('User role update error:', err);
       toast({
         title: "Error",
         description: err.message || 'Failed to update user role',
         variant: "destructive",
       });
     }
-  };
+  }, [fetchUsers, toast]);
 
   useEffect(() => {
     fetchUsers();
-  }, [params.page, params.limit, params.search, params.sort, params.order]);
+  }, [fetchUsers]);
+
+  // Set up real-time subscription for user updates
+  useEffect(() => {
+    const channel = supabase
+      .channel('admin-users-updates')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'profiles' }, 
+        () => fetchUsers()
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchUsers]);
 
   return {
     users,

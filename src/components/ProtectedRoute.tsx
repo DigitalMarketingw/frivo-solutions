@@ -13,6 +13,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, adminOnly = f
 
   console.log('ProtectedRoute - Loading:', loading, 'User:', !!user, 'Profile:', profile?.role);
 
+  // Show loading spinner while authentication is being determined
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50">
@@ -24,18 +25,23 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, adminOnly = f
     );
   }
 
+  // If no user, redirect to auth page
   if (!user) {
-    console.log('No user, redirecting to auth');
+    console.log('No user found, redirecting to auth');
     return <Navigate to="/auth" replace />;
   }
 
+  // If admin access is required but user is not admin
   if (adminOnly && profile?.role !== 'admin') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50">
         <div className="text-center max-w-md mx-auto p-6">
           <div className="bg-white rounded-lg shadow-lg p-8">
+            <div className="text-6xl mb-4">🚫</div>
             <h1 className="text-2xl font-bold text-red-600 mb-4">Access Denied</h1>
-            <p className="text-gray-600 mb-6">You don't have permission to access this page. Admin access is required.</p>
+            <p className="text-gray-600 mb-6">
+              You don't have permission to access this page. Admin access is required.
+            </p>
             <div className="space-y-3">
               <a 
                 href="/dashboard" 
@@ -44,7 +50,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, adminOnly = f
                 Go to Dashboard
               </a>
               <p className="text-sm text-gray-500">
-                Current role: {profile?.role || 'Not set'}
+                Current role: {profile?.role || 'Loading...'}
               </p>
             </div>
           </div>
