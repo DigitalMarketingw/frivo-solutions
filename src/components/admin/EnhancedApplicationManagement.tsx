@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -99,8 +98,8 @@ export const EnhancedApplicationManagement: React.FC = () => {
     refetch();
   };
 
-  const handleBulkUpdate = async (status: ApplicationStatus) => {
-    await bulkUpdateStatus(selectedApplications, status);
+  const handleBulkUpdate = async (applicationIds: string[], status: ApplicationStatus) => {
+    await bulkUpdateStatus(applicationIds, status);
     setSelectedApplications([]);
     setShowBulkActions(false);
   };
@@ -112,6 +111,18 @@ export const EnhancedApplicationManagement: React.FC = () => {
 
   const availableFields = [...new Set(applications.map(app => (app.jobs as any)?.title).filter(Boolean))];
   const availableCompanies = [...new Set(applications.map(app => (app.jobs as any)?.company).filter(Boolean))];
+
+  // Transform applications data to match the expected type for BulkApplicationActions
+  const transformedApplications = applications.map(app => ({
+    ...app,
+    profiles: {
+      full_name: (app.profiles as any)?.full_name || 'N/A'
+    },
+    jobs: {
+      title: (app.jobs as any)?.title || 'N/A',
+      company: (app.jobs as any)?.company || 'N/A'
+    }
+  }));
 
   const columns = [
     {
@@ -291,7 +302,7 @@ export const EnhancedApplicationManagement: React.FC = () => {
 
       <BulkApplicationActions
         selectedApplications={selectedApplications}
-        applications={applications}
+        applications={transformedApplications}
         open={showBulkActions}
         onOpenChange={setShowBulkActions}
         onBulkStatusUpdate={handleBulkUpdate}
