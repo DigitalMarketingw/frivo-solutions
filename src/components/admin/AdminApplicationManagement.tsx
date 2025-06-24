@@ -14,7 +14,8 @@ import { Database } from '@/integrations/supabase/types';
 // Use the proper Supabase types
 type ApplicationStatus = Database['public']['Enums']['application_status'];
 
-interface ApplicationData {
+// Define the actual data structure returned from the query
+type ApplicationRow = {
   id: string;
   user_id: string;
   job_id: string;
@@ -30,7 +31,7 @@ interface ApplicationData {
     title: string;
     company: string;
   } | null;
-}
+};
 
 export const AdminApplicationManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -62,7 +63,7 @@ export const AdminApplicationManagement: React.FC = () => {
       if (error) throw error;
       
       return {
-        data: data || [],
+        data: (data || []) as ApplicationRow[],
         total: count || 0,
         page: currentPage,
         limit: pageSize,
@@ -102,15 +103,15 @@ export const AdminApplicationManagement: React.FC = () => {
     { 
       key: 'profiles.full_name', 
       label: 'Applicant',
-      render: (value: any, app: ApplicationData) => app.profiles?.full_name || 'Unknown'
+      render: (value: any, item: ApplicationRow) => item.profiles?.full_name || 'Unknown'
     },
     { 
       key: 'jobs.title', 
       label: 'Job',
-      render: (value: any, app: ApplicationData) => (
+      render: (value: any, item: ApplicationRow) => (
         <div>
-          <div className="font-medium">{app.jobs?.title || 'Unknown Job'}</div>
-          <div className="text-sm text-muted-foreground">{app.jobs?.company || 'Unknown Company'}</div>
+          <div className="font-medium">{item.jobs?.title || 'Unknown Job'}</div>
+          <div className="text-sm text-muted-foreground">{item.jobs?.company || 'Unknown Company'}</div>
         </div>
       )
     },
@@ -122,9 +123,9 @@ export const AdminApplicationManagement: React.FC = () => {
     { 
       key: 'assignment_status', 
       label: 'Assignment',
-      render: (value: string, app: ApplicationData) => (
+      render: (value: string, item: ApplicationRow) => (
         <div className="flex items-center gap-2">
-          {app.assignment_completed ? (
+          {item.assignment_completed ? (
             <Badge variant="default" className="bg-green-100 text-green-800">
               <CheckCircle className="h-3 w-3 mr-1" />
               Completed
@@ -170,17 +171,17 @@ export const AdminApplicationManagement: React.FC = () => {
             onPageChange: setCurrentPage,
             onPageSizeChange: () => {}, // Not implemented for simplicity
           }}
-          actions={(app: ApplicationData) => (
+          actions={(item: ApplicationRow) => (
             <div className="flex gap-2">
               <Button variant="outline" size="sm">
                 <Eye className="h-4 w-4" />
               </Button>
-              {app.status === 'applied' && (
+              {item.status === 'applied' && (
                 <>
                   <Button 
                     variant="outline" 
                     size="sm"
-                    onClick={() => updateApplicationStatus(app.id, 'under_review')}
+                    onClick={() => updateApplicationStatus(item.id, 'under_review')}
                     className="text-blue-600 hover:text-blue-700"
                   >
                     Review
@@ -188,7 +189,7 @@ export const AdminApplicationManagement: React.FC = () => {
                   <Button 
                     variant="outline" 
                     size="sm"
-                    onClick={() => updateApplicationStatus(app.id, 'approved')}
+                    onClick={() => updateApplicationStatus(item.id, 'approved')}
                     className="text-green-600 hover:text-green-700"
                   >
                     <CheckCircle className="h-4 w-4" />
@@ -196,7 +197,7 @@ export const AdminApplicationManagement: React.FC = () => {
                   <Button 
                     variant="outline" 
                     size="sm"
-                    onClick={() => updateApplicationStatus(app.id, 'rejected')}
+                    onClick={() => updateApplicationStatus(item.id, 'rejected')}
                     className="text-red-600 hover:text-red-700"
                   >
                     <XCircle className="h-4 w-4" />
