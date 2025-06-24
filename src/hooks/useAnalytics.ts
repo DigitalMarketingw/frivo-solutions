@@ -42,7 +42,7 @@ export const useApplicationAnalytics = (filters: AnalyticsFilters = {}) => {
 
       if (error) throw error;
       
-      return data as AnalyticsData;
+      return data as unknown as AnalyticsData;
     },
   });
 };
@@ -65,7 +65,7 @@ export const useUserPerformanceMetrics = (userId?: string) => {
 
       if (error) throw error;
       
-      return data as UserPerformanceData;
+      return data as unknown as UserPerformanceData;
     },
   });
 };
@@ -73,7 +73,7 @@ export const useUserPerformanceMetrics = (userId?: string) => {
 export const useApplicationTrends = () => {
   return useQuery({
     queryKey: ['application-trends'],
-    queryFn: async () => {
+    queryFn: async (): Promise<Array<{ date: string; total: number; approved: number; rejected: number }>> => {
       const { data, error } = await supabase
         .from('application_analytics')
         .select('application_date, field, status')
@@ -82,7 +82,7 @@ export const useApplicationTrends = () => {
       if (error) throw error;
 
       // Process data for trend analysis
-      const trendData = data.reduce((acc: any, curr: any) => {
+      const trendData = (data || []).reduce((acc: any, curr: any) => {
         const date = curr.application_date;
         if (!acc[date]) {
           acc[date] = { date, total: 0, approved: 0, rejected: 0 };
@@ -93,7 +93,7 @@ export const useApplicationTrends = () => {
         return acc;
       }, {});
 
-      return Object.values(trendData);
+      return Object.values(trendData) as Array<{ date: string; total: number; approved: number; rejected: number }>;
     },
   });
 };

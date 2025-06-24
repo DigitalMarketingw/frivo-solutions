@@ -15,6 +15,7 @@ type ApplicationStatus = Database['public']['Enums']['application_status'];
 
 export const EnhancedApplicationManagement: React.FC = () => {
   const [selectedApplications, setSelectedApplications] = useState<string[]>([]);
+  const [showBulkActions, setShowBulkActions] = useState(false);
   const [searchFilters, setSearchFilters] = useState({
     search: '',
     status: [] as string[],
@@ -101,10 +102,12 @@ export const EnhancedApplicationManagement: React.FC = () => {
   const handleBulkUpdate = async (status: ApplicationStatus) => {
     await bulkUpdateStatus(selectedApplications, status);
     setSelectedApplications([]);
+    setShowBulkActions(false);
   };
 
-  const handleBulkEmail = async (subject: string, message: string) => {
-    await sendBulkEmail(selectedApplications, subject, message);
+  const handleBulkEmail = async (applicationIds: string[], subject: string, message: string) => {
+    await sendBulkEmail(applicationIds, subject, message);
+    setShowBulkActions(false);
   };
 
   const availableFields = [...new Set(applications.map(app => (app.jobs as any)?.title).filter(Boolean))];
@@ -266,13 +269,34 @@ export const EnhancedApplicationManagement: React.FC = () => {
       />
 
       {selectedApplications.length > 0 && (
-        <BulkApplicationActions
-          selectedApplicationIds={selectedApplications}
-          onBulkUpdate={handleBulkUpdate}
-          onBulkEmail={handleBulkEmail}
-          onClearSelection={() => setSelectedApplications([])}
-        />
+        <div className="flex items-center gap-4 p-4 bg-blue-50 rounded-lg">
+          <span className="text-sm font-medium">
+            {selectedApplications.length} applications selected
+          </span>
+          <Button
+            size="sm"
+            onClick={() => setShowBulkActions(true)}
+          >
+            Bulk Actions
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setSelectedApplications([])}
+          >
+            Clear Selection
+          </Button>
+        </div>
       )}
+
+      <BulkApplicationActions
+        selectedApplications={selectedApplications}
+        applications={applications}
+        open={showBulkActions}
+        onOpenChange={setShowBulkActions}
+        onBulkStatusUpdate={handleBulkUpdate}
+        onBulkEmail={handleBulkEmail}
+      />
 
       <Card>
         <CardHeader>
@@ -282,7 +306,11 @@ export const EnhancedApplicationManagement: React.FC = () => {
           <DataTable
             columns={columns}
             data={applications}
-            searchKey="profiles.full_name"
+            search={{
+              value: searchFilters.search,
+              onChange: (value) => setSearchFilters(prev => ({ ...prev, search: value })),
+              placeholder: "Search applications..."
+            }}
           />
         </CardContent>
       </Card>
