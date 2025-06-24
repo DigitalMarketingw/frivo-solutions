@@ -2,32 +2,46 @@
 import React, { useState } from 'react';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { AdminStatsCards } from '@/components/admin/AdminStatsCards';
+import { EnhancedJobManagement } from '@/components/admin/EnhancedJobManagement';
 import { AdminUserManagement } from '@/components/admin/AdminUserManagement';
-import { AdminJobManagement } from '@/components/admin/AdminJobManagement';
 import { AdminApplicationManagement } from '@/components/admin/AdminApplicationManagement';
-import { ConfirmDialog } from '@/components/admin/ConfirmDialog';
-import { NotificationCenter } from '@/components/admin/NotificationCenter';
 import { LiveStatusIndicator } from '@/components/admin/LiveStatusIndicator';
+import { NotificationCenter } from '@/components/admin/NotificationCenter';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
 import { useAdminStats } from '@/hooks/useAdminStats';
-import { useAdminUsers } from '@/hooks/useAdminUsers';
 import { useAdminJobs } from '@/hooks/useAdminJobs';
+import { useAdminUsers } from '@/hooks/useAdminUsers';
 import { useRealTimeUpdates } from '@/hooks/useRealTimeUpdates';
-import { RefreshCw } from 'lucide-react';
-import { User, Job } from '@/types/admin';
+import { Job } from '@/types/admin';
 
 const Admin = () => {
+  // Search and pagination states
+  const [jobSearchParams, setJobSearchParams] = useState({
+    search: '',
+    page: 1,
+    limit: 10,
+  });
+
+  const [userSearchParams, setUserSearchParams] = useState({
+    search: '',
+    page: 1,
+    limit: 10,
+  });
+
+  // Data hooks
   const { stats, loading: statsLoading, refetch: refetchStats } = useAdminStats();
-  
-  // Users state
-  const [usersParams, setUsersParams] = useState({ page: 1, limit: 10, search: '' });
-  const { users, loading: usersLoading, updateUserRole, refetch: refetchUsers } = useAdminUsers(usersParams);
-  
-  // Jobs state  
-  const [jobsParams, setJobsParams] = useState({ page: 1, limit: 10, search: '' });
-  const { jobs, loading: jobsLoading, deleteJob, refetch: refetchJobs } = useAdminJobs(jobsParams);
-  
+  const { 
+    jobs, 
+    loading: jobsLoading, 
+    refetch: refetchJobs, 
+    deleteJob 
+  } = useAdminJobs(jobSearchParams);
+  const { 
+    users, 
+    loading: usersLoading, 
+    refetch: refetchUsers 
+  } = useAdminUsers(userSearchParams);
+
   // Real-time updates
   useRealTimeUpdates({
     onUserUpdate: refetchUsers,
@@ -35,123 +49,88 @@ const Admin = () => {
     onStatsUpdate: refetchStats,
   });
 
-  // Confirm dialog state
-  const [confirmDialog, setConfirmDialog] = useState<{
-    open: boolean;
-    title: string;
-    description: string;
-    onConfirm: () => void;
-    loading: boolean;
-  }>({
-    open: false,
-    title: '',
-    description: '',
-    onConfirm: () => {},
-    loading: false,
-  });
-
-  const handleDeleteJob = (job: Job) => {
-    setConfirmDialog({
-      open: true,
-      title: 'Delete Job',
-      description: `Are you sure you want to delete "${job.title}" at ${job.company}? This action cannot be undone.`,
-      onConfirm: async () => {
-        setConfirmDialog(prev => ({ ...prev, loading: true }));
-        await deleteJob(job.id);
-        setConfirmDialog(prev => ({ ...prev, open: false, loading: false }));
-      },
-      loading: false,
-    });
+  // Job management handlers
+  const handleJobSearchChange = (search: string) => {
+    setJobSearchParams(prev => ({ ...prev, search, page: 1 }));
   };
 
-  const handleUpdateUserRole = (user: User) => {
-    const newRole = user.role === 'admin' ? 'user' : 'admin';
-    setConfirmDialog({
-      open: true,
-      title: 'Update User Role',
-      description: `Are you sure you want to ${newRole === 'admin' ? 'promote' : 'demote'} ${user.full_name || user.id} to ${newRole}?`,
-      onConfirm: async () => {
-        setConfirmDialog(prev => ({ ...prev, loading: true }));
-        await updateUserRole(user.id, newRole);
-        setConfirmDialog(prev => ({ ...prev, open: false, loading: false }));
-      },
-      loading: false,
-    });
+  const handleJobPageChange = (page: number) => {
+    setJobSearchParams(prev => ({ ...prev, page }));
   };
 
-  const handleManualRefresh = () => {
-    refetchStats();
-    refetchUsers();
-    refetchJobs();
+  const handleJobPageSizeChange = (limit: number) => {
+    setJobSearchParams(prev => ({ ...prev, limit, page: 1 }));
+  };
+
+  const handleDeleteJob = async (job: Job) => {
+    await deleteJob(job.id);
+  };
+
+  // User management handlers
+  const handleUserSearchChange = (search: string) => {
+    setUserSearchParams(prev => ({ ...prev, search, page: 1 }));
+  };
+
+  const handleUserPageChange = (page: number) => {
+    setUserSearchParams(prev => ({ ...prev, page }));
+  };
+
+  const handleUserPageSizeChange = (limit: number) => {
+    setUserSearchParams(prev => ({ ...prev, limit, page: 1 }));
   };
 
   return (
     <AdminLayout 
       title="Admin Dashboard" 
-      description="Manage users, jobs, and applications"
+      description="Manage jobs, applications, and users"
       actions={
-        <div className="flex items-center gap-2">
+        <div className="flex items-center space-x-4">
           <LiveStatusIndicator />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleManualRefresh}
-            disabled={statsLoading || usersLoading || jobsLoading}
-          >
-            <RefreshCw className={`h-4 w-4 ${(statsLoading || usersLoading || jobsLoading) ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
           <NotificationCenter />
         </div>
       }
     >
-      <AdminStatsCards stats={stats} loading={statsLoading} />
+      <div className="space-y-8">
+        {/* Stats Overview */}
+        <AdminStatsCards stats={stats} loading={statsLoading} />
 
-      <Tabs defaultValue="users" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="users">Users</TabsTrigger>
-          <TabsTrigger value="jobs">Jobs</TabsTrigger>
-          <TabsTrigger value="applications">Applications</TabsTrigger>
-        </TabsList>
+        {/* Main Admin Tabs */}
+        <Tabs defaultValue="jobs" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="jobs">Jobs</TabsTrigger>
+            <TabsTrigger value="applications">Applications</TabsTrigger>
+            <TabsTrigger value="users">Users</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="users">
-          <AdminUserManagement
-            users={users}
-            loading={usersLoading}
-            searchParams={usersParams}
-            onSearchChange={(value) => setUsersParams(prev => ({ ...prev, search: value, page: 1 }))}
-            onPageChange={(page) => setUsersParams(prev => ({ ...prev, page }))}
-            onPageSizeChange={(limit) => setUsersParams(prev => ({ ...prev, limit, page: 1 }))}
-            onUpdateUserRole={handleUpdateUserRole}
-          />
-        </TabsContent>
+          <TabsContent value="jobs" className="space-y-6">
+            <EnhancedJobManagement
+              jobs={jobs}
+              loading={jobsLoading}
+              searchParams={jobSearchParams}
+              onSearchChange={handleJobSearchChange}
+              onPageChange={handleJobPageChange}
+              onPageSizeChange={handleJobPageSizeChange}
+              onDeleteJob={handleDeleteJob}
+              onRefresh={refetchJobs}
+            />
+          </TabsContent>
 
-        <TabsContent value="jobs">
-          <AdminJobManagement
-            jobs={jobs}
-            loading={jobsLoading}
-            searchParams={jobsParams}
-            onSearchChange={(value) => setJobsParams(prev => ({ ...prev, search: value, page: 1 }))}
-            onPageChange={(page) => setJobsParams(prev => ({ ...prev, page }))}
-            onPageSizeChange={(limit) => setJobsParams(prev => ({ ...prev, limit, page: 1 }))}
-            onDeleteJob={handleDeleteJob}
-          />
-        </TabsContent>
+          <TabsContent value="applications" className="space-y-6">
+            <AdminApplicationManagement />
+          </TabsContent>
 
-        <TabsContent value="applications">
-          <AdminApplicationManagement />
-        </TabsContent>
-      </Tabs>
-
-      <ConfirmDialog
-        open={confirmDialog.open}
-        onOpenChange={(open) => setConfirmDialog(prev => ({ ...prev, open }))}
-        title={confirmDialog.title}
-        description={confirmDialog.description}
-        onConfirm={confirmDialog.onConfirm}
-        loading={confirmDialog.loading}
-        variant="destructive"
-      />
+          <TabsContent value="users" className="space-y-6">
+            <AdminUserManagement
+              users={users}
+              loading={usersLoading}
+              searchParams={userSearchParams}
+              onSearchChange={handleUserSearchChange}
+              onPageChange={handleUserPageChange}
+              onPageSizeChange={handleUserPageSizeChange}
+            />
+          </TabsContent>
+        </Tabs>
+      </div>
     </AdminLayout>
   );
 };

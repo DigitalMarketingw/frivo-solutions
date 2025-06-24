@@ -274,6 +274,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_job: {
+        Args: {
+          job_title: string
+          job_description: string
+          job_company: string
+          job_location: string
+          job_field: string
+          job_requirements?: Json
+          job_tags?: string[]
+        }
+        Returns: string
+      }
+      duplicate_job: {
+        Args: { job_id: string }
+        Returns: string
+      }
       get_admin_stats: {
         Args: Record<PropertyKey, never>
         Returns: Json
@@ -284,6 +300,20 @@ export type Database = {
       }
       soft_delete_job: {
         Args: { job_id: string }
+        Returns: boolean
+      }
+      update_job: {
+        Args: {
+          job_id: string
+          job_title: string
+          job_description: string
+          job_company: string
+          job_location: string
+          job_field: string
+          job_requirements?: Json
+          job_tags?: string[]
+          job_status?: Database["public"]["Enums"]["job_status"]
+        }
         Returns: boolean
       }
     }
