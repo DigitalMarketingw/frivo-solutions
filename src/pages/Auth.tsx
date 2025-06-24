@@ -47,7 +47,7 @@ const Auth = () => {
         {/* Logo Header */}
         <div className="text-center mb-8">
           <img 
-            src="/lovable-uploads/8ef7b6c8-b414-448f-a8d4-e649b0c29c49.png" 
+            src="/lovable-uploads/5e550e9d-5865-4e41-bf94-3e957f814d97.png" 
             alt="Frivo Solutions" 
             className="h-12 w-auto mx-auto mb-4"
           />
