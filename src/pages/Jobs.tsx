@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Search, MapPin, Building, Calendar, DollarSign } from 'lucide-react';
@@ -62,8 +63,6 @@ const Jobs = () => {
       return;
     }
 
-    // For now, just show a success message
-    // In a real app, this would create an enrollment and redirect to payment
     toast({
       title: "Application Started",
       description: "This would redirect to the enrollment and payment process.",
@@ -72,14 +71,16 @@ const Jobs = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-      </div>
+      <AppLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+        </div>
+      </AppLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <AppLayout>
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-8">
@@ -170,7 +171,7 @@ const Jobs = () => {
           )}
         </div>
       </div>
-    </div>
+    </AppLayout>
   );
 };
 

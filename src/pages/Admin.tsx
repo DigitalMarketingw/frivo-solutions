@@ -1,13 +1,12 @@
 
 import React, { useState } from 'react';
-import { AdminLayout } from '@/components/admin/AdminLayout';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { AdminStatsCards } from '@/components/admin/AdminStatsCards';
 import { EnhancedJobManagement } from '@/components/admin/EnhancedJobManagement';
 import { AdminUserManagement } from '@/components/admin/AdminUserManagement';
 import { EnhancedApplicationManagement } from '@/components/admin/EnhancedApplicationManagement';
 import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
 import { LiveStatusIndicator } from '@/components/admin/LiveStatusIndicator';
-import { NotificationCenter } from '@/components/admin/NotificationCenter';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAdminStats } from '@/hooks/useAdminStats';
 import { useAdminJobs } from '@/hooks/useAdminJobs';
@@ -87,64 +86,68 @@ const Admin = () => {
   };
 
   return (
-    <AdminLayout 
-      title="Admin Dashboard" 
-      description="Manage jobs, applications, and users"
-      actions={
-        <div className="flex items-center space-x-4">
-          <LiveStatusIndicator />
-          <NotificationCenter />
+    <AppLayout>
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-7xl mx-auto space-y-8">
+          {/* Admin Header */}
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-4xl font-bold text-primary mb-2">Admin Dashboard</h1>
+              <p className="text-xl text-muted-foreground">Manage jobs, applications, and users</p>
+            </div>
+            <div className="flex items-center space-x-4">
+              <LiveStatusIndicator />
+            </div>
+          </div>
+
+          {/* Stats Overview */}
+          <AdminStatsCards stats={stats} loading={statsLoading} />
+
+          {/* Main Admin Tabs */}
+          <Tabs defaultValue="jobs" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="jobs">Jobs</TabsTrigger>
+              <TabsTrigger value="applications">Applications</TabsTrigger>
+              <TabsTrigger value="users">Users</TabsTrigger>
+              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="jobs" className="space-y-6">
+              <EnhancedJobManagement
+                jobs={jobs}
+                loading={jobsLoading}
+                searchParams={jobSearchParams}
+                onSearchChange={handleJobSearchChange}
+                onPageChange={handleJobPageChange}
+                onPageSizeChange={handleJobPageSizeChange}
+                onDeleteJob={handleDeleteJob}
+                onRefresh={refetchJobs}
+              />
+            </TabsContent>
+
+            <TabsContent value="applications" className="space-y-6">
+              <EnhancedApplicationManagement />
+            </TabsContent>
+
+            <TabsContent value="users" className="space-y-6">
+              <AdminUserManagement
+                users={users}
+                loading={usersLoading}
+                searchParams={userSearchParams}
+                onSearchChange={handleUserSearchChange}
+                onPageChange={handleUserPageChange}
+                onPageSizeChange={handleUserPageSizeChange}
+                onUpdateUserRole={handleUpdateUserRole}
+              />
+            </TabsContent>
+
+            <TabsContent value="analytics" className="space-y-6">
+              <AnalyticsDashboard />
+            </TabsContent>
+          </Tabs>
         </div>
-      }
-    >
-      <div className="space-y-8">
-        {/* Stats Overview */}
-        <AdminStatsCards stats={stats} loading={statsLoading} />
-
-        {/* Main Admin Tabs */}
-        <Tabs defaultValue="jobs" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="jobs">Jobs</TabsTrigger>
-            <TabsTrigger value="applications">Applications</TabsTrigger>
-            <TabsTrigger value="users">Users</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="jobs" className="space-y-6">
-            <EnhancedJobManagement
-              jobs={jobs}
-              loading={jobsLoading}
-              searchParams={jobSearchParams}
-              onSearchChange={handleJobSearchChange}
-              onPageChange={handleJobPageChange}
-              onPageSizeChange={handleJobPageSizeChange}
-              onDeleteJob={handleDeleteJob}
-              onRefresh={refetchJobs}
-            />
-          </TabsContent>
-
-          <TabsContent value="applications" className="space-y-6">
-            <EnhancedApplicationManagement />
-          </TabsContent>
-
-          <TabsContent value="users" className="space-y-6">
-            <AdminUserManagement
-              users={users}
-              loading={usersLoading}
-              searchParams={userSearchParams}
-              onSearchChange={handleUserSearchChange}
-              onPageChange={handleUserPageChange}
-              onPageSizeChange={handleUserPageSizeChange}
-              onUpdateUserRole={handleUpdateUserRole}
-            />
-          </TabsContent>
-
-          <TabsContent value="analytics" className="space-y-6">
-            <AnalyticsDashboard />
-          </TabsContent>
-        </Tabs>
       </div>
-    </AdminLayout>
+    </AppLayout>
   );
 };
 
