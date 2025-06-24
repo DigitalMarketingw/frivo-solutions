@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { AdminStatsCard } from '@/components/admin/AdminStatsCard';
@@ -24,7 +23,10 @@ import {
   Plus, 
   Settings,
   Activity,
-  TrendingUp
+  TrendingUp,
+  Shield,
+  Sparkles,
+  Crown
 } from 'lucide-react';
 
 const Admin = () => {
@@ -104,35 +106,65 @@ const Admin = () => {
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Enhanced Admin Header */}
           <div className="flex justify-between items-start">
-            <div className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <div className="p-3 bg-primary/10 rounded-lg">
-                  <Settings className="h-8 w-8 text-primary" />
+            <div className="space-y-6">
+              <div className="flex items-center space-x-4">
+                <div className="p-4 bg-gradient-to-br from-primary/10 to-blue-500/10 rounded-2xl border border-primary/20">
+                  <Crown className="h-10 w-10 text-primary" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-bold text-primary mb-2">Admin Dashboard</h1>
-                  <p className="text-xl text-muted-foreground">Complete platform management and analytics</p>
+                  <div className="flex items-center space-x-3 mb-2">
+                    <h1 className="text-5xl font-bold bg-gradient-to-r from-slate-900 via-primary to-blue-700 bg-clip-text text-transparent">
+                      Admin Dashboard
+                    </h1>
+                    <Badge className="bg-gradient-to-r from-primary to-blue-600 text-white border-0 shadow-lg">
+                      <Sparkles className="h-3 w-3 mr-1" />
+                      Premium
+                    </Badge>
+                  </div>
+                  <p className="text-xl text-slate-600">Complete platform management and analytics suite</p>
                 </div>
               </div>
               
-              {/* Quick Stats Summary */}
+              {/* Enhanced Quick Stats Summary */}
               {stats && (
-                <div className="flex items-center space-x-6 text-sm text-muted-foreground">
-                  <div className="flex items-center space-x-2">
-                    <Users className="h-4 w-4" />
-                    <span>{stats.total_users} Total Users</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Briefcase className="h-4 w-4" />
-                    <span>{stats.total_jobs} Jobs Posted</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <FileText className="h-4 w-4" />
-                    <span>{stats.total_applications} Applications</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <TrendingUp className="h-4 w-4" />
-                    <span>{stats.total_enrollments} Total Enrollments</span>
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border-0">
+                  <div className="flex items-center space-x-8 text-sm">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                        <Users className="h-4 w-4 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold text-slate-900">{stats.total_users}</p>
+                        <p className="text-slate-600">Total Users</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                        <Briefcase className="h-4 w-4 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold text-slate-900">{stats.total_jobs}</p>
+                        <p className="text-slate-600">Jobs Posted</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <FileText className="h-4 w-4 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold text-slate-900">{stats.total_applications}</p>
+                        <p className="text-slate-600">Applications</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-gradient-to-r from-amber-500 to-amber-600 rounded-lg flex items-center justify-center">
+                        <TrendingUp className="h-4 w-4 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold text-slate-900">{stats.total_enrollments}</p>
+                        <p className="text-slate-600">Enrollments</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
@@ -140,7 +172,7 @@ const Admin = () => {
             
             <div className="flex items-center space-x-4">
               <LiveStatusIndicator />
-              <Badge variant="secondary" className="flex items-center space-x-1">
+              <Badge variant="secondary" className="flex items-center space-x-2 bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 border-green-200">
                 <Activity className="h-3 w-3" />
                 <span>Live Updates</span>
               </Badge>
@@ -150,38 +182,54 @@ const Admin = () => {
           {/* Enhanced Stats Overview */}
           <AdminStatsCard stats={stats} loading={statsLoading} />
 
-          {/* Main Admin Management Tabs */}
-          <Tabs defaultValue="jobs" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4 bg-muted/50">
-              <TabsTrigger value="jobs" className="flex items-center space-x-2">
+          {/* Enhanced Main Admin Management Tabs */}
+          <Tabs defaultValue="jobs" className="space-y-8">
+            <TabsList className="grid w-full grid-cols-4 bg-white/80 backdrop-blur-sm shadow-xl border-0 rounded-2xl p-2 h-16">
+              <TabsTrigger 
+                value="jobs" 
+                className="flex items-center space-x-3 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 h-12"
+              >
                 <Briefcase className="h-4 w-4" />
-                <span>Job Management</span>
+                <span className="font-medium">Job Management</span>
               </TabsTrigger>
-              <TabsTrigger value="applications" className="flex items-center space-x-2">
+              <TabsTrigger 
+                value="applications" 
+                className="flex items-center space-x-3 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 h-12"
+              >
                 <FileText className="h-4 w-4" />
-                <span>Applications</span>
+                <span className="font-medium">Applications</span>
               </TabsTrigger>
-              <TabsTrigger value="users" className="flex items-center space-x-2">
+              <TabsTrigger 
+                value="users" 
+                className="flex items-center space-x-3 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 h-12"
+              >
                 <Users className="h-4 w-4" />
-                <span>User Management</span>
+                <span className="font-medium">User Management</span>
               </TabsTrigger>
-              <TabsTrigger value="analytics" className="flex items-center space-x-2">
+              <TabsTrigger 
+                value="analytics" 
+                className="flex items-center space-x-3 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 h-12"
+              >
                 <BarChart3 className="h-4 w-4" />
-                <span>Analytics</span>
+                <span className="font-medium">Analytics</span>
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="jobs" className="space-y-6">
-              <Card>
-                <CardHeader>
+              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+                <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50/50 rounded-t-2xl">
                   <div className="flex justify-between items-center">
-                    <CardTitle className="flex items-center space-x-2">
-                      <Briefcase className="h-5 w-5" />
+                    <CardTitle className="flex items-center space-x-3 text-2xl">
+                      <div className="w-10 h-10 bg-gradient-to-r from-primary to-blue-600 rounded-xl flex items-center justify-center">
+                        <Briefcase className="h-5 w-5 text-white" />
+                      </div>
                       <span>Job Management System</span>
                     </CardTitle>
-                    <div className="flex items-center space-x-2">
-                      <Badge variant="outline">{jobs.total} Total Jobs</Badge>
-                      <Button size="sm">
+                    <div className="flex items-center space-x-3">
+                      <Badge variant="outline" className="bg-white/60 border-primary/30 text-primary">
+                        {jobs.total} Total Jobs
+                      </Badge>
+                      <Button size="sm" className="bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 shadow-lg">
                         <Plus className="h-4 w-4 mr-2" />
                         Quick Actions
                       </Button>
@@ -204,10 +252,12 @@ const Admin = () => {
             </TabsContent>
 
             <TabsContent value="applications" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <FileText className="h-5 w-5" />
+              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+                <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50/50 rounded-t-2xl">
+                  <CardTitle className="flex items-center space-x-3 text-2xl">
+                    <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+                      <FileText className="h-5 w-5 text-white" />
+                    </div>
                     <span>Application Management System</span>
                   </CardTitle>
                 </CardHeader>
@@ -218,14 +268,18 @@ const Admin = () => {
             </TabsContent>
 
             <TabsContent value="users" className="space-y-6">
-              <Card>
-                <CardHeader>
+              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+                <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50/50 rounded-t-2xl">
                   <div className="flex justify-between items-center">
-                    <CardTitle className="flex items-center space-x-2">
-                      <Users className="h-5 w-5" />
+                    <CardTitle className="flex items-center space-x-3 text-2xl">
+                      <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                        <Users className="h-5 w-5 text-white" />
+                      </div>
                       <span>User Management System</span>
                     </CardTitle>
-                    <Badge variant="outline">{users.total} Total Users</Badge>
+                    <Badge variant="outline" className="bg-white/60 border-emerald-500/30 text-emerald-600">
+                      {users.total} Total Users
+                    </Badge>
                   </div>
                 </CardHeader>
                 <CardContent className="p-0">
@@ -243,10 +297,12 @@ const Admin = () => {
             </TabsContent>
 
             <TabsContent value="analytics" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <BarChart3 className="h-5 w-5" />
+              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+                <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50/50 rounded-t-2xl">
+                  <CardTitle className="flex items-center space-x-3 text-2xl">
+                    <div className="w-10 h-10 bg-gradient-to-r from-amber-500 to-amber-600 rounded-xl flex items-center justify-center">
+                      <BarChart3 className="h-5 w-5 text-white" />
+                    </div>
                     <span>Advanced Analytics Dashboard</span>
                   </CardTitle>
                 </CardHeader>

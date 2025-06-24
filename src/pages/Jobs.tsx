@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Search, MapPin, Building, Calendar, DollarSign } from 'lucide-react';
+import { Search, MapPin, Building, Calendar, DollarSign, Briefcase, Star, TrendingUp, Filter } from 'lucide-react';
 
 const Jobs = () => {
   const { user } = useAuth();
@@ -156,7 +155,10 @@ const Jobs = () => {
     return (
       <AppLayout>
         <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+          <div className="flex flex-col items-center space-y-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            <p className="text-slate-600 animate-pulse">Loading premium opportunities...</p>
+          </div>
         </div>
       </AppLayout>
     );
@@ -165,83 +167,166 @@ const Jobs = () => {
   return (
     <AppLayout>
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-primary mb-4">Available Opportunities</h1>
-            <p className="text-xl text-muted-foreground">Discover your next career move with our premium job placement program</p>
+        <div className="max-w-7xl mx-auto">
+          {/* Enhanced Header */}
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-primary/10 to-blue-500/10 text-primary font-medium text-sm mb-6 border border-primary/20">
+              <Star className="h-4 w-4 mr-2 fill-current" />
+              Premium Opportunities
+            </div>
+            <h1 className="text-5xl md:text-6xl font-bold mb-6">
+              <span className="text-slate-900">Available</span>
+              <br />
+              <span className="bg-gradient-to-r from-primary via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                Opportunities
+              </span>
+            </h1>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+              Discover your next career move with our premium job placement program. 
+              Exclusive positions from top-tier companies waiting for talented individuals like you.
+            </p>
           </div>
 
-          {/* Search */}
-          <div className="mb-8">
-            <div className="relative max-w-md mx-auto">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                placeholder="Search jobs..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
+          {/* Enhanced Search */}
+          <div className="mb-12">
+            <div className="max-w-2xl mx-auto">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 h-5 w-5" />
+                <Input
+                  placeholder="Search jobs by title, company, or location..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-12 pr-12 h-14 text-lg bg-white/80 backdrop-blur-sm border-0 shadow-xl rounded-2xl focus:ring-2 focus:ring-primary/20"
+                />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 hover:bg-primary/5 rounded-xl"
+                >
+                  <Filter className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
 
-          {/* Jobs Grid */}
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {/* Stats Bar */}
+          <div className="mb-12">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border-0">
+              <div className="flex flex-wrap justify-center items-center gap-8 text-center">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 bg-gradient-to-r from-primary to-blue-600 rounded-lg flex items-center justify-center">
+                    <Briefcase className="h-4 w-4 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-slate-900">{filteredJobs.length}</p>
+                    <p className="text-sm text-slate-600">Available Jobs</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
+                    <TrendingUp className="h-4 w-4 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-slate-900">95%</p>
+                    <p className="text-sm text-slate-600">Success Rate</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 bg-gradient-to-r from-amber-500 to-orange-600 rounded-lg flex items-center justify-center">
+                    <Star className="h-4 w-4 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-slate-900">Premium</p>
+                    <p className="text-sm text-slate-600">Quality Jobs</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Enhanced Jobs Grid */}
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {filteredJobs.map((job) => (
-              <Card key={job.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
+              <Card key={job.id} className="bg-white/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 group">
+                <CardHeader className="pb-4">
                   <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-lg mb-2">{job.title}</CardTitle>
-                      <CardDescription className="flex items-center gap-1">
-                        <Building className="h-4 w-4" />
+                    <div className="space-y-2">
+                      <CardTitle className="text-xl mb-2 group-hover:text-primary transition-colors">{job.title}</CardTitle>
+                      <CardDescription className="flex items-center gap-2 text-slate-600 font-medium">
+                        <div className="w-6 h-6 bg-gradient-to-r from-slate-200 to-slate-300 rounded-lg flex items-center justify-center">
+                          <Building className="h-3 w-3 text-slate-600" />
+                        </div>
                         {job.company}
                       </CardDescription>
                     </div>
-                    <Badge variant="outline">{job.field}</Badge>
+                    <Badge variant="outline" className="bg-gradient-to-r from-primary/10 to-blue-500/10 text-primary border-primary/30 font-medium">
+                      {job.field}
+                    </Badge>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
-                    {job.location}
-                  </div>
-                  
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
-                    Posted {new Date(job.created_at).toLocaleDateString()}
+                <CardContent className="space-y-6">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 text-sm text-slate-600">
+                      <div className="w-5 h-5 bg-slate-100 rounded-lg flex items-center justify-center">
+                        <MapPin className="h-3 w-3" />
+                      </div>
+                      {job.location}
+                    </div>
+                    
+                    <div className="flex items-center gap-3 text-sm text-slate-600">
+                      <div className="w-5 h-5 bg-slate-100 rounded-lg flex items-center justify-center">
+                        <Calendar className="h-3 w-3" />
+                      </div>
+                      Posted {new Date(job.created_at).toLocaleDateString()}
+                    </div>
                   </div>
 
-                  <p className="text-sm text-gray-600 line-clamp-3">
-                    {job.description}
-                  </p>
+                  <div className="bg-slate-50 rounded-xl p-4">
+                    <p className="text-sm text-slate-700 line-clamp-3 leading-relaxed">
+                      {job.description}
+                    </p>
+                  </div>
 
                   {/* Tags */}
                   {job.tags && job.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap gap-2">
                       {job.tags.slice(0, 3).map((tag: string, index: number) => (
-                        <Badge key={index} variant="secondary" className="text-xs">
+                        <Badge key={index} variant="secondary" className="text-xs bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
                           {tag}
                         </Badge>
                       ))}
                       {job.tags.length > 3 && (
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-xs bg-slate-100 text-slate-600">
                           +{job.tags.length - 3} more
                         </Badge>
                       )}
                     </div>
                   )}
 
-                  <div className="pt-4 border-t">
+                  <div className="pt-6 border-t border-slate-100">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1 text-sm font-medium text-green-600">
-                        <DollarSign className="h-4 w-4" />
-                        Premium Placement Program
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
+                          <DollarSign className="h-3 w-3 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-emerald-700">Premium Placement</p>
+                          <p className="text-xs text-emerald-600">Guaranteed process</p>
+                        </div>
                       </div>
                       <Button 
                         onClick={() => handleApply(job.id)}
                         disabled={applying === job.id}
+                        className="bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-700/90 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
                       >
-                        {applying === job.id ? 'Applying...' : 'Apply Now'}
+                        {applying === job.id ? (
+                          <div className="flex items-center space-x-2">
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            <span>Applying...</span>
+                          </div>
+                        ) : (
+                          'Apply Now'
+                        )}
                       </Button>
                     </div>
                   </div>
@@ -251,8 +336,12 @@ const Jobs = () => {
           </div>
 
           {filteredJobs.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">No jobs found matching your search criteria.</p>
+            <div className="text-center py-20">
+              <div className="w-20 h-20 bg-gradient-to-br from-slate-100 to-slate-200 rounded-3xl flex items-center justify-center mx-auto mb-8">
+                <Search className="h-10 w-10 text-slate-400" />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-4">No jobs found</h3>
+              <p className="text-slate-600 text-lg">Try adjusting your search criteria to find more opportunities.</p>
             </div>
           )}
         </div>
