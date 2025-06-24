@@ -14,7 +14,7 @@ import { Database } from '@/integrations/supabase/types';
 // Use the proper Supabase types
 type ApplicationStatus = Database['public']['Enums']['application_status'];
 
-// Define the actual data structure returned from the query
+// Define the actual data structure returned from the query - matching Supabase's exact response
 type ApplicationRow = {
   id: string;
   user_id: string;
@@ -24,6 +24,7 @@ type ApplicationRow = {
   assignment_completed: boolean;
   assignment_status: string;
   applied_at: string;
+  // These can be null if the join fails or if there's no related data
   profiles: {
     full_name: string;
   } | null;
@@ -63,7 +64,7 @@ export const AdminApplicationManagement: React.FC = () => {
       if (error) throw error;
       
       return {
-        data: (data || []) as ApplicationRow[],
+        data: (data || []) as unknown as ApplicationRow[],
         total: count || 0,
         page: currentPage,
         limit: pageSize,
