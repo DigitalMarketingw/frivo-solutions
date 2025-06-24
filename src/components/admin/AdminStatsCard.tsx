@@ -62,8 +62,8 @@ export const AdminStatsCard: React.FC<AdminStatsCardProps> = ({ stats, loading }
       bgColor: 'bg-purple-50',
     },
     {
-      label: 'Approved',
-      value: stats.approved_applications,
+      label: 'Active Jobs',
+      value: stats.active_jobs,
       icon: CheckCircle,
       color: 'text-emerald-600',
       bgColor: 'bg-emerald-50',
@@ -76,8 +76,8 @@ export const AdminStatsCard: React.FC<AdminStatsCardProps> = ({ stats, loading }
       bgColor: 'bg-yellow-50',
     },
     {
-      label: 'Active Enrollments',
-      value: stats.active_enrollments,
+      label: 'Total Enrollments',
+      value: stats.total_enrollments,
       icon: TrendingUp,
       color: 'text-indigo-600',
       bgColor: 'bg-indigo-50',

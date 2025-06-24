@@ -132,7 +132,7 @@ const Admin = () => {
                   </div>
                   <div className="flex items-center space-x-2">
                     <TrendingUp className="h-4 w-4" />
-                    <span>{stats.active_enrollments} Active Enrollments</span>
+                    <span>{stats.total_enrollments} Total Enrollments</span>
                   </div>
                 </div>
               )}
