@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,6 +23,7 @@ type ApplicationRow = {
   hackerrank_link: string | null;
   assignment_completed: boolean;
   assignment_status: string;
+  test_results: any;
   applied_at: string;
   profiles: {
     full_name: string;
