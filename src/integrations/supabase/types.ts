@@ -39,6 +39,13 @@ export type Database = {
             foreignKeyName: "application_timeline_application_id_fkey"
             columns: ["application_id"]
             isOneToOne: false
+            referencedRelation: "application_analytics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "application_timeline_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
             referencedRelation: "applications"
             referencedColumns: ["id"]
           },
@@ -354,7 +361,42 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      application_analytics: {
+        Row: {
+          applicant_name: string | null
+          application_date: string | null
+          application_month: string | null
+          application_week: string | null
+          applied_at: string | null
+          assignment_completed: boolean | null
+          company: string | null
+          field: string | null
+          id: string | null
+          job_id: string | null
+          job_title: string | null
+          location: string | null
+          payment_required: boolean | null
+          payment_status: string | null
+          status: Database["public"]["Enums"]["application_status"] | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "applications_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_applications_job_id"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       create_job: {
@@ -377,9 +419,17 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      get_application_stats: {
+        Args: { start_date?: string; end_date?: string; job_field?: string }
+        Returns: Json
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      get_user_performance_metrics: {
+        Args: { user_uuid: string }
+        Returns: Json
       }
       soft_delete_job: {
         Args: { job_id: string }

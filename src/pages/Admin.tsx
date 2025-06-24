@@ -4,7 +4,8 @@ import { AdminLayout } from '@/components/admin/AdminLayout';
 import { AdminStatsCards } from '@/components/admin/AdminStatsCards';
 import { EnhancedJobManagement } from '@/components/admin/EnhancedJobManagement';
 import { AdminUserManagement } from '@/components/admin/AdminUserManagement';
-import { AdminApplicationManagement } from '@/components/admin/AdminApplicationManagement';
+import { EnhancedApplicationManagement } from '@/components/admin/EnhancedApplicationManagement';
+import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
 import { LiveStatusIndicator } from '@/components/admin/LiveStatusIndicator';
 import { NotificationCenter } from '@/components/admin/NotificationCenter';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -102,10 +103,11 @@ const Admin = () => {
 
         {/* Main Admin Tabs */}
         <Tabs defaultValue="jobs" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="jobs">Jobs</TabsTrigger>
             <TabsTrigger value="applications">Applications</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
           </TabsList>
 
           <TabsContent value="jobs" className="space-y-6">
@@ -122,7 +124,7 @@ const Admin = () => {
           </TabsContent>
 
           <TabsContent value="applications" className="space-y-6">
-            <AdminApplicationManagement />
+            <EnhancedApplicationManagement />
           </TabsContent>
 
           <TabsContent value="users" className="space-y-6">
@@ -135,6 +137,10 @@ const Admin = () => {
               onPageSizeChange={handleUserPageSizeChange}
               onUpdateUserRole={handleUpdateUserRole}
             />
+          </TabsContent>
+
+          <TabsContent value="analytics" className="space-y-6">
+            <AnalyticsDashboard />
           </TabsContent>
         </Tabs>
       </div>
