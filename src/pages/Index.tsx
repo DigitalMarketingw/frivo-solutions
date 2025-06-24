@@ -3,11 +3,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Briefcase, Users, Award, ArrowRight, CheckCircle, Star, Trophy, Target } from 'lucide-react';
+import { Briefcase, Users, Award, ArrowRight, CheckCircle, Star, Trophy, Target, Play } from 'lucide-react';
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/40">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/30 to-indigo-50/40">
       {/* Enhanced Navigation Header */}
       <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,67 +34,139 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* Enhanced Hero Section */}
-      <section className="relative overflow-hidden pt-20 pb-32">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-blue-500/5 to-indigo-500/5"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%)]"></div>
+      {/* Modern Hero Section */}
+      <section className="relative overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-blue-500/5 to-indigo-500/5"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(147,51,234,0.1),transparent_50%)]"></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(99,102,241,0.08),transparent_50%)]"></div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="text-center max-w-5xl mx-auto">
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-white/60 backdrop-blur-sm border border-primary/20 text-primary font-medium text-sm mb-8 shadow-sm">
-              <Star className="h-4 w-4 mr-2 fill-current" />
-              Premium Career Platform
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-[90vh] py-20">
+            {/* Left Column - Content */}
+            <div className="space-y-8">
+              {/* Badge */}
+              <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-purple-100 to-blue-100 border border-purple-200/50 text-purple-700 font-medium text-sm shadow-sm">
+                <Star className="h-4 w-4 mr-2 fill-current" />
+                Grow Fast
+              </div>
+              
+              {/* Main Heading */}
+              <div className="space-y-6">
+                <h1 className="text-5xl lg:text-7xl font-bold leading-tight">
+                  <span className="text-slate-900">Welcome to</span>
+                  <br />
+                  <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    Your Career
+                  </span>
+                  <br />
+                  <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    Success
+                  </span>
+                </h1>
+                
+                <p className="text-xl text-slate-600 leading-relaxed max-w-xl font-light">
+                  Transform your professional journey with Frivo Solutions. Access premium opportunities, 
+                  complete skill assessments, and accelerate your career growth with our proven platform.
+                </p>
+              </div>
+              
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <Button 
+                  size="lg" 
+                  className="text-lg px-8 py-6 h-auto bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-700/90 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1" 
+                  asChild
+                >
+                  <Link to="/auth">
+                    Get Started Today
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="text-lg px-8 py-6 h-auto border-2 border-purple-200 hover:bg-purple-50 hover:border-purple-300 transition-all duration-300"
+                >
+                  <Play className="mr-2 h-5 w-5" />
+                  Watch Demo
+                </Button>
+              </div>
+              
+              {/* Trust Indicators */}
+              <div className="flex flex-wrap gap-6 pt-6 text-sm text-slate-500">
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  <span>Free to start</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  <span>No credit card required</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  <span>Expert support</span>
+                </div>
+              </div>
             </div>
             
-            <h1 className="text-6xl md:text-8xl font-bold mb-8 leading-tight">
-              <span className="text-slate-900">Launch Your</span>
-              <br />
-              <span className="bg-gradient-to-r from-primary via-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Dream Career
-              </span>
-            </h1>
-            
-            <p className="text-xl md:text-2xl text-slate-600 mb-12 leading-relaxed max-w-4xl mx-auto font-light">
-              Join Frivo Solutions' exclusive job portal and get access to premium career opportunities. 
-              Complete assessments, showcase your skills, and land your ideal position with our 
-              <span className="font-semibold text-primary"> proven success system</span>.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12">
-              <Button 
-                size="lg" 
-                className="text-lg px-10 py-6 h-auto bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-700/90 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1" 
-                asChild
-              >
-                <Link to="/auth">
-                  Start Your Journey
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button 
-                variant="outline" 
-                size="lg" 
-                className="text-lg px-10 py-6 h-auto border-2 hover:bg-slate-50 hover:border-primary/30 transition-all duration-300"
-              >
-                Learn More
-              </Button>
-            </div>
-
-            {/* Trust Indicators */}
-            <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-slate-500">
-              <div className="flex items-center space-x-2">
-                <CheckCircle className="h-4 w-4 text-green-500" />
-                <span>No Hidden Fees</span>
+            {/* Right Column - Visual */}
+            <div className="relative">
+              <div className="relative z-10">
+                {/* Main Feature Card */}
+                <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-2xl rounded-3xl overflow-hidden">
+                  <CardHeader className="bg-gradient-to-br from-purple-50 to-blue-50 p-8">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-600 rounded-xl flex items-center justify-center">
+                          <Briefcase className="h-6 w-6 text-white" />
+                        </div>
+                        <div>
+                          <CardTitle className="text-xl text-slate-900">Career Dashboard</CardTitle>
+                          <CardDescription className="text-slate-600">Track your progress</CardDescription>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                        <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                        <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                        <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                        <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-8">
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-700 font-medium">Job Applications</span>
+                        <span className="text-2xl font-bold text-primary">24</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-700 font-medium">Interviews Scheduled</span>
+                        <span className="text-2xl font-bold text-green-600">8</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-700 font-medium">Skill Assessments</span>
+                        <span className="text-2xl font-bold text-blue-600">12</span>
+                      </div>
+                      <div className="w-full bg-slate-200 rounded-full h-3">
+                        <div className="bg-gradient-to-r from-purple-500 to-blue-600 h-3 rounded-full" style={{width: '75%'}}></div>
+                      </div>
+                      <p className="text-sm text-slate-600 text-center">75% Profile Completion</p>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                {/* Floating Success Badge */}
+                <div className="absolute -top-4 -right-4 bg-gradient-to-r from-green-400 to-emerald-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+                  <Trophy className="h-4 w-4 inline mr-1" />
+                  95% Success Rate
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <CheckCircle className="h-4 w-4 text-green-500" />
-                <span>24/7 Support</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <CheckCircle className="h-4 w-4 text-green-500" />
-                <span>Guaranteed Results</span>
-              </div>
+              
+              {/* Background Decorative Elements */}
+              <div className="absolute -top-8 -left-8 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-blue-400/20 rounded-full blur-xl"></div>
+              <div className="absolute -bottom-8 -right-8 w-40 h-40 bg-gradient-to-br from-blue-400/20 to-indigo-400/20 rounded-full blur-xl"></div>
             </div>
           </div>
         </div>
