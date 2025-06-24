@@ -19,15 +19,22 @@ export const useRealTimeUpdates = ({
   const { toast } = useToast();
 
   const showNotification = useCallback((message: string, type: 'info' | 'success' | 'warning' = 'info') => {
-    toast({
-      title: "Real-time Update",
-      description: message,
-      variant: type === 'warning' ? 'destructive' : 'default',
-    });
+    // Try to use the global notification function first (for NotificationCenter)
+    if (typeof (window as any).addNotification === 'function') {
+      (window as any).addNotification(message, type);
+    } else {
+      // Fallback to toast
+      toast({
+        title: "Real-time Update",
+        description: message,
+        variant: type === 'warning' ? 'destructive' : 'default',
+      });
+    }
   }, [toast]);
 
   useEffect(() => {
     const channels: any[] = [];
+    console.log('Setting up real-time subscriptions...');
 
     // Subscribe to profiles (users) changes
     if (onUserUpdate) {
@@ -53,7 +60,9 @@ export const useRealTimeUpdates = ({
             onStatsUpdate?.();
           }
         )
-        .subscribe();
+        .subscribe((status) => {
+          console.log('Profiles subscription status:', status);
+        });
       
       channels.push(profilesChannel);
     }
@@ -87,7 +96,9 @@ export const useRealTimeUpdates = ({
             onStatsUpdate?.();
           }
         )
-        .subscribe();
+        .subscribe((status) => {
+          console.log('Jobs subscription status:', status);
+        });
       
       channels.push(jobsChannel);
     }
@@ -116,13 +127,16 @@ export const useRealTimeUpdates = ({
             onStatsUpdate?.();
           }
         )
-        .subscribe();
+        .subscribe((status) => {
+          console.log('Applications subscription status:', status);
+        });
       
       channels.push(applicationsChannel);
     }
 
     // Cleanup function
     return () => {
+      console.log('Cleaning up real-time subscriptions...');
       channels.forEach(channel => {
         supabase.removeChannel(channel);
       });

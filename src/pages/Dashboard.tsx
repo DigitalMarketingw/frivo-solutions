@@ -3,11 +3,51 @@ import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { LogOut, User, Briefcase, TrendingUp, CheckCircle2, Clock, Settings, Shield } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
+import { Link, useNavigate } from 'react-router-dom';
+import { 
+  User, 
+  Briefcase, 
+  Settings, 
+  LogOut, 
+  Shield,
+  FileText,
+  Users,
+  BarChart3,
+  CheckCircle,
+  AlertCircle
+} from 'lucide-react';
 
 const Dashboard = () => {
   const { user, profile, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const calculateProfileCompletion = () => {
+    if (!profile) return 0;
+    let completed = 0;
+    let total = 4;
+    
+    if (profile.full_name) completed++;
+    if (profile.phone) completed++;
+    if (profile.skills && profile.skills.length > 0) completed++;
+    if (profile.resume_url) completed++;
+    
+    return Math.round((completed / total) * 100);
+  };
+
+  const profileCompletion = calculateProfileCompletion();
+  const isAdmin = profile?.role === 'admin';
+
+  if (!profile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
@@ -21,15 +61,14 @@ const Dashboard = () => {
                 alt="Frivo Solutions" 
                 className="h-8 w-auto"
               />
-              <h1 className="text-xl font-bold text-primary">Frivo Solutions</h1>
+              <h1 className="text-xl font-bold text-primary">
+                {isAdmin ? 'Admin Dashboard' : 'Dashboard'}
+              </h1>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" asChild>
-                <Link to="/profile">
-                  <User className="h-4 w-4 mr-2" />
-                  Profile
-                </Link>
-              </Button>
+              <Badge variant={isAdmin ? 'default' : 'secondary'}>
+                {isAdmin ? 'Administrator' : 'User'}
+              </Badge>
               <Button variant="outline" onClick={signOut}>
                 <LogOut className="h-4 w-4 mr-2" />
                 Sign Out
@@ -41,199 +80,207 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        {/* Welcome Section */}
-        <div className="mb-12">
-          <h2 className="text-4xl font-bold text-primary mb-3">
-            Welcome back, {user?.user_metadata?.full_name || user?.email?.split('@')[0]}!
-            {profile?.role === 'admin' && (
-              <span className="ml-3 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-800">
-                <Shield className="h-4 w-4 mr-1" />
-                Admin
-              </span>
-            )}
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-primary">
+            Welcome back, {profile.full_name || 'User'}!
           </h2>
-          <p className="text-xl text-muted-foreground">
-            {profile?.role === 'admin' 
-              ? "Manage the platform and explore opportunities" 
-              : "Ready to take the next step in your career journey?"
+          <p className="text-muted-foreground mt-2">
+            {isAdmin 
+              ? 'Manage your platform and oversee all operations' 
+              : 'Manage your profile and explore job opportunities'
             }
           </p>
         </div>
 
-        {/* Admin Navigation Options */}
-        {profile?.role === 'admin' && (
-          <div className="mb-12">
-            <h3 className="text-2xl font-bold text-primary mb-6">Admin Options</h3>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-l-amber-500">
-                <CardHeader className="pb-4">
-                  <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center mb-4">
-                    <Shield className="h-6 w-6 text-amber-600" />
+        {/* Profile Completion Alert for Non-Admin Users */}
+        {!isAdmin && profileCompletion < 100 && (
+          <Card className="mb-6 border-l-4 border-l-yellow-500">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <AlertCircle className="h-5 w-5 text-yellow-500" />
+                Complete Your Profile
+              </CardTitle>
+              <CardDescription>
+                Your profile is {profileCompletion}% complete. Complete it to improve your job application success rate.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div className="flex-1 mr-4">
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-yellow-500 h-2 rounded-full transition-all duration-300" 
+                      style={{ width: `${profileCompletion}%` }}
+                    ></div>
                   </div>
-                  <CardTitle className="text-2xl text-primary">Admin Dashboard</CardTitle>
-                  <CardDescription className="text-lg">
-                    Manage users, jobs, applications, and platform settings with full administrative control.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button asChild className="w-full h-12 text-lg bg-amber-600 hover:bg-amber-700">
-                    <Link to="/admin">
-                      <Settings className="h-5 w-5 mr-2" />
-                      Go to Admin Dashboard
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-              
-              <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-l-primary">
-                <CardHeader className="pb-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    <Briefcase className="h-6 w-6 text-primary" />
-                  </div>
-                  <CardTitle className="text-2xl text-primary">Job Portal</CardTitle>
-                  <CardDescription className="text-lg">
-                    Browse and explore job opportunities as a regular user would see them.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button variant="outline" asChild className="w-full h-12 text-lg">
-                    <Link to="/jobs">
-                      <Briefcase className="h-5 w-5 mr-2" />
-                      View Job Portal
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
+                </div>
+                <Button asChild>
+                  <Link to="/profile">Complete Profile</Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Quick Actions Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {/* Profile Management */}
+          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/profile')}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <User className="h-5 w-5" />
+                My Profile
+              </CardTitle>
+              <CardDescription>
+                {isAdmin ? 'Manage your admin profile' : 'Update your professional information'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">
+                  {profileCompletion}% complete
+                </span>
+                {profileCompletion === 100 ? (
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                ) : (
+                  <AlertCircle className="h-4 w-4 text-yellow-500" />
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Jobs */}
+          <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/jobs')}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Briefcase className="h-5 w-5" />
+                {isAdmin ? 'Manage Jobs' : 'Browse Jobs'}
+              </CardTitle>
+              <CardDescription>
+                {isAdmin ? 'Oversee all job postings' : 'Find your next opportunity'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                {isAdmin ? 'Review and manage job listings' : 'Explore available positions'}
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Admin Panel (Admin Only) */}
+          {isAdmin && (
+            <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/admin')}>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Shield className="h-5 w-5" />
+                  Admin Panel
+                </CardTitle>
+                <CardDescription>
+                  Full administrative control
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Manage users, jobs, and system settings
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* Additional Admin Tools (Admin Only) */}
+        {isAdmin && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">System Overview</CardTitle>
+                <BarChart3 className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <Button asChild variant="outline" className="w-full">
+                  <Link to="/admin">View Analytics</Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">User Management</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <Button asChild variant="outline" className="w-full">
+                  <Link to="/admin">Manage Users</Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Job Postings</CardTitle>
+                <Briefcase className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <Button asChild variant="outline" className="w-full">
+                  <Link to="/admin">Manage Jobs</Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Applications</CardTitle>
+                <FileText className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <Button asChild variant="outline" className="w-full">
+                  <Link to="/admin">View Applications</Link>
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         )}
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-          <Card className="border-0 shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Available Jobs</CardTitle>
-              <Briefcase className="h-5 w-5 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-primary">24</div>
-              <p className="text-sm text-muted-foreground">
-                New opportunities waiting
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card className="border-0 shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Applications</CardTitle>
-              <TrendingUp className="h-5 w-5 text-accent" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-primary">3</div>
-              <p className="text-sm text-muted-foreground">
-                Applications in progress
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card className="border-0 shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Profile Status</CardTitle>
-              <CheckCircle2 className="h-5 w-5 text-green-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-green-600">85%</div>
-              <p className="text-sm text-muted-foreground">
-                Profile completed
-              </p>
-            </CardContent>
-          </Card>
+        {/* Quick Stats for Regular Users */}
+        {!isAdmin && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Profile Status</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-primary">{profileCompletion}%</div>
+                <p className="text-sm text-muted-foreground">Profile completion</p>
+              </CardContent>
+            </Card>
 
-          <Card className="border-0 shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Next Assessment</CardTitle>
-              <Clock className="h-5 w-5 text-accent" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-accent">2</div>
-              <p className="text-sm text-muted-foreground">
-                Days remaining
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Skills</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-primary">
+                  {profile.skills?.length || 0}
+                </div>
+                <p className="text-sm text-muted-foreground">Skills added</p>
+              </CardContent>
+            </Card>
 
-        {/* Action Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader className="pb-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                <Briefcase className="h-6 w-6 text-primary" />
-              </div>
-              <CardTitle className="text-2xl text-primary">Explore Opportunities</CardTitle>
-              <CardDescription className="text-lg">
-                Browse our curated collection of premium job openings from top-tier companies.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button asChild className="w-full h-12 text-lg">
-                <Link to="/jobs">View All Jobs</Link>
-              </Button>
-            </CardContent>
-          </Card>
-          
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader className="pb-4">
-              <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-4">
-                <User className="h-6 w-6 text-accent" />
-              </div>
-              <CardTitle className="text-2xl text-primary">Complete Your Profile</CardTitle>
-              <CardDescription className="text-lg">
-                Enhance your profile with skills, experience, and certifications to stand out.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button variant="outline" asChild className="w-full h-12 text-lg">
-                <Link to="/profile">Update Profile</Link>
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Recent Activity */}
-        <div className="mt-12">
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-2xl text-primary">Recent Activity</CardTitle>
-              <CardDescription>Your latest interactions and updates</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-4 p-4 bg-slate-50 rounded-lg">
-                  <div className="w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="font-medium text-primary">Profile updated successfully</p>
-                    <p className="text-sm text-muted-foreground">2 hours ago</p>
-                  </div>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Resume</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-primary">
+                  {profile.resume_url ? '✓' : '✗'}
                 </div>
-                <div className="flex items-center space-x-4 p-4 bg-slate-50 rounded-lg">
-                  <div className="w-2 h-2 bg-accent rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="font-medium text-primary">New job matches available</p>
-                    <p className="text-sm text-muted-foreground">1 day ago</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-4 p-4 bg-slate-50 rounded-lg">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="font-medium text-primary">Assessment completed</p>
-                    <p className="text-sm text-muted-foreground">3 days ago</p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                <p className="text-sm text-muted-foreground">
+                  Resume {profile.resume_url ? 'uploaded' : 'missing'}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </main>
     </div>
   );

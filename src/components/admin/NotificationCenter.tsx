@@ -52,6 +52,10 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
     setNotifications(prev => prev.filter(notif => notif.id !== id));
   };
 
+  const clearAllNotifications = () => {
+    setNotifications([]);
+  };
+
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const getTypeColor = (type: string) => {
@@ -72,6 +76,16 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
     if (minutes < 1440) return `${Math.floor(minutes / 60)}h ago`;
     return date.toLocaleDateString();
   };
+
+  // Simulate some initial notifications for testing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      addNotification('Welcome to the admin dashboard!', 'info');
+      addNotification('Real-time updates are now active', 'success');
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Expose addNotification globally for the real-time hook
   useEffect(() => {
@@ -101,17 +115,29 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-sm flex items-center justify-between">
-                Notifications
-                {unreadCount > 0 && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={markAllAsRead}
-                    className="text-xs h-6 px-2"
-                  >
-                    Mark all read
-                  </Button>
-                )}
+                <span>Notifications</span>
+                <div className="flex gap-2">
+                  {unreadCount > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={markAllAsRead}
+                      className="text-xs h-6 px-2"
+                    >
+                      Mark all read
+                    </Button>
+                  )}
+                  {notifications.length > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={clearAllNotifications}
+                      className="text-xs h-6 px-2"
+                    >
+                      Clear all
+                    </Button>
+                  )}
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
@@ -124,7 +150,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ classNam
                   {notifications.map(notification => (
                     <div
                       key={notification.id}
-                      className={`p-3 border-b last:border-b-0 hover:bg-muted/50 cursor-pointer ${
+                      className={`group p-3 border-b last:border-b-0 hover:bg-muted/50 cursor-pointer ${
                         !notification.read ? 'bg-blue-50/50' : ''
                       }`}
                       onClick={() => markAsRead(notification.id)}
