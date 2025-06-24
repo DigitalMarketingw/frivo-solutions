@@ -9,23 +9,27 @@ import { Eye, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { Database } from '@/integrations/supabase/types';
 
-interface Application {
+// Use the proper Supabase types
+type ApplicationStatus = Database['public']['Enums']['application_status'];
+
+interface ApplicationData {
   id: string;
   user_id: string;
   job_id: string;
-  status: string;
+  status: ApplicationStatus;
   hackerrank_link: string | null;
   assignment_completed: boolean;
   assignment_status: string;
   applied_at: string;
   profiles: {
     full_name: string;
-  };
+  } | null;
   jobs: {
     title: string;
     company: string;
-  };
+  } | null;
 }
 
 export const AdminApplicationManagement: React.FC = () => {
@@ -67,7 +71,7 @@ export const AdminApplicationManagement: React.FC = () => {
     },
   });
 
-  const updateApplicationStatus = async (applicationId: string, newStatus: string) => {
+  const updateApplicationStatus = async (applicationId: string, newStatus: ApplicationStatus) => {
     try {
       const { error } = await supabase
         .from('applications')
@@ -98,27 +102,27 @@ export const AdminApplicationManagement: React.FC = () => {
     { 
       key: 'profiles.full_name', 
       label: 'Applicant',
-      render: (value: string, app: Application) => app.profiles?.full_name || 'Unknown'
+      render: (value: any, app: ApplicationData) => app.profiles?.full_name || 'Unknown'
     },
     { 
       key: 'jobs.title', 
       label: 'Job',
-      render: (value: string, app: Application) => (
+      render: (value: any, app: ApplicationData) => (
         <div>
-          <div className="font-medium">{app.jobs?.title}</div>
-          <div className="text-sm text-muted-foreground">{app.jobs?.company}</div>
+          <div className="font-medium">{app.jobs?.title || 'Unknown Job'}</div>
+          <div className="text-sm text-muted-foreground">{app.jobs?.company || 'Unknown Company'}</div>
         </div>
       )
     },
     { 
       key: 'status', 
       label: 'Status', 
-      render: (value: string) => <StatusBadge status={value} type="application" />
+      render: (value: ApplicationStatus) => <StatusBadge status={value} type="application" />
     },
     { 
       key: 'assignment_status', 
       label: 'Assignment',
-      render: (value: string, app: Application) => (
+      render: (value: string, app: ApplicationData) => (
         <div className="flex items-center gap-2">
           {app.assignment_completed ? (
             <Badge variant="default" className="bg-green-100 text-green-800">
@@ -166,7 +170,7 @@ export const AdminApplicationManagement: React.FC = () => {
             onPageChange: setCurrentPage,
             onPageSizeChange: () => {}, // Not implemented for simplicity
           }}
-          actions={(app: Application) => (
+          actions={(app: ApplicationData) => (
             <div className="flex gap-2">
               <Button variant="outline" size="sm">
                 <Eye className="h-4 w-4" />
