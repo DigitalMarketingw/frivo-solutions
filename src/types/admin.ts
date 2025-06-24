@@ -39,6 +39,10 @@ export interface Application {
   job_id: string;
   status: 'applied' | 'under_review' | 'test_assigned' | 'test_completed' | 'approved' | 'rejected';
   applied_at: string;
+  assignment_completed: boolean | null;
+  assignment_status: string | null;
+  hackerrank_link: string | null;
+  test_results: any;
   profiles?: {
     full_name: string;
   };
