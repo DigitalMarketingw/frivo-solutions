@@ -1,154 +1,16 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from '@/components/ui/navigation-menu';
+import { PublicHeader } from '@/components/layout/PublicHeader';
+import { Footer } from '@/components/layout/Footer';
+import { WorldMapBackground } from '@/components/layout/WorldMapBackground';
 import { Briefcase, Users, Award, ArrowRight, CheckCircle, Star, Trophy, Target, Play, Brain, Rocket, DollarSign, Cog, Cpu } from 'lucide-react';
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/30 to-indigo-50/40">
-      {/* Enhanced Navigation Header with Services Dropdown */}
-      <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-3">
-              <img 
-                src="/lovable-uploads/5e550e9d-5865-4e41-bf94-3e957f814d97.png" 
-                alt="Frivo Solutions" 
-                className="h-10 w-auto"
-              />
-              <div className="text-xl font-bold bg-gradient-to-r from-primary to-blue-700 bg-clip-text text-transparent">
-                Frivo Solutions
-              </div>
-            </div>
-            
-            {/* Navigation Menu with Services Dropdown */}
-            <div className="hidden md:flex items-center space-x-6">
-              <NavigationMenu>
-                <NavigationMenuList>
-                  <NavigationMenuItem>
-                    <NavigationMenuTrigger className="text-slate-700 hover:text-primary font-medium">
-                      Services
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent>
-                      <div className="grid w-[600px] gap-3 p-6">
-                        <div className="grid grid-cols-1 gap-2">
-                          <NavigationMenuLink asChild>
-                            <Link
-                              to="/services/strategy-consulting"
-                              className="group flex items-center space-x-3 rounded-lg p-3 hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 transition-all duration-200"
-                            >
-                              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center">
-                                <Brain className="h-5 w-5 text-white" />
-                              </div>
-                              <div>
-                                <div className="font-semibold text-slate-900 group-hover:text-primary">Strategy & Consulting</div>
-                                <div className="text-sm text-slate-600">Flexible delivery models and deep expertise</div>
-                              </div>
-                            </Link>
-                          </NavigationMenuLink>
-                          
-                          <NavigationMenuLink asChild>
-                            <Link
-                              to="/services/business-transformation"
-                              className="group flex items-center space-x-3 rounded-lg p-3 hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50 transition-all duration-200"
-                            >
-                              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg flex items-center justify-center">
-                                <Rocket className="h-5 w-5 text-white" />
-                              </div>
-                              <div>
-                                <div className="font-semibold text-slate-900 group-hover:text-primary">Business Transformation</div>
-                                <div className="text-sm text-slate-600">Reshape operations for sustainable growth</div>
-                              </div>
-                            </Link>
-                          </NavigationMenuLink>
-                          
-                          <NavigationMenuLink asChild>
-                            <Link
-                              to="/services/finance-transformation"
-                              className="group flex items-center space-x-3 rounded-lg p-3 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50 transition-all duration-200"
-                            >
-                              <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
-                                <DollarSign className="h-5 w-5 text-white" />
-                              </div>
-                              <div>
-                                <div className="font-semibold text-slate-900 group-hover:text-primary">Finance Transformation</div>
-                                <div className="text-sm text-slate-600">Build resilient, agile finance functions</div>
-                              </div>
-                            </Link>
-                          </NavigationMenuLink>
-                          
-                          <NavigationMenuLink asChild>
-                            <Link
-                              to="/services/business-process-management"
-                              className="group flex items-center space-x-3 rounded-lg p-3 hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 transition-all duration-200"
-                            >
-                              <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center">
-                                <Cog className="h-5 w-5 text-white" />
-                              </div>
-                              <div>
-                                <div className="font-semibold text-slate-900 group-hover:text-primary">Business Process Management</div>
-                                <div className="text-sm text-slate-600">Streamline operations across all functions</div>
-                              </div>
-                            </Link>
-                          </NavigationMenuLink>
-                          
-                          <NavigationMenuLink asChild>
-                            <Link
-                              to="/services/digital-automation"
-                              className="group flex items-center space-x-3 rounded-lg p-3 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-200"
-                            >
-                              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
-                                <Cpu className="h-5 w-5 text-white" />
-                              </div>
-                              <div>
-                                <div className="font-semibold text-slate-900 group-hover:text-primary">Digital & Automation</div>
-                                <div className="text-sm text-slate-600">AI, ML, RPA, and custom software solutions</div>
-                              </div>
-                            </Link>
-                          </NavigationMenuLink>
-                        </div>
-                      </div>
-                    </NavigationMenuContent>
-                  </NavigationMenuItem>
-                </NavigationMenuList>
-              </NavigationMenu>
-              
-              <Button variant="ghost" asChild className="hover:bg-primary/5">
-                <Link to="/contact">Contact Us</Link>
-              </Button>
-              <Button variant="ghost" asChild className="hover:bg-primary/5">
-                <Link to="/auth">Sign In</Link>
-              </Button>
-              <Button variant="default" asChild className="bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-700/90 shadow-md hover:shadow-lg transition-all duration-200">
-                <Link to="/auth">Job Portal</Link>
-              </Button>
-            </div>
-            
-            {/* Mobile Navigation - Simplified */}
-            <div className="md:hidden flex items-center space-x-4">
-              <Button variant="ghost" asChild className="hover:bg-primary/5">
-                <Link to="/contact">Contact</Link>
-              </Button>
-              <Button variant="ghost" asChild className="hover:bg-primary/5">
-                <Link to="/auth">Sign In</Link>
-              </Button>
-              <Button variant="default" asChild className="bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-700/90 shadow-md hover:shadow-lg transition-all duration-200">
-                <Link to="/auth">Job Portal</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <PublicHeader />
 
       {/* Modern Hero Section */}
       <section className="relative overflow-hidden">
@@ -579,8 +441,9 @@ const Index = () => {
           </div>
 
           {/* Enhanced Success Metrics */}
-          <div className="bg-gradient-to-r from-slate-50 to-blue-50/50 rounded-3xl p-12 shadow-inner mb-16">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          <div className="bg-gradient-to-r from-slate-50 to-blue-50/50 rounded-3xl p-12 shadow-inner mb-16 relative overflow-hidden">
+            <WorldMapBackground />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center relative z-10">
               <div>
                 <div className="text-5xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent mb-3">95%</div>
                 <div className="text-slate-600 font-medium">Success Rate</div>
@@ -828,24 +691,7 @@ const Index = () => {
       </section>
 
       {/* Enhanced Footer */}
-      <footer className="bg-slate-900 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center space-x-3 mb-6 md:mb-0">
-              <img 
-                src="/lovable-uploads/5e550e9d-5865-4e41-bf94-3e957f814d97.png" 
-                alt="Frivo Solutions" 
-                className="h-10 w-auto"
-              />
-              <div className="text-xl font-bold">Frivo Solutions</div>
-            </div>
-            <div className="text-slate-400 text-center md:text-right">
-              <p>© 2024 Frivo Solutions. All rights reserved.</p>
-              <p className="text-sm mt-1">Building careers, one success story at a time.</p>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

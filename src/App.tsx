@@ -15,6 +15,7 @@ import Jobs from "./pages/Jobs";
 import Analytics from "./pages/Analytics";
 import Admin from "./pages/Admin";
 import Contact from "./pages/Contact";
+import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 import Pricing from "./pages/Pricing";
 import PaymentSuccess from "./pages/PaymentSuccess";
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/about" element={<About />} />
             <Route path="/jobs" element={<Jobs />} />
             
             {/* Service Pages */}
