@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -51,17 +50,22 @@ export const JobForm: React.FC<JobFormProps> = ({ job, onSubmit, onCancel, loadi
       title: job?.title || '',
       company: job?.company || '',
       location: job?.location || '',
-      field: job?.field || '',
+      field: job?.field || 'technology',
       description: job?.description || '',
       status: job?.status || 'open',
     },
   });
 
   const watchedStatus = watch('status');
+  const watchedField = watch('field');
 
   useEffect(() => {
     setValue('status', watchedStatus);
   }, [watchedStatus, setValue]);
+
+  useEffect(() => {
+    setValue('field', watchedField);
+  }, [watchedField, setValue]);
 
   const addRequirement = () => {
     if (newRequirement.trim() && !requirements.includes(newRequirement.trim())) {
@@ -139,7 +143,7 @@ export const JobForm: React.FC<JobFormProps> = ({ job, onSubmit, onCancel, loadi
 
             <div className="space-y-2">
               <Label htmlFor="field">Field *</Label>
-              <Select onValueChange={(value) => setValue('field', value)}>
+              <Select value={watchedField} onValueChange={(value) => setValue('field', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select field" />
                 </SelectTrigger>
@@ -233,7 +237,7 @@ export const JobForm: React.FC<JobFormProps> = ({ job, onSubmit, onCancel, loadi
 
           <div className="space-y-2">
             <Label>Status</Label>
-            <Select onValueChange={(value) => setValue('status', value as any)}>
+            <Select value={watchedStatus} onValueChange={(value) => setValue('status', value as any)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
