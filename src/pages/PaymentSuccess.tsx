@@ -1,37 +1,14 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, Briefcase, Star } from 'lucide-react';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { supabase } from '@/integrations/supabase/client';
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const plan = searchParams.get('plan') || 'basic';
-
-  useEffect(() => {
-    // Update payment status to completed
-    const updatePaymentStatus = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const supabaseService = createClient(
-          "https://bmjkgypudskcxmoiqpax.supabase.co",
-          Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-        );
-        
-        await supabaseService
-          .from('user_payments')
-          .update({ status: 'completed' })
-          .eq('user_id', user.id)
-          .eq('plan_type', plan)
-          .eq('status', 'pending');
-      }
-    };
-
-    updatePaymentStatus();
-  }, [plan]);
 
   const planDetails = {
     basic: { name: 'Basic', color: 'from-blue-500 to-blue-600' },

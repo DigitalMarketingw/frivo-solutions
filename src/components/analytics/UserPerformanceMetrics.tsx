@@ -12,7 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 export const UserPerformanceMetrics: React.FC = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const { data: metrics, isLoading, error, refetch } = useUserPerformanceMetrics(user?.id);
+  const { data: metrics, isLoading, error, refetch } = useUserPerformanceMetrics();
 
   const handleRefresh = async () => {
     try {
