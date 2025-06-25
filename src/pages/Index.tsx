@@ -23,6 +23,9 @@ const Index = () => {
             </div>
             <div className="flex items-center space-x-4">
               <Button variant="ghost" asChild className="hover:bg-primary/5">
+                <Link to="/contact">Contact Us</Link>
+              </Button>
+              <Button variant="ghost" asChild className="hover:bg-primary/5">
                 <Link to="/auth">Sign In</Link>
               </Button>
               <Button variant="default" asChild className="bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-700/90 shadow-md hover:shadow-lg transition-all duration-200">
@@ -462,7 +465,7 @@ const Index = () => {
           </div>
 
           {/* Enhanced Success Metrics */}
-          <div className="bg-gradient-to-r from-slate-50 to-blue-50/50 rounded-3xl p-12 shadow-inner">
+          <div className="bg-gradient-to-r from-slate-50 to-blue-50/50 rounded-3xl p-12 shadow-inner mb-16">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               <div>
                 <div className="text-5xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent mb-3">95%</div>
@@ -481,6 +484,30 @@ const Index = () => {
                 <div className="text-slate-600 font-medium">Support Available</div>
               </div>
             </div>
+          </div>
+
+          {/* Contact Us CTA Section */}
+          <div className="text-center">
+            <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-emerald-100 to-teal-100 border border-emerald-200/50 text-emerald-700 font-semibold text-sm shadow-sm mb-8">
+              <Target className="h-4 w-4 mr-2" />
+              Ready to Get Started?
+            </div>
+            <h3 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6 leading-tight">
+              Ready to Take the Next Step in Your Career?
+            </h3>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed font-light mb-8">
+              Share your career goals with us and let our expert team connect you with opportunities that match your aspirations.
+            </p>
+            <Button 
+              size="lg" 
+              className="text-lg px-10 py-6 h-auto bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-700/90 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1" 
+              asChild
+            >
+              <Link to="/contact">
+                Contact Us Today
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </Button>
           </div>
         </div>
       </section>

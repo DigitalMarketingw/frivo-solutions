@@ -14,6 +14,7 @@ import Profile from "./pages/Profile";
 import Jobs from "./pages/Jobs";
 import Analytics from "./pages/Analytics";
 import Admin from "./pages/Admin";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/dashboard" element={
               <ProtectedRoute>
