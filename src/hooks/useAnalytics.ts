@@ -42,13 +42,10 @@ export const useApplicationAnalytics = (filters: AnalyticsFilters = {}) => {
         });
 
         if (error) {
-          console.error('Analytics error:', error);
-          // Fallback to demo data if main function fails
-          const { data: demoData } = await supabase.rpc('get_demo_application_stats');
-          return demoData as unknown as AnalyticsData;
+          console.warn('Main analytics RPC failed, using demo data:', error);
+          return getDemoAnalyticsData();
         }
         
-        // Ensure we have valid data structure
         const result = data as unknown as AnalyticsData;
         return {
           total_applications: result.total_applications || 0,
@@ -58,35 +55,33 @@ export const useApplicationAnalytics = (filters: AnalyticsFilters = {}) => {
           conversion_rate: result.conversion_rate || 0
         };
       } catch (error) {
-        console.error('Analytics query failed:', error);
-        // Return demo data as fallback
-        const { data: demoData } = await supabase.rpc('get_demo_application_stats');
-        return demoData as unknown as AnalyticsData;
+        console.warn('Analytics query failed, using demo data:', error);
+        return getDemoAnalyticsData();
       }
     },
-    staleTime: 30000, // Cache for 30 seconds
-    retry: 2,
+    staleTime: 30000,
+    retry: 1,
   });
 };
 
-export const useUserPerformanceMetrics = (userId?: string) => {
+export const useUserPerformanceMetrics = () => {
   return useQuery({
-    queryKey: ['user-performance', userId],
+    queryKey: ['user-performance'],
     queryFn: async (): Promise<UserPerformanceData> => {
       try {
-        let targetUserId = userId;
-        
-        if (!targetUserId) {
-          const { data: { user } } = await supabase.auth.getUser();
-          if (!user) throw new Error('No authenticated user');
-          targetUserId = user.id;
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          return getEmptyUserPerformanceData();
         }
 
         const { data, error } = await supabase.rpc('get_user_performance_metrics', {
-          user_uuid: targetUserId,
+          user_uuid: user.id,
         });
 
-        if (error) throw error;
+        if (error) {
+          console.warn('User performance RPC failed, using empty data:', error);
+          return getEmptyUserPerformanceData();
+        }
         
         const result = data as unknown as UserPerformanceData;
         return {
@@ -98,21 +93,12 @@ export const useUserPerformanceMetrics = (userId?: string) => {
           recent_activity: Array.isArray(result.recent_activity) ? result.recent_activity : []
         };
       } catch (error) {
-        console.error('User performance metrics error:', error);
-        // Return empty but valid structure
-        return {
-          total_applications: 0,
-          approved_applications: 0,
-          pending_applications: 0,
-          success_rate: 0,
-          applications_by_field: [],
-          recent_activity: []
-        };
+        console.warn('User performance metrics error, using empty data:', error);
+        return getEmptyUserPerformanceData();
       }
     },
-    enabled: !!userId,
     staleTime: 30000,
-    retry: 2,
+    retry: 1,
   });
 };
 
@@ -127,18 +113,10 @@ export const useApplicationTrends = () => {
           .order('application_date', { ascending: true });
 
         if (error) {
-          console.error('Trends query error:', error);
-          // Return demo trend data
-          return [
-            { date: '2024-06-20', total: 2, approved: 1, rejected: 0 },
-            { date: '2024-06-21', total: 3, approved: 1, rejected: 1 },
-            { date: '2024-06-22', total: 1, approved: 0, rejected: 0 },
-            { date: '2024-06-23', total: 4, approved: 2, rejected: 1 },
-            { date: '2024-06-24', total: 2, approved: 1, rejected: 0 }
-          ];
+          console.warn('Trends query error, using demo data:', error);
+          return getDemoTrendData();
         }
 
-        // Process data for trend analysis
         const trendData = (data || []).reduce((acc: any, curr: any) => {
           const date = curr.application_date;
           if (!date) return acc;
@@ -155,30 +133,58 @@ export const useApplicationTrends = () => {
 
         const result = Object.values(trendData) as Array<{ date: string; total: number; approved: number; rejected: number }>;
         
-        // If no data, return demo data
         if (result.length === 0) {
-          return [
-            { date: '2024-06-20', total: 2, approved: 1, rejected: 0 },
-            { date: '2024-06-21', total: 3, approved: 1, rejected: 1 },
-            { date: '2024-06-22', total: 1, approved: 0, rejected: 0 },
-            { date: '2024-06-23', total: 4, approved: 2, rejected: 1 },
-            { date: '2024-06-24', total: 2, approved: 1, rejected: 0 }
-          ];
+          return getDemoTrendData();
         }
         
         return result;
       } catch (error) {
-        console.error('Trends processing error:', error);
-        return [
-          { date: '2024-06-20', total: 2, approved: 1, rejected: 0 },
-          { date: '2024-06-21', total: 3, approved: 1, rejected: 1 },
-          { date: '2024-06-22', total: 1, approved: 0, rejected: 0 },
-          { date: '2024-06-23', total: 4, approved: 2, rejected: 1 },
-          { date: '2024-06-24', total: 2, approved: 1, rejected: 0 }
-        ];
+        console.warn('Trends processing error, using demo data:', error);
+        return getDemoTrendData();
       }
     },
-    staleTime: 60000, // Cache for 1 minute
-    retry: 2,
+    staleTime: 60000,
+    retry: 1,
   });
 };
+
+const getDemoAnalyticsData = (): AnalyticsData => ({
+  total_applications: 12,
+  status_breakdown: [
+    { status: "applied", count: 4 },
+    { status: "under_review", count: 3 },
+    { status: "approved", count: 3 },
+    { status: "rejected", count: 2 }
+  ],
+  field_breakdown: [
+    { field: "Technology", count: 5 },
+    { field: "Healthcare", count: 3 },
+    { field: "Finance", count: 2 },
+    { field: "Education", count: 2 }
+  ],
+  daily_applications: [
+    { date: "2024-06-20", count: 2 },
+    { date: "2024-06-21", count: 3 },
+    { date: "2024-06-22", count: 1 },
+    { date: "2024-06-23", count: 4 },
+    { date: "2024-06-24", count: 2 }
+  ],
+  conversion_rate: 25.0
+});
+
+const getEmptyUserPerformanceData = (): UserPerformanceData => ({
+  total_applications: 0,
+  approved_applications: 0,
+  pending_applications: 0,
+  success_rate: 0,
+  applications_by_field: [],
+  recent_activity: []
+});
+
+const getDemoTrendData = () => [
+  { date: '2024-06-20', total: 2, approved: 1, rejected: 0 },
+  { date: '2024-06-21', total: 3, approved: 1, rejected: 1 },
+  { date: '2024-06-22', total: 1, approved: 0, rejected: 0 },
+  { date: '2024-06-23', total: 4, approved: 2, rejected: 1 },
+  { date: '2024-06-24', total: 2, approved: 1, rejected: 0 }
+];

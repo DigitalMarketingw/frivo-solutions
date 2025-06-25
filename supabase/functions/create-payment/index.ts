@@ -24,9 +24,11 @@ serve(async (req) => {
     const { data } = await supabaseClient.auth.getUser(token);
     const user = data.user;
     
-    if (!user?.email) throw new Error("User not authenticated");
+    if (!user?.email) {
+      throw new Error("User not authenticated");
+    }
 
-    const { applicationId, amount } = await req.json();
+    const { planType, amount } = await req.json();
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2023-10-16",
@@ -39,6 +41,12 @@ serve(async (req) => {
       customerId = customers.data[0].id;
     }
 
+    const planNames = {
+      basic: "Basic Career Plan",
+      premium: "Premium Career Plan", 
+      enterprise: "Enterprise Career Plan"
+    };
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
@@ -46,19 +54,36 @@ serve(async (req) => {
         {
           price_data: {
             currency: "usd",
-            product_data: { name: "Application Processing Fee" },
+            product_data: { 
+              name: planNames[planType as keyof typeof planNames] || "Career Plan",
+              description: "One-time payment for unlimited job applications"
+            },
             unit_amount: amount,
           },
           quantity: 1,
         },
       ],
       mode: "payment",
-      success_url: `${req.headers.get("origin")}/dashboard?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.get("origin")}/dashboard?payment=canceled`,
+      success_url: `${req.headers.get("origin")}/payment-success?plan=${planType}`,
+      cancel_url: `${req.headers.get("origin")}/pricing`,
       metadata: {
-        application_id: applicationId,
         user_id: user.id,
-      },
+        plan_type: planType,
+      }
+    });
+
+    // Create payment record
+    const supabaseService = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
+    await supabaseService.from("user_payments").insert({
+      user_id: user.id,
+      plan_type: planType,
+      amount: amount,
+      stripe_payment_id: session.id,
+      status: "pending",
     });
 
     return new Response(JSON.stringify({ url: session.url }), {
@@ -66,7 +91,7 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    console.error("Payment creation error:", error);
+    console.error('Payment creation error:', error);
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,

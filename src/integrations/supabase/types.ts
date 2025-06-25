@@ -359,6 +359,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_payments: {
+        Row: {
+          amount: number
+          created_at: string | null
+          id: string
+          paid_at: string | null
+          plan_type: string
+          status: string | null
+          stripe_payment_id: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          id?: string
+          paid_at?: string | null
+          plan_type: string
+          status?: string | null
+          stripe_payment_id?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          id?: string
+          paid_at?: string | null
+          plan_type?: string
+          status?: string | null
+          stripe_payment_id?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       application_analytics: {
@@ -431,6 +467,14 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      get_user_payment_status: {
+        Args: { user_uuid: string }
+        Returns: {
+          has_paid: boolean
+          plan_type: string
+          paid_at: string
+        }[]
+      }
       get_user_performance_metrics: {
         Args: { user_uuid: string }
         Returns: Json
@@ -451,6 +495,10 @@ export type Database = {
           job_tags?: string[]
           job_status?: Database["public"]["Enums"]["job_status"]
         }
+        Returns: boolean
+      }
+      user_has_paid: {
+        Args: { user_uuid: string }
         Returns: boolean
       }
     }
