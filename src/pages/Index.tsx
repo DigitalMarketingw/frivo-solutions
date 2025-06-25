@@ -630,6 +630,10 @@ const Index = () => {
               </CardContent>
             </Card>
           </div>
+
+          {/* Service Stats */}
+          
+        </div> 
       </section>
 
       {/* Enhanced CTA Section */}
