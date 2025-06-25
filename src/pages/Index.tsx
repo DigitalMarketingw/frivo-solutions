@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Briefcase, Users, Award, ArrowRight, CheckCircle, Star, Trophy, Target, Play } from 'lucide-react';
+import { Briefcase, Users, Award, ArrowRight, CheckCircle, Star, Trophy, Target, Play, Brain, Rocket, DollarSign, Cog, Cpu } from 'lucide-react';
 
 const Index = () => {
   return (
@@ -508,6 +508,172 @@ const Index = () => {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* New Services Section */}
+      <section className="py-32 bg-gradient-to-br from-slate-50 to-blue-50/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section Header */}
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-purple-100 to-blue-100 border border-purple-200/50 text-purple-700 font-semibold text-sm shadow-sm mb-8">
+              <Briefcase className="h-4 w-4 mr-2" />
+              Our Services
+            </div>
+            <h2 className="text-5xl md:text-6xl font-bold text-slate-900 mb-8 leading-tight">
+              Comprehensive Solutions for
+              <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent"> Business Growth</span>
+            </h2>
+            <p className="text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed font-light">
+              From strategic consulting to digital transformation, we deliver end-to-end solutions 
+              that drive efficiency, innovation, and sustainable growth for your organization.
+            </p>
+          </div>
+
+          {/* Services Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+            {/* Strategy & Consulting */}
+            <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-xl rounded-3xl overflow-hidden transform hover:scale-105 transition-all duration-500 hover:shadow-2xl">
+              <CardHeader className="bg-gradient-to-br from-purple-50 to-indigo-50 p-8">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                  <Brain className="h-8 w-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl text-slate-900 mb-4">Strategy & Consulting</CardTitle>
+                <CardDescription className="text-slate-600 text-base leading-relaxed">
+                  Flexible delivery models, deep industry expertise, and proprietary frameworks to drive measurable transformation.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-8">
+                <Button 
+                  asChild 
+                  className="w-full bg-gradient-to-r from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <Link to="/services/strategy-consulting">
+                    Know More
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Business Transformation */}
+            <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-xl rounded-3xl overflow-hidden transform hover:scale-105 transition-all duration-500 hover:shadow-2xl">
+              <CardHeader className="bg-gradient-to-br from-blue-50 to-cyan-50 p-8">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                  <Rocket className="h-8 w-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl text-slate-900 mb-4">Business Transformation</CardTitle>
+                <CardDescription className="text-slate-600 text-base leading-relaxed">
+                  Reshape operations to drive efficiency, innovation, and sustainable growth through streamlined operating models.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-8">
+                <Button 
+                  asChild 
+                  className="w-full bg-gradient-to-r from-blue-600 to-cyan-700 hover:from-blue-700 hover:to-cyan-800 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <Link to="/services/business-transformation">
+                    Know More
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Finance Transformation */}
+            <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-xl rounded-3xl overflow-hidden transform hover:scale-105 transition-all duration-500 hover:shadow-2xl">
+              <CardHeader className="bg-gradient-to-br from-emerald-50 to-teal-50 p-8">
+                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                  <DollarSign className="h-8 w-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl text-slate-900 mb-4">Finance Transformation</CardTitle>
+                <CardDescription className="text-slate-600 text-base leading-relaxed">
+                  Build resilient, agile finance functions with streamlined operating models and modern technology platforms.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-8">
+                <Button 
+                  asChild 
+                  className="w-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <Link to="/services/finance-transformation">
+                    Know More
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Business Process Management */}
+            <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-xl rounded-3xl overflow-hidden transform hover:scale-105 transition-all duration-500 hover:shadow-2xl">
+              <CardHeader className="bg-gradient-to-br from-amber-50 to-orange-50 p-8">
+                <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                  <Cog className="h-8 w-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl text-slate-900 mb-4">Business Process Management</CardTitle>
+                <CardDescription className="text-slate-600 text-base leading-relaxed">
+                  Streamline operations across finance, recruitment, HR, marketing, and IT to boost efficiency and productivity.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-8">
+                <Button 
+                  asChild 
+                  className="w-full bg-gradient-to-r from-amber-600 to-orange-700 hover:from-amber-700 hover:to-orange-800 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <Link to="/services/business-process-management">
+                    Know More
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Digital & Automation */}
+            <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-xl rounded-3xl overflow-hidden transform hover:scale-105 transition-all duration-500 hover:shadow-2xl md:col-span-2 lg:col-span-1">
+              <CardHeader className="bg-gradient-to-br from-indigo-50 to-purple-50 p-8">
+                <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                  <Cpu className="h-8 w-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl text-slate-900 mb-4">Digital & Automation</CardTitle>
+                <CardDescription className="text-slate-600 text-base leading-relaxed">
+                  Accelerate digital transformation with AI, ML, RPA, and custom software solutions for future-ready operations.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-8">
+                <Button 
+                  asChild 
+                  className="w-full bg-gradient-to-r from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <Link to="/services/digital-automation">
+                    Know More
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Service Stats */}
+          <div className="bg-gradient-to-r from-slate-50 to-blue-50/50 rounded-3xl p-12 shadow-inner">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+              <div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent mb-3">15+</div>
+                <div className="text-slate-600 font-medium">Years Experience</div>
+              </div>
+              <div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent mb-3">200+</div>
+                <div className="text-slate-600 font-medium">Clients Served</div>
+              </div>
+              <div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent mb-3">50+</div>
+                <div className="text-slate-600 font-medium">Industries</div>
+              </div>
+              <div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent mb-3">98%</div>
+                <div className="text-slate-600 font-medium">Client Satisfaction</div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

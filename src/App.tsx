@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,6 +19,13 @@ import NotFound from "./pages/NotFound";
 import Pricing from "./pages/Pricing";
 import PaymentSuccess from "./pages/PaymentSuccess";
 
+// Service Pages
+import StrategyConsulting from "./pages/services/StrategyConsulting";
+import BusinessTransformation from "./pages/services/BusinessTransformation";
+import FinanceTransformation from "./pages/services/FinanceTransformation";
+import BusinessProcessManagement from "./pages/services/BusinessProcessManagement";
+import DigitalAutomation from "./pages/services/DigitalAutomation";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -32,6 +40,14 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/jobs" element={<Jobs />} />
+            
+            {/* Service Pages */}
+            <Route path="/services/strategy-consulting" element={<StrategyConsulting />} />
+            <Route path="/services/business-transformation" element={<BusinessTransformation />} />
+            <Route path="/services/finance-transformation" element={<FinanceTransformation />} />
+            <Route path="/services/business-process-management" element={<BusinessProcessManagement />} />
+            <Route path="/services/digital-automation" element={<DigitalAutomation />} />
+            
             <Route path="/pricing" element={
               <ProtectedRoute>
                 <Pricing />
