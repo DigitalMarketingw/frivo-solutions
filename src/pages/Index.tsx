@@ -632,7 +632,26 @@ const Index = () => {
           </div>
 
           {/* Service Stats */}
-          
+          <div className="bg-gradient-to-r from-slate-50 to-blue-50/50 rounded-3xl p-12 shadow-inner">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+              <div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent mb-3">15+</div>
+                <div className="text-slate-600 font-medium">Years Experience</div>
+              </div>
+              <div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent mb-3">200+</div>
+                <div className="text-slate-600 font-medium">Clients Served</div>
+              </div>
+              <div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent mb-3">50+</div>
+                <div className="text-slate-600 font-medium">Industries</div>
+              </div>
+              <div>
+                <div className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent mb-3">98%</div>
+                <div className="text-slate-600 font-medium">Client Satisfaction</div>
+              </div>
+            </div>
+          </div>
         </div> 
       </section>
 
