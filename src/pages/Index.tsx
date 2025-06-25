@@ -652,8 +652,8 @@ const Index = () => {
               </div>
             </div>
           </div>
-        </div>
-      </section> */}
+        </div> */}
+      </section>
 
       {/* Enhanced CTA Section */}
       <section className="py-32 bg-gradient-to-br from-primary via-blue-700 to-indigo-700 relative overflow-hidden">
