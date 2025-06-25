@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { AppHeader } from './AppHeader';
+import { PublicHeader } from './PublicHeader';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface AppLayoutProps {
@@ -13,8 +14,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, className = '' }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      {/* Only show AppHeader for authenticated users */}
-      {user && <AppHeader />}
+      {/* Show AppHeader for authenticated users, PublicHeader for non-authenticated users */}
+      {user ? <AppHeader /> : <PublicHeader />}
       <main className={`${className}`}>
         {children}
       </main>
