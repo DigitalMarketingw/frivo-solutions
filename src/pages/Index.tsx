@@ -64,7 +64,7 @@ const Index = () => {
                 <Button 
                   variant="outline" 
                   size="lg" 
-                  className="text-lg px-8 py-6 h-auto border-2 border-purple-200 hover:bg-purple-50 hover:border-purple-300 transition-all duration-300"
+                  className="text-lg px-8 py-6 h-auto border-2 border-purple-200 hover:bg-purple-50 hover:border-purple-300 hover:text-purple-700 transition-all duration-300"
                 >
                   <Play className="mr-2 h-5 w-5" />
                   Watch Demo
@@ -630,28 +630,6 @@ const Index = () => {
               </CardContent>
             </Card>
           </div>
-
-          {/* Service Stats */}
-          <div className="bg-gradient-to-r from-slate-50 to-blue-50/50 rounded-3xl p-12 shadow-inner">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-              <div>
-                <div className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent mb-3">15+</div>
-                <div className="text-slate-600 font-medium">Years Experience</div>
-              </div>
-              <div>
-                <div className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent mb-3">200+</div>
-                <div className="text-slate-600 font-medium">Clients Served</div>
-              </div>
-              <div>
-                <div className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent mb-3">50+</div>
-                <div className="text-slate-600 font-medium">Industries</div>
-              </div>
-              <div>
-                <div className="text-4xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent mb-3">98%</div>
-                <div className="text-slate-600 font-medium">Client Satisfaction</div>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -678,7 +656,7 @@ const Index = () => {
             <Button 
               variant="secondary" 
               size="lg" 
-              className="text-lg px-10 py-6 h-auto bg-white text-primary hover:bg-slate-50 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+              className="text-lg px-10 py-6 h-auto bg-white text-primary hover:bg-slate-50 hover:text-primary shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
               asChild
             >
               <Link to="/auth">

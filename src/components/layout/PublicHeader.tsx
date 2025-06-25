@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -10,9 +9,19 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
-import { Brain, Rocket, DollarSign, Cog, Cpu } from 'lucide-react';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { Brain, Rocket, DollarSign, Cog, Cpu, Menu } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export const PublicHeader: React.FC = () => {
+  const isMobile = useIsMobile();
+
   return (
     <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -30,7 +39,7 @@ export const PublicHeader: React.FC = () => {
             </Link>
           </div>
           
-          {/* Navigation Menu with Services Dropdown */}
+          {/* Desktop Navigation Menu with Services Dropdown */}
           <div className="hidden md:flex items-center space-x-6">
             <NavigationMenu>
               <NavigationMenuList>
@@ -136,17 +145,94 @@ export const PublicHeader: React.FC = () => {
             </Button>
           </div>
           
-          {/* Mobile Navigation */}
-          <div className="md:hidden flex items-center space-x-4">
-            <Button variant="ghost" asChild className="hover:bg-primary/5">
-              <Link to="/contact">Contact</Link>
-            </Button>
-            <Button variant="ghost" asChild className="hover:bg-primary/5">
-              <Link to="/auth">Sign In</Link>
-            </Button>
-            <Button variant="default" asChild className="bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-700/90 shadow-md hover:shadow-lg transition-all duration-200">
-              <Link to="/auth">Job Portal</Link>
-            </Button>
+          {/* Mobile Navigation - Hamburger Menu */}
+          <div className="md:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="hover:bg-primary/5">
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Open menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-80 sm:w-96">
+                <SheetHeader>
+                  <SheetTitle className="text-left">Menu</SheetTitle>
+                </SheetHeader>
+                <div className="mt-8 space-y-6">
+                  {/* Services Section */}
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-slate-900 text-lg">Services</h3>
+                    <div className="space-y-3 pl-4">
+                      <Link
+                        to="/services/strategy-consulting"
+                        className="flex items-center space-x-3 rounded-lg p-3 hover:bg-slate-50 transition-colors"
+                      >
+                        <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                          <Brain className="h-4 w-4 text-white" />
+                        </div>
+                        <span className="text-slate-700">Strategy & Consulting</span>
+                      </Link>
+                      
+                      <Link
+                        to="/services/business-transformation"
+                        className="flex items-center space-x-3 rounded-lg p-3 hover:bg-slate-50 transition-colors"
+                      >
+                        <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg flex items-center justify-center">
+                          <Rocket className="h-4 w-4 text-white" />
+                        </div>
+                        <span className="text-slate-700">Business Transformation</span>
+                      </Link>
+                      
+                      <Link
+                        to="/services/finance-transformation"
+                        className="flex items-center space-x-3 rounded-lg p-3 hover:bg-slate-50 transition-colors"
+                      >
+                        <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
+                          <DollarSign className="h-4 w-4 text-white" />
+                        </div>
+                        <span className="text-slate-700">Finance Transformation</span>
+                      </Link>
+                      
+                      <Link
+                        to="/services/business-process-management"
+                        className="flex items-center space-x-3 rounded-lg p-3 hover:bg-slate-50 transition-colors"
+                      >
+                        <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center">
+                          <Cog className="h-4 w-4 text-white" />
+                        </div>
+                        <span className="text-slate-700">Business Process Management</span>
+                      </Link>
+                      
+                      <Link
+                        to="/services/digital-automation"
+                        className="flex items-center space-x-3 rounded-lg p-3 hover:bg-slate-50 transition-colors"
+                      >
+                        <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                          <Cpu className="h-4 w-4 text-white" />
+                        </div>
+                        <span className="text-slate-700">Digital & Automation</span>
+                      </Link>
+                    </div>
+                  </div>
+                  
+                  {/* Other Navigation Links */}
+                  <div className="space-y-3">
+                    <Button variant="ghost" asChild className="w-full justify-start hover:bg-slate-50">
+                      <Link to="/about">About Us</Link>
+                    </Button>
+                    <Button variant="ghost" asChild className="w-full justify-start hover:bg-slate-50">
+                      <Link to="/contact">Contact Us</Link>
+                    </Button>
+                    <Button variant="ghost" asChild className="w-full justify-start hover:bg-slate-50">
+                      <Link to="/auth">Sign In</Link>
+                    </Button>
+                    <Button variant="default" asChild className="w-full bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-700/90 shadow-md hover:shadow-lg transition-all duration-200">
+                      <Link to="/auth">Job Portal</Link>
+                    </Button>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </div>
