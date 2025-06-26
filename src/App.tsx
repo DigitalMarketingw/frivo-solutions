@@ -27,6 +27,11 @@ import FinanceTransformation from "./pages/services/FinanceTransformation";
 import BusinessProcessManagement from "./pages/services/BusinessProcessManagement";
 import DigitalAutomation from "./pages/services/DigitalAutomation";
 
+// Know Us Pages
+import OurPurpose from "./pages/know-us/OurPurpose";
+import QualitySecurityTrust from "./pages/know-us/QualitySecurityTrust";
+import WorkplaceThatInspires from "./pages/know-us/WorkplaceThatInspires";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -49,6 +54,11 @@ const App = () => (
             <Route path="/services/finance-transformation" element={<FinanceTransformation />} />
             <Route path="/services/business-process-management" element={<BusinessProcessManagement />} />
             <Route path="/services/digital-automation" element={<DigitalAutomation />} />
+            
+            {/* Know Us Pages */}
+            <Route path="/know-us/our-purpose" element={<OurPurpose />} />
+            <Route path="/know-us/quality-security-trust" element={<QualitySecurityTrust />} />
+            <Route path="/know-us/workplace-that-inspires" element={<WorkplaceThatInspires />} />
             
             <Route path="/pricing" element={
               <ProtectedRoute>

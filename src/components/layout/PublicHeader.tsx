@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -16,7 +17,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { Brain, Rocket, DollarSign, Cog, Cpu, Menu } from 'lucide-react';
+import { Brain, Rocket, DollarSign, Cog, Cpu, Menu, Target, Shield, Heart } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 export const PublicHeader: React.FC = () => {
@@ -39,7 +40,7 @@ export const PublicHeader: React.FC = () => {
             </Link>
           </div>
           
-          {/* Desktop Navigation Menu with Services Dropdown */}
+          {/* Desktop Navigation Menu with Services and Know Us Dropdowns */}
           <div className="hidden md:flex items-center space-x-6">
             <NavigationMenu>
               <NavigationMenuList>
@@ -121,6 +122,62 @@ export const PublicHeader: React.FC = () => {
                             <div>
                               <div className="font-semibold text-slate-900 group-hover:text-primary">Digital & Automation</div>
                               <div className="text-sm text-slate-600">AI, ML, RPA, and custom software solutions</div>
+                            </div>
+                          </Link>
+                        </NavigationMenuLink>
+                      </div>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="text-slate-700 hover:text-primary font-medium">
+                    Know Us
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="grid w-[500px] gap-3 p-6">
+                      <div className="grid grid-cols-1 gap-2">
+                        <NavigationMenuLink asChild>
+                          <Link
+                            to="/know-us/our-purpose"
+                            className="group flex items-center space-x-3 rounded-lg p-3 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200"
+                          >
+                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                              <Target className="h-5 w-5 text-white" />
+                            </div>
+                            <div>
+                              <div className="font-semibold text-slate-900 group-hover:text-primary">Our Purpose</div>
+                              <div className="text-sm text-slate-600">Fueling innovation through excellence</div>
+                            </div>
+                          </Link>
+                        </NavigationMenuLink>
+                        
+                        <NavigationMenuLink asChild>
+                          <Link
+                            to="/know-us/quality-security-trust"
+                            className="group flex items-center space-x-3 rounded-lg p-3 hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 transition-all duration-200"
+                          >
+                            <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                              <Shield className="h-5 w-5 text-white" />
+                            </div>
+                            <div>
+                              <div className="font-semibold text-slate-900 group-hover:text-primary">Frivo Quality, Security & Trust</div>
+                              <div className="text-sm text-slate-600">Highest standards of quality and data protection</div>
+                            </div>
+                          </Link>
+                        </NavigationMenuLink>
+                        
+                        <NavigationMenuLink asChild>
+                          <Link
+                            to="/know-us/workplace-that-inspires"
+                            className="group flex items-center space-x-3 rounded-lg p-3 hover:bg-gradient-to-r hover:from-pink-50 hover:to-rose-50 transition-all duration-200"
+                          >
+                            <div className="w-10 h-10 bg-gradient-to-br from-pink-500 to-rose-600 rounded-lg flex items-center justify-center">
+                              <Heart className="h-5 w-5 text-white" />
+                            </div>
+                            <div>
+                              <div className="font-semibold text-slate-900 group-hover:text-primary">A Workplace That Inspires</div>
+                              <div className="text-sm text-slate-600">Where innovation meets culture</div>
                             </div>
                           </Link>
                         </NavigationMenuLink>
@@ -211,6 +268,42 @@ export const PublicHeader: React.FC = () => {
                           <Cpu className="h-4 w-4 text-white" />
                         </div>
                         <span className="text-slate-700">Digital & Automation</span>
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Know Us Section */}
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-slate-900 text-lg">Know Us</h3>
+                    <div className="space-y-3 pl-4">
+                      <Link
+                        to="/know-us/our-purpose"
+                        className="flex items-center space-x-3 rounded-lg p-3 hover:bg-slate-50 transition-colors"
+                      >
+                        <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                          <Target className="h-4 w-4 text-white" />
+                        </div>
+                        <span className="text-slate-700">Our Purpose</span>
+                      </Link>
+                      
+                      <Link
+                        to="/know-us/quality-security-trust"
+                        className="flex items-center space-x-3 rounded-lg p-3 hover:bg-slate-50 transition-colors"
+                      >
+                        <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                          <Shield className="h-4 w-4 text-white" />
+                        </div>
+                        <span className="text-slate-700">Quality, Security & Trust</span>
+                      </Link>
+                      
+                      <Link
+                        to="/know-us/workplace-that-inspires"
+                        className="flex items-center space-x-3 rounded-lg p-3 hover:bg-slate-50 transition-colors"
+                      >
+                        <div className="w-8 h-8 bg-gradient-to-br from-pink-500 to-rose-600 rounded-lg flex items-center justify-center">
+                          <Heart className="h-4 w-4 text-white" />
+                        </div>
+                        <span className="text-slate-700">A Workplace That Inspires</span>
                       </Link>
                     </div>
                   </div>
