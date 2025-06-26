@@ -2,6 +2,7 @@
 import React from 'react';
 import { AppHeader } from './AppHeader';
 import { PublicHeader } from './PublicHeader';
+import { Footer } from './Footer';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface AppLayoutProps {
@@ -19,6 +20,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, className = '' }
       <main className={`${className}`}>
         {children}
       </main>
+      <Footer />
     </div>
   );
 };
