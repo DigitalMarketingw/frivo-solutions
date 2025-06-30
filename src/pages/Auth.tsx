@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 const Auth = () => {
   const { user, signUp, signIn } = useAuth();
+  const [searchParams] = useSearchParams();
+  const returnUrl = searchParams.get('returnUrl');
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     email: '',
@@ -17,7 +19,14 @@ const Auth = () => {
   });
   const [loading, setLoading] = useState(false);
 
-  if (user) {
+  // Redirect authenticated users
+  useEffect(() => {
+    if (user && returnUrl) {
+      window.location.href = returnUrl;
+    }
+  }, [user, returnUrl]);
+
+  if (user && !returnUrl) {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -52,6 +61,11 @@ const Auth = () => {
             className="h-12 w-auto mx-auto mb-4"
           />
           <h1 className="text-2xl font-bold text-primary">Frivo Solutions</h1>
+          {returnUrl && (
+            <p className="text-sm text-slate-600 mt-2">
+              Sign in to continue to job portal
+            </p>
+          )}
         </div>
 
         <Card className="border-0 shadow-2xl">
