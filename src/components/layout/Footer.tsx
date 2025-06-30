@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, Linkedin, Twitter, Facebook } from 'lucide-react';
+import { Mail, Phone, MapPin, Linkedin } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
@@ -25,14 +25,8 @@ export const Footer: React.FC = () => {
               that drive digital transformation and business success.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-gradient-to-r hover:from-purple-600 hover:to-blue-600 transition-all duration-300">
+              <a href="https://www.linkedin.com/company/frivo-solutions/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-gradient-to-r hover:from-purple-600 hover:to-blue-600 transition-all duration-300">
                 <Linkedin className="h-5 w-5" />
-              </a>
-              <a href="#" className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-gradient-to-r hover:from-purple-600 hover:to-blue-600 transition-all duration-300">
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a href="#" className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-gradient-to-r hover:from-purple-600 hover:to-blue-600 transition-all duration-300">
-                <Facebook className="h-5 w-5" />
               </a>
             </div>
           </div>
@@ -95,7 +89,7 @@ export const Footer: React.FC = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-purple-400 flex-shrink-0" />
-                <span className="text-slate-300 text-sm">+1 (555) 123-4567</span>
+                <span className="text-slate-300 text-sm">+1 507 209 0001</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-purple-400 flex-shrink-0" />
