@@ -194,7 +194,7 @@ const Contact = () => {
                       </div>
                       <div>
                         <p className="font-semibold text-slate-800">Visit Us</p>
-                        <p className="text-slate-600 text-sm">New York, NY</p>
+                        <p className="text-slate-600 text-sm">147 W 28th ST RM 10E, NEW YORK, NY 10001</p>
                       </div>
                     </div>
                   </div>
