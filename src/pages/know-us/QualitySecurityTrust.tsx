@@ -6,27 +6,25 @@ import { Shield, Award, Lock, Eye } from 'lucide-react';
 const QualitySecurityTrust: React.FC = () => {
   return (
     <AppLayout>
-      <div className="min-h-screen">
+      <div className="min-h-screen bg-white">
         {/* Hero Section */}
-        <section className="bg-gradient-to-br from-primary/10 via-blue-50 to-purple-50 py-20 px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 bg-gradient-to-br from-primary to-blue-600 rounded-xl flex items-center justify-center">
-                <Shield className="h-8 w-8 text-white" />
-              </div>
+        <section className="py-16 bg-slate-50">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div className="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-6">
+              <Shield className="h-8 w-8 text-primary" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
               Frivo Quality, Security & Trust
             </h1>
-            <p className="text-xl text-slate-600 leading-relaxed">
+            <p className="text-xl text-slate-600">
               Upholding the Highest Standards of Quality and Data Protection
             </p>
           </div>
         </section>
 
         {/* Main Content */}
-        <section className="py-16 px-4">
-          <div className="max-w-4xl mx-auto">
+        <section className="py-16">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="prose prose-lg max-w-none">
               <div className="text-center mb-12">
                 <h2 className="text-2xl font-bold text-slate-900 mb-4">
@@ -50,7 +48,7 @@ const QualitySecurityTrust: React.FC = () => {
                 </p>
               </div>
 
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 mb-12">
+              <div className="bg-slate-50 rounded-xl p-8 mb-12">
                 <h3 className="text-3xl font-bold text-slate-900 mb-6 flex items-center">
                   <Lock className="h-8 w-8 text-primary mr-3" />
                   Information Security Management System (ISMS)
@@ -76,19 +74,15 @@ const QualitySecurityTrust: React.FC = () => {
                 </p>
               </div>
 
-              <div className="bg-slate-50 rounded-2xl p-8">
-                <h3 className="text-3xl font-bold text-slate-900 mb-6 flex items-center">
-                  <Eye className="h-8 w-8 text-primary mr-3" />
-                  Privacy Information Management System (PIMS)
+              <div className="bg-slate-50 rounded-xl p-8">
+                <h3 className="text-2xl font-bold text-slate-900 mb-4 flex items-center">
+                  <Eye className="h-6 w-6 text-primary mr-3" />
+                  Transparency and Trust
                 </h3>
-                <p className="text-slate-700 leading-relaxed mb-6">
-                  As Frivo Solutions expands its footprint across global markets, addressing the evolving landscape of international privacy regulations has become a top priority. To align with diverse legal frameworks and ensure robust data privacy practices, we have successfully implemented the ISO 27701 standard—the global benchmark for Privacy Information Management Systems (PIMS)—validated by an independent audit from the British Standards Institution (BSI).
-                </p>
-                <p className="text-slate-700 leading-relaxed mb-6">
-                  ISO 27701 serves as a natural extension of our ISO 27001-certified Information Security Management System. It outlines the best practices for establishing, implementing, maintaining, and continuously improving privacy controls within an organization. This standard incorporates a comprehensive framework of privacy-specific requirements and control objectives, built on the core principles of data protection and privacy-by-design.
-                </p>
                 <p className="text-slate-700 leading-relaxed">
-                  By integrating ISO 27701 into our governance framework, Frivo Solutions ensures that personal data is managed with the highest level of care, compliance, and transparency—regardless of geographic boundaries. Our commitment to responsible data stewardship allows us to safeguard stakeholder trust while staying fully compliant with global privacy expectations.
+                  We believe that trust is built through transparency. Our clients have full visibility into our processes, 
+                  and we maintain open communication channels throughout every engagement. This commitment to transparency 
+                  ensures that our clients can trust us with their most critical business operations.
                 </p>
               </div>
             </div>

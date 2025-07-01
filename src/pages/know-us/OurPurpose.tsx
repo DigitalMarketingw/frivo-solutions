@@ -6,27 +6,25 @@ import { Target, Globe, Users } from 'lucide-react';
 const OurPurpose: React.FC = () => {
   return (
     <AppLayout>
-      <div className="min-h-screen">
+      <div className="min-h-screen bg-white">
         {/* Hero Section */}
-        <section className="bg-gradient-to-br from-primary/10 via-blue-50 to-purple-50 py-20 px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 bg-gradient-to-br from-primary to-blue-600 rounded-xl flex items-center justify-center">
-                <Target className="h-8 w-8 text-white" />
-              </div>
+        <section className="py-16 bg-slate-50">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div className="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-6">
+              <Target className="h-8 w-8 text-primary" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
               Our Purpose
             </h1>
-            <p className="text-xl text-slate-600 leading-relaxed">
+            <p className="text-xl text-slate-600">
               Fueling Innovation Through Excellence
             </p>
           </div>
         </section>
 
         {/* Main Content */}
-        <section className="py-16 px-4">
-          <div className="max-w-4xl mx-auto">
+        <section className="py-16">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="prose prose-lg max-w-none">
               <div className="mb-12">
                 <h2 className="text-3xl font-bold text-slate-900 mb-6">Our Purpose: Fueling Innovation</h2>
@@ -38,7 +36,7 @@ const OurPurpose: React.FC = () => {
                 </p>
               </div>
 
-              <div className="bg-gradient-to-r from-primary/10 to-blue-50 rounded-2xl p-8 mb-12">
+              <div className="bg-slate-50 rounded-xl p-8 mb-12">
                 <h3 className="text-2xl font-bold text-slate-900 mb-4">WE ARE FRIVO</h3>
                 <p className="text-slate-700 leading-relaxed text-lg">
                   We harness the power of the right talent, streamlined processes, and smart technology to transform and elevate your business operations.
@@ -61,7 +59,7 @@ const OurPurpose: React.FC = () => {
                 </p>
               </div>
 
-              <div className="bg-slate-50 rounded-2xl p-8">
+              <div className="bg-slate-50 rounded-xl p-8">
                 <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center">
                   <Globe className="h-8 w-8 text-primary mr-3" />
                   Frivo Solutions and the United Nations' Sustainable Development Goals (SDGs)
