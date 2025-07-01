@@ -31,7 +31,11 @@ import {
   Phone, 
   MapPin, 
   User, 
-  Briefcase
+  Briefcase, 
+  Upload,
+  CheckCircle,
+  Star,
+  Target
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -79,9 +83,9 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/30 to-indigo-50/40">
       {/* Navigation Header */}
-      <nav className="bg-white border-b border-slate-200 sticky top-0 z-50">
+      <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
@@ -90,15 +94,15 @@ const Contact = () => {
                 alt="Frivo Solutions" 
                 className="h-10 w-auto"
               />
-              <div className="text-xl font-bold text-primary">
+              <div className="text-xl font-bold bg-gradient-to-r from-primary to-blue-700 bg-clip-text text-transparent">
                 Frivo Solutions
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" asChild>
+              <Button variant="ghost" asChild className="hover:bg-primary/5">
                 <Link to="/">Home</Link>
               </Button>
-              <Button asChild className="frivo-button">
+              <Button variant="default" asChild className="bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-700/90 shadow-md hover:shadow-lg transition-all duration-200">
                 <Link to="/auth">Sign In</Link>
               </Button>
             </div>
@@ -107,101 +111,125 @@ const Contact = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="professional-section py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-blue-500/5 to-indigo-500/5"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(147,51,234,0.1),transparent_50%)]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(99,102,241,0.08),transparent_50%)]"></div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center py-20">
             {/* Left Column - Content */}
-            <div className="space-y-6">
-              <h1 className="text-4xl lg:text-5xl font-bold leading-tight text-slate-900">
-                Ready to Launch Your Career?
-              </h1>
+            <div className="space-y-8">
+              <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-purple-100 to-blue-100 border border-purple-200/50 text-purple-700 font-medium text-sm shadow-sm">
+                <Target className="h-4 w-4 mr-2 fill-current" />
+                Get Started Today
+              </div>
               
-              <p className="text-xl text-slate-600 leading-relaxed">
-                Share your professional details with us and let our expert team connect you 
-                with premium career opportunities tailored to your skills and aspirations.
-              </p>
+              <div className="space-y-6">
+                <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
+                  <span className="text-slate-900">Ready to Launch</span>
+                  <br />
+                  <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    Your Career?
+                  </span>
+                </h1>
+                
+                <p className="text-xl text-slate-600 leading-relaxed max-w-xl font-light">
+                  Share your professional details with us and let our expert team connect you 
+                  with premium career opportunities tailored to your skills and aspirations.
+                </p>
+              </div>
               
-              <div className="flex flex-wrap gap-6 pt-4 text-sm text-slate-500">
+              <div className="flex flex-wrap gap-6 pt-6 text-sm text-slate-500">
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <CheckCircle className="h-4 w-4 text-green-500" />
                   <span>Free consultation</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <CheckCircle className="h-4 w-4 text-green-500" />
                   <span>Expert career guidance</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <CheckCircle className="h-4 w-4 text-green-500" />
                   <span>24/7 support</span>
                 </div>
               </div>
             </div>
             
             {/* Right Column - Contact Info */}
-            <Card className="frivo-card">
-              <CardHeader>
-                <CardTitle className="text-2xl text-slate-900 flex items-center">
-                  <Mail className="h-6 w-6 mr-3 text-primary" />
-                  Get In Touch
-                </CardTitle>
-                <CardDescription className="text-slate-600 text-lg">
-                  Connect with our career experts
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center space-x-4 p-4 bg-slate-50 rounded-lg">
-                  <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-                    <Mail className="h-6 w-6 text-white" />
+            <div className="relative">
+              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-2xl rounded-3xl overflow-hidden">
+                <CardHeader className="bg-gradient-to-br from-purple-50 to-blue-50 p-8">
+                  <CardTitle className="text-2xl text-slate-900 flex items-center">
+                    <Mail className="h-6 w-6 mr-3 text-primary" />
+                    Get In Touch
+                  </CardTitle>
+                  <CardDescription className="text-slate-600 text-lg">
+                    Connect with our career experts
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-8 space-y-6">
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl">
+                      <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-600 rounded-xl flex items-center justify-center">
+                        <Mail className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-slate-800">Email Us</p>
+                        <p className="text-slate-600 text-sm">careers@frivosolutions.com</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl">
+                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                        <Phone className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-slate-800">Call Us</p>
+                        <p className="text-slate-600 text-sm">+1 507 209 0001</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl">
+                      <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                        <MapPin className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-slate-800">Visit Us</p>
+                        <p className="text-slate-600 text-sm">147 W 28th ST RM 10E, NEW YORK, NY 10001</p>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-semibold text-slate-800">Email Us</p>
-                    <p className="text-slate-600 text-sm">careers@frivosolutions.com</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-4 p-4 bg-slate-50 rounded-lg">
-                  <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-                    <Phone className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-slate-800">Call Us</p>
-                    <p className="text-slate-600 text-sm">+1 507 209 0001</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-4 p-4 bg-slate-50 rounded-lg">
-                  <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-                    <MapPin className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-slate-800">Visit Us</p>
-                    <p className="text-slate-600 text-sm">147 W 28th ST RM 10E, NEW YORK, NY 10001</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Contact Form Section */}
-      <section className="py-20 bg-slate-50">
+      <section className="py-32 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">
-              Tell Us About Your Goals
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-purple-100 to-blue-100 border border-purple-200/50 text-purple-700 font-semibold text-sm shadow-sm mb-8">
+              <User className="h-4 w-4 mr-2" />
+              Career Application
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">
+              Tell Us About 
+              <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent"> Your Goals</span>
             </h2>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-light">
               Fill out this form to help us understand your career aspirations and connect you with the right opportunities.
             </p>
           </div>
 
-          <Card className="frivo-card">
-            <CardContent className="p-8">
+          <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-2xl rounded-3xl overflow-hidden">
+            <CardContent className="p-12">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                   {/* Personal Information Section */}
                   <div className="space-y-6">
-                    <div className="flex items-center space-x-3 mb-6 pb-4 border-b border-slate-200">
-                      <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                    <div className="flex items-center space-x-3 mb-6">
+                      <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center">
                         <User className="h-4 w-4 text-white" />
                       </div>
                       <h3 className="text-xl font-semibold text-slate-900">Personal Information</h3>
@@ -253,9 +281,9 @@ const Contact = () => {
                   </div>
 
                   {/* Professional Details Section */}
-                  <div className="space-y-6">
-                    <div className="flex items-center space-x-3 mb-6 pb-4 border-b border-slate-200">
-                      <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                  <div className="space-y-6 pt-8 border-t border-slate-200">
+                    <div className="flex items-center space-x-3 mb-6">
+                      <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
                         <Briefcase className="h-4 w-4 text-white" />
                       </div>
                       <h3 className="text-xl font-semibold text-slate-900">Professional Details</h3>
@@ -301,7 +329,17 @@ const Contact = () => {
                         )}
                       />
                     </div>
+                  </div>
 
+                  {/* Job Preferences Section */}
+                  <div className="space-y-6 pt-8 border-t border-slate-200">
+                    <div className="flex items-center space-x-3 mb-6">
+                      <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <Target className="h-4 w-4 text-white" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-slate-900">Job Preferences</h3>
+                    </div>
+                    
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <FormField
                         control={form.control}
@@ -383,7 +421,7 @@ const Contact = () => {
                   </div>
 
                   {/* Additional Information */}
-                  <div className="space-y-6">
+                  <div className="space-y-6 pt-8 border-t border-slate-200">
                     <FormField
                       control={form.control}
                       name="message"
@@ -404,7 +442,7 @@ const Contact = () => {
                   </div>
 
                   {/* Terms and Submit */}
-                  <div className="space-y-6 pt-6 border-t border-slate-200">
+                  <div className="space-y-6 pt-8 border-t border-slate-200">
                     <FormField
                       control={form.control}
                       name="agreeToTerms"
@@ -429,7 +467,7 @@ const Contact = () => {
                     <Button
                       type="submit"
                       size="lg"
-                      className="w-full frivo-button"
+                      className="w-full text-lg px-8 py-6 h-auto bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-700/90 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
                     >
                       Submit Application
                       <ArrowRight className="ml-2 h-5 w-5" />
