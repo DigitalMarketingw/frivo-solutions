@@ -19,7 +19,6 @@ const Auth = () => {
   });
   const [loading, setLoading] = useState(false);
 
-  // Redirect authenticated users
   useEffect(() => {
     if (user && returnUrl) {
       window.location.href = returnUrl;
@@ -51,7 +50,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-md">
         {/* Logo Header */}
         <div className="text-center mb-8">
@@ -68,12 +67,12 @@ const Auth = () => {
           )}
         </div>
 
-        <Card className="border-0 shadow-2xl">
+        <Card className="frivo-card">
           <CardHeader className="text-center pb-6">
-            <CardTitle className="text-3xl font-bold text-primary">
+            <CardTitle className="text-2xl font-bold text-slate-900">
               {isLogin ? 'Welcome Back' : 'Join Frivo Solutions'}
             </CardTitle>
-            <CardDescription className="text-lg">
+            <CardDescription className="text-slate-600">
               {isLogin 
                 ? 'Sign in to access your career dashboard' 
                 : 'Create your account and start your career journey'
@@ -81,10 +80,10 @@ const Auth = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
               {!isLogin && (
                 <div className="space-y-2">
-                  <Label htmlFor="fullName" className="text-primary font-medium">Full Name</Label>
+                  <Label htmlFor="fullName" className="text-slate-700">Full Name</Label>
                   <Input
                     id="fullName"
                     name="fullName"
@@ -92,14 +91,13 @@ const Auth = () => {
                     placeholder="Enter your full name"
                     value={formData.fullName}
                     onChange={handleInputChange}
-                    className="h-12 border-slate-300 focus:border-primary"
                     required
                   />
                 </div>
               )}
               
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-primary font-medium">Email Address</Label>
+                <Label htmlFor="email" className="text-slate-700">Email Address</Label>
                 <Input
                   id="email"
                   name="email"
@@ -107,13 +105,12 @@ const Auth = () => {
                   placeholder="Enter your email address"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="h-12 border-slate-300 focus:border-primary"
                   required
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-primary font-medium">Password</Label>
+                <Label htmlFor="password" className="text-slate-700">Password</Label>
                 <Input
                   id="password"
                   name="password"
@@ -121,27 +118,26 @@ const Auth = () => {
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="h-12 border-slate-300 focus:border-primary"
                   required
                 />
               </div>
               
               <Button 
                 type="submit" 
-                className="w-full h-12 text-lg font-medium" 
+                className="w-full frivo-button" 
                 disabled={loading}
               >
                 {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
               </Button>
             </form>
             
-            <div className="text-center pt-4 border-t border-slate-200">
-              <p className="text-muted-foreground">
+            <div className="text-center pt-4 border-t">
+              <p className="text-slate-600">
                 {isLogin ? "Don't have an account? " : "Already have an account? "}
                 <button
                   type="button"
                   onClick={() => setIsLogin(!isLogin)}
-                  className="text-primary hover:text-accent font-medium hover:underline transition-colors"
+                  className="text-primary hover:underline font-medium"
                 >
                   {isLogin ? 'Sign up here' : 'Sign in here'}
                 </button>
@@ -154,7 +150,7 @@ const Auth = () => {
         <div className="text-center mt-6">
           <a 
             href="/" 
-            className="text-muted-foreground hover:text-primary transition-colors"
+            className="text-slate-600 hover:text-primary transition-colors"
           >
             ← Back to Home
           </a>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -12,7 +11,7 @@ import { PaymentGate } from '@/components/PaymentGate';
 import { usePaymentStatus } from '@/hooks/usePaymentStatus';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Search, MapPin, Building, Calendar, Briefcase, DollarSign, Lock, Eye } from 'lucide-react';
+import { Search, MapPin, Building, Calendar, Briefcase, Lock, Eye } from 'lucide-react';
 import { JobDetailModal } from '@/components/jobs/JobDetailModal';
 
 const Jobs = () => {
@@ -152,59 +151,60 @@ const Jobs = () => {
     <AppLayout>
       <div className="max-w-7xl mx-auto p-6">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent mb-4">
+          <h1 className="text-4xl font-bold text-slate-900 mb-4">
             Available Jobs
           </h1>
           <p className="text-xl text-slate-600">
             Find your next career opportunity from our curated job listings
             {!user && (
-              <span className="block text-sm text-amber-600 mt-2">
-                📋 Sign in to view full job details and apply for positions
+              <span className="block text-sm text-amber-700 mt-2">
+                Sign in to view full job details and apply for positions
               </span>
             )}
           </p>
         </div>
 
         {/* Search and Filter Section */}
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-200/50 p-6 mb-8">
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-5 w-5" />
-              <Input
-                placeholder="Search jobs, companies, or locations..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 h-12 border-slate-300 focus:border-primary focus:ring-primary"
-              />
-            </div>
-            
-            <Select value={selectedField} onValueChange={setSelectedField}>
-              <SelectTrigger className="h-12 border-slate-300 focus:border-primary focus:ring-primary">
-                <SelectValue placeholder="Select field" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Fields</SelectItem>
-                <SelectItem value="technology">Technology</SelectItem>
-                <SelectItem value="healthcare">Healthcare</SelectItem>
-                <SelectItem value="finance">Finance</SelectItem>
-                <SelectItem value="education">Education</SelectItem>
-                <SelectItem value="marketing">Marketing</SelectItem>
-                <SelectItem value="sales">Sales</SelectItem>
-                <SelectItem value="design">Design</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
-              </SelectContent>
-            </Select>
+        <Card className="frivo-card mb-8">
+          <CardContent className="p-6">
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-5 w-5" />
+                <Input
+                  placeholder="Search jobs, companies, or locations..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              
+              <Select value={selectedField} onValueChange={setSelectedField}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select field" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Fields</SelectItem>
+                  <SelectItem value="technology">Technology</SelectItem>
+                  <SelectItem value="healthcare">Healthcare</SelectItem>
+                  <SelectItem value="finance">Finance</SelectItem>
+                  <SelectItem value="education">Education</SelectItem>
+                  <SelectItem value="marketing">Marketing</SelectItem>
+                  <SelectItem value="sales">Sales</SelectItem>
+                  <SelectItem value="design">Design</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
 
-            <div className="flex items-center justify-center gap-2 text-sm text-slate-600 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg px-4 border border-green-200/50">
-              <DollarSign className="h-4 w-4 text-green-600" />
-              <span className="font-medium">
-                {user ? (shouldCheckPayment && paymentStatus?.has_paid ? 'Unlimited Applications' : 'Payment Required') : 'Sign In Required'}
-              </span>
+              <div className="flex items-center justify-center gap-2 text-sm text-slate-600 bg-slate-50 rounded-lg px-4 border">
+                <span className="font-medium">
+                  {user ? (shouldCheckPayment && paymentStatus?.has_paid ? 'Unlimited Applications' : 'Payment Required') : 'Sign In Required'}
+                </span>
+              </div>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        {/* Jobs Grid */}
+        {/* Jobs List */}
         {isLoading ? (
           <div className="flex justify-center items-center p-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
@@ -212,7 +212,7 @@ const Jobs = () => {
         ) : (
           <div className="grid gap-6">
             {filteredJobs?.map((job) => (
-              <Card key={job.id} className="bg-white/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+              <Card key={job.id} className="frivo-card hover:shadow-md transition-shadow">
                 <CardHeader className="pb-4">
                   <div className="flex justify-between items-start">
                     <div className="space-y-2">
@@ -231,7 +231,7 @@ const Jobs = () => {
                           <span>{new Date(job.created_at).toLocaleDateString()}</span>
                         </div>
                       </div>
-                      <Badge variant="outline" className="bg-gradient-to-r from-primary/10 to-blue-500/10 text-primary border-primary/20">
+                      <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20">
                         {job.field}
                       </Badge>
                     </div>
@@ -248,7 +248,7 @@ const Jobs = () => {
                           {truncateText(job.description, 120)}
                         </p>
                         {job.description.length > 120 && (
-                          <div className="flex items-center gap-2 mt-2 text-sm text-amber-600">
+                          <div className="flex items-center gap-2 mt-2 text-sm text-amber-700">
                             <Lock className="h-3 w-3" />
                             <span>Sign in to view full description</span>
                           </div>
@@ -259,7 +259,7 @@ const Jobs = () => {
                   
                   {user && job.requirements && Array.isArray(job.requirements) && job.requirements.length > 0 && (
                     <div>
-                      <h4 className="font-semibold text-slate-900 mb-2">Requirements:</h4>
+                      <h4 className="font-medium text-slate-900 mb-2">Requirements:</h4>
                       <div className="flex flex-wrap gap-2">
                         {job.requirements.slice(0, 3).map((req: string, index: number) => (
                           <Badge key={index} variant="secondary" className="text-xs">
@@ -285,7 +285,7 @@ const Jobs = () => {
                     </div>
                   )}
 
-                  <div className="flex justify-between items-center pt-4 border-t border-slate-200">
+                  <div className="flex justify-between items-center pt-4 border-t">
                     <div className="flex items-center gap-2">
                       <Briefcase className="h-4 w-4 text-slate-500" />
                       <span className="text-sm text-slate-600">Full-time position</span>
@@ -297,14 +297,13 @@ const Jobs = () => {
                           <Button
                             variant="outline"
                             onClick={() => handleJobClick(job.id)}
-                            className="border-primary text-primary hover:bg-primary/10"
                           >
                             <Eye className="h-4 w-4 mr-2" />
                             View Details
                           </Button>
                           <Button
                             onClick={() => handleApplyClick(job.id)}
-                            className="bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-700/90 shadow-lg hover:shadow-xl transition-all duration-300"
+                            className="frivo-button"
                           >
                             {shouldCheckPayment && paymentStatus?.has_paid ? 'Apply Now' : 'Apply Now ($499)'}
                           </Button>
@@ -312,7 +311,7 @@ const Jobs = () => {
                       ) : (
                         <Button
                           onClick={() => handleJobClick(job.id)}
-                          className="bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-700/90 shadow-lg hover:shadow-xl transition-all duration-300"
+                          className="frivo-button"
                         >
                           <Lock className="h-4 w-4 mr-2" />
                           Sign In to Apply
@@ -325,10 +324,10 @@ const Jobs = () => {
             ))}
             
             {filteredJobs?.length === 0 && (
-              <Card className="bg-gradient-to-br from-slate-50 to-blue-50/30 border-0 shadow-xl">
+              <Card className="frivo-card">
                 <CardContent className="p-12 text-center">
-                  <div className="w-20 h-20 bg-gradient-to-br from-primary/10 to-blue-500/10 rounded-3xl flex items-center justify-center mx-auto mb-8">
-                    <Briefcase className="h-10 w-10 text-primary" />
+                  <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Briefcase className="h-10 w-10 text-slate-400" />
                   </div>
                   <h3 className="text-2xl font-bold text-slate-900 mb-4">No Jobs Found</h3>
                   <p className="text-slate-600 text-lg">
