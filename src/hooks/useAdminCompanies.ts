@@ -19,7 +19,7 @@ interface CreateCompanyData {
 interface CompanyCreationResult {
   company_id: string;
   company_uuid: string;
-  company_name: string;
+  created_company_name: string;
   admin_email: string;
   admin_full_name: string;
 }
@@ -55,17 +55,17 @@ export const useAdminCompanies = () => {
   const createCompany = useCallback(async (companyData: CreateCompanyData): Promise<CompanyCreationResult | null> => {
     setCreating(true);
     try {
-      // Call the function with parameters in the correct order: required first, then optional
-      const { data, error } = await (supabase.rpc as any)('admin_create_company', {
-        company_name: companyData.company_name,
-        admin_full_name: companyData.admin_full_name,
-        admin_email: companyData.admin_email,
-        admin_password: companyData.admin_password,
-        company_email: companyData.company_email,
-        company_phone: companyData.company_phone,
-        company_address: companyData.company_address,
-        company_website: companyData.company_website,
-        company_description: companyData.company_description,
+      // Call the function with corrected parameter names
+      const { data, error } = await supabase.rpc('admin_create_company', {
+        p_company_name: companyData.company_name,
+        p_admin_full_name: companyData.admin_full_name,
+        p_admin_email: companyData.admin_email,
+        p_admin_password: companyData.admin_password,
+        p_company_email: companyData.company_email,
+        p_company_phone: companyData.company_phone,
+        p_company_address: companyData.company_address,
+        p_company_website: companyData.company_website,
+        p_company_description: companyData.company_description,
       });
 
       if (error) throw error;

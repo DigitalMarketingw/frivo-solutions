@@ -485,6 +485,26 @@ export type Database = {
       }
     }
     Functions: {
+      admin_create_company: {
+        Args: {
+          p_company_name: string
+          p_admin_full_name: string
+          p_admin_email: string
+          p_admin_password: string
+          p_company_email?: string
+          p_company_phone?: string
+          p_company_address?: string
+          p_company_website?: string
+          p_company_description?: string
+        }
+        Returns: {
+          company_id: string
+          company_uuid: string
+          created_company_name: string
+          admin_email: string
+          admin_full_name: string
+        }[]
+      }
       create_job: {
         Args: {
           job_title: string

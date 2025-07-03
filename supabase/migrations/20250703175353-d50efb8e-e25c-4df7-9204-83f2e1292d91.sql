@@ -1,20 +1,23 @@
 
--- Create the admin_create_company function with correct parameter order
+-- Drop the existing function if it exists to start clean
+DROP FUNCTION IF EXISTS public.admin_create_company;
+
+-- Create the admin_create_company function with fixed parameter names
 CREATE OR REPLACE FUNCTION public.admin_create_company(
-  company_name TEXT,
-  admin_full_name TEXT,
-  admin_email TEXT,
-  admin_password TEXT,
-  company_email TEXT DEFAULT NULL,
-  company_phone TEXT DEFAULT NULL,
-  company_address TEXT DEFAULT NULL,
-  company_website TEXT DEFAULT NULL,
-  company_description TEXT DEFAULT NULL
+  p_company_name TEXT,
+  p_admin_full_name TEXT,
+  p_admin_email TEXT,
+  p_admin_password TEXT,
+  p_company_email TEXT DEFAULT NULL,
+  p_company_phone TEXT DEFAULT NULL,
+  p_company_address TEXT DEFAULT NULL,
+  p_company_website TEXT DEFAULT NULL,
+  p_company_description TEXT DEFAULT NULL
 )
 RETURNS TABLE(
   company_id TEXT,
   company_uuid UUID,
-  company_name TEXT,
+  created_company_name TEXT,
   admin_email TEXT,
   admin_full_name TEXT
 )
@@ -52,21 +55,21 @@ BEGIN
     website,
     description
   ) VALUES (
-    company_name,
+    p_company_name,
     generated_company_id,
-    company_email,
-    company_phone,
-    company_address,
-    company_website,
-    company_description
+    p_company_email,
+    p_company_phone,
+    p_company_address,
+    p_company_website,
+    p_company_description
   ) RETURNING id INTO new_company_uuid;
 
   -- Return the company details
   RETURN QUERY SELECT 
     generated_company_id as company_id,
     new_company_uuid as company_uuid,
-    company_name,
-    admin_email,
-    admin_full_name;
+    p_company_name as created_company_name,
+    p_admin_email as admin_email,
+    p_admin_full_name as admin_full_name;
 END;
 $$;
