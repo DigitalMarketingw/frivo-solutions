@@ -364,6 +364,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          company_id: string | null
           created_at: string | null
           employment_history: Json | null
           full_name: string | null
@@ -375,6 +376,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          company_id?: string | null
           created_at?: string | null
           employment_history?: Json | null
           full_name?: string | null
@@ -386,6 +388,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          company_id?: string | null
           created_at?: string | null
           employment_history?: Json | null
           full_name?: string | null
@@ -396,7 +399,15 @@ export type Database = {
           skills?: Json | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_payments: {
         Row: {
