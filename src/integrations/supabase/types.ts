@@ -134,6 +134,45 @@ export type Database = {
           },
         ]
       }
+      companies: {
+        Row: {
+          address: string | null
+          company_id: string
+          company_name: string
+          created_at: string | null
+          description: string | null
+          email: string | null
+          id: string
+          phone: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          company_id: string
+          company_name: string
+          created_at?: string | null
+          description?: string | null
+          email?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          company_id?: string
+          company_name?: string
+          created_at?: string | null
+          description?: string | null
+          email?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
       enrollments: {
         Row: {
           enrolled_at: string | null
@@ -513,7 +552,7 @@ export type Database = {
       enrollment_status: "pending" | "enrolled" | "cancelled"
       job_status: "open" | "closed" | "under_review" | "filled"
       payment_status: "pending" | "completed" | "failed" | "refunded"
-      user_role: "user" | "admin"
+      user_role: "user" | "admin" | "company"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -640,7 +679,7 @@ export const Constants = {
       enrollment_status: ["pending", "enrolled", "cancelled"],
       job_status: ["open", "closed", "under_review", "filled"],
       payment_status: ["pending", "completed", "failed", "refunded"],
-      user_role: ["user", "admin"],
+      user_role: ["user", "admin", "company"],
     },
   },
 } as const
