@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -16,6 +15,16 @@ interface CreateCompanyData {
   admin_password: string;
 }
 
+interface UpdateCompanyData {
+  company_name: string;
+  company_email: string;
+  company_phone?: string;
+  company_address?: string;
+  company_website?: string;
+  company_description?: string;
+  admin_password?: string; // Optional password update
+}
+
 interface CompanyCreationResult {
   company_id: string;
   company_uuid: string;
@@ -28,6 +37,7 @@ export const useAdminCompanies = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [updating, setUpdating] = useState(false);
   const { toast } = useToast();
 
   const fetchCompanies = useCallback(async () => {
@@ -124,6 +134,75 @@ export const useAdminCompanies = () => {
     }
   }, [toast, fetchCompanies]);
 
+  const updateCompany = useCallback(async (companyId: string, companyData: UpdateCompanyData): Promise<boolean> => {
+    setUpdating(true);
+    try {
+      // Update company details
+      const { error: companyError } = await supabase
+        .from('companies')
+        .update({
+          company_name: companyData.company_name,
+          email: companyData.company_email,
+          phone: companyData.company_phone,
+          address: companyData.company_address,
+          website: companyData.company_website,
+          description: companyData.company_description,
+        })
+        .eq('id', companyId);
+
+      if (companyError) throw companyError;
+
+      // Update admin password if provided
+      if (companyData.admin_password) {
+        // Get the admin user for this company
+        const { data: profiles, error: profileError } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('company_id', companyId)
+          .eq('role', 'company')
+          .single();
+
+        if (profileError) {
+          console.error('Could not find admin user for company:', profileError);
+        } else if (profiles) {
+          // Update password using admin API
+          const { error: passwordError } = await supabase.auth.admin.updateUserById(
+            profiles.id,
+            { password: companyData.admin_password }
+          );
+
+          if (passwordError) {
+            console.error('Password update error:', passwordError);
+            toast({
+              title: "Warning",
+              description: "Company updated but password change failed",
+              variant: "destructive",
+            });
+          }
+        }
+      }
+
+      toast({
+        title: "Success!",
+        description: "Company updated successfully",
+      });
+
+      // Refresh companies list
+      await fetchCompanies();
+      return true;
+    } catch (error: any) {
+      console.error('Error updating company:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update company",
+        variant: "destructive",
+      });
+      return false;
+    } finally {
+      setUpdating(false);
+    }
+  }, [toast, fetchCompanies]);
+
   useEffect(() => {
     fetchCompanies();
   }, [fetchCompanies]);
@@ -132,7 +211,9 @@ export const useAdminCompanies = () => {
     companies,
     loading,
     creating,
+    updating,
     fetchCompanies,
     createCompany,
+    updateCompany,
   };
 };

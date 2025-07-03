@@ -4,15 +4,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Building2, Plus, Search, Mail, Phone, Globe, MapPin } from 'lucide-react';
+import { Building2, Plus, Search, Mail, Phone, Globe, MapPin, Edit3 } from 'lucide-react';
 import { useAdminCompanies } from '@/hooks/useAdminCompanies';
 import { CompanyCreationModal } from './CompanyCreationModal';
+import { CompanyEditModal } from './CompanyEditModal';
 import { Company } from '@/types/company';
 
 export const AdminCompanyManagement: React.FC = () => {
-  const { companies, loading, creating, createCompany } = useAdminCompanies();
+  const { companies, loading, creating, updating, createCompany, updateCompany } = useAdminCompanies();
   const [searchTerm, setSearchTerm] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
 
   const filteredCompanies = companies.filter(company =>
     company.company_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -23,8 +26,22 @@ export const AdminCompanyManagement: React.FC = () => {
   const handleCreateCompany = async (data: any) => {
     const result = await createCompany(data);
     if (result) {
-      setIsModalOpen(false);
+      setIsCreateModalOpen(false);
     }
+  };
+
+  const handleEditCompany = (company: Company) => {
+    setSelectedCompany(company);
+    setIsEditModalOpen(true);
+  };
+
+  const handleUpdateCompany = async (companyId: string, data: any) => {
+    const success = await updateCompany(companyId, data);
+    if (success) {
+      setIsEditModalOpen(false);
+      setSelectedCompany(null);
+    }
+    return success;
   };
 
   if (loading) {
@@ -46,7 +63,7 @@ export const AdminCompanyManagement: React.FC = () => {
             Create and manage company accounts and their admin users
           </p>
         </div>
-        <Button onClick={() => setIsModalOpen(true)} className="flex items-center space-x-2">
+        <Button onClick={() => setIsCreateModalOpen(true)} className="flex items-center space-x-2">
           <Plus className="h-4 w-4" />
           <span>Create Company</span>
         </Button>
@@ -72,7 +89,7 @@ export const AdminCompanyManagement: React.FC = () => {
               {searchTerm ? 'No companies match your search criteria.' : 'No companies have been created yet.'}
             </p>
             {!searchTerm && (
-              <Button onClick={() => setIsModalOpen(true)}>
+              <Button onClick={() => setIsCreateModalOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
                 Create First Company
               </Button>
@@ -82,17 +99,29 @@ export const AdminCompanyManagement: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCompanies.map((company) => (
-            <CompanyCard key={company.id} company={company} />
+            <CompanyCard key={company.id} company={company} onEdit={handleEditCompany} />
           ))}
         </div>
       )}
 
       {/* Company Creation Modal */}
       <CompanyCreationModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
         onCreateCompany={handleCreateCompany}
         isCreating={creating}
+      />
+
+      {/* Company Edit Modal */}
+      <CompanyEditModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setSelectedCompany(null);
+        }}
+        company={selectedCompany}
+        onUpdateCompany={handleUpdateCompany}
+        isUpdating={updating}
       />
     </div>
   );
@@ -100,9 +129,10 @@ export const AdminCompanyManagement: React.FC = () => {
 
 interface CompanyCardProps {
   company: Company;
+  onEdit: (company: Company) => void;
 }
 
-const CompanyCard: React.FC<CompanyCardProps> = ({ company }) => {
+const CompanyCard: React.FC<CompanyCardProps> = ({ company, onEdit }) => {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -126,6 +156,14 @@ const CompanyCard: React.FC<CompanyCardProps> = ({ company }) => {
               </Badge>
             </div>
           </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onEdit(company)}
+            className="h-8 w-8 p-0"
+          >
+            <Edit3 className="h-4 w-4" />
+          </Button>
         </div>
       </CardHeader>
       
