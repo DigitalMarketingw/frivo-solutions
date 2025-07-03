@@ -74,6 +74,17 @@ export const JobDetailsPanel: React.FC<JobDetailsPanelProps> = ({
 
   if (!job) return null;
 
+  // Safely handle requirements as Json type
+  const getRequirements = () => {
+    if (!job.requirements) return [];
+    if (Array.isArray(job.requirements)) {
+      return job.requirements.filter(req => typeof req === 'string') as string[];
+    }
+    return [];
+  };
+
+  const requirements = getRequirements();
+
   return (
     <div className="h-full flex flex-col bg-white rounded-lg border shadow-sm">
       <CardHeader className="border-b bg-slate-50/50">
@@ -117,11 +128,11 @@ export const JobDetailsPanel: React.FC<JobDetailsPanelProps> = ({
           </div>
 
           {/* Requirements */}
-          {job.requirements && Array.isArray(job.requirements) && job.requirements.length > 0 && (
+          {requirements.length > 0 && (
             <div>
               <h3 className="text-xl font-semibold text-slate-900 mb-3">Requirements</h3>
               <div className="grid gap-2">
-                {job.requirements.map((req: string, index: number) => (
+                {requirements.map((req, index) => (
                   <div key={index} className="flex items-start gap-2">
                     <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
                     <span className="text-slate-700">{req}</span>
@@ -136,7 +147,7 @@ export const JobDetailsPanel: React.FC<JobDetailsPanelProps> = ({
             <div>
               <h3 className="text-xl font-semibold text-slate-900 mb-3">Skills & Technologies</h3>
               <div className="flex flex-wrap gap-2">
-                {job.tags.map((tag: string, index: number) => (
+                {job.tags.map((tag, index) => (
                   <Badge key={index} variant="secondary" className="text-sm">
                     {tag}
                   </Badge>

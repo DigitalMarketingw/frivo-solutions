@@ -3,6 +3,7 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Building, MapPin, Calendar, CheckCircle } from 'lucide-react';
+import { Json } from '@/integrations/supabase/types';
 
 interface Job {
   id: string;
@@ -12,7 +13,7 @@ interface Job {
   field: string;
   created_at: string;
   description: string;
-  requirements?: string[];
+  requirements?: Json;
   tags?: string[];
 }
 
