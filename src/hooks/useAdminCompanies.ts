@@ -33,7 +33,7 @@ export const useAdminCompanies = () => {
   const fetchCompanies = useCallback(async () => {
     setLoading(true);
     try {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('companies')
         .select('*')
         .order('created_at', { ascending: false });
@@ -56,7 +56,7 @@ export const useAdminCompanies = () => {
     setCreating(true);
     try {
       // Call the function with parameters in the correct order: required first, then optional
-      const { data, error } = await supabase.rpc('admin_create_company' as any, {
+      const { data, error } = await supabase.rpc('admin_create_company', {
         company_name: companyData.company_name,
         admin_full_name: companyData.admin_full_name,
         admin_email: companyData.admin_email,
@@ -88,13 +88,13 @@ export const useAdminCompanies = () => {
 
       // If auth user was created, update their profile
       if (authData.user && !authError) {
-        const { error: profileError } = await (supabase as any)
+        const { error: profileError } = await supabase
           .from('profiles')
           .upsert({
             id: authData.user.id,
             full_name: companyData.admin_full_name,
             role: 'company',
-            company_id: data.company_uuid,
+            company_id: data[0].company_uuid,
           });
 
         if (profileError) {
@@ -104,13 +104,13 @@ export const useAdminCompanies = () => {
 
       toast({
         title: "Success!",
-        description: `Company created successfully! Company ID: ${data.company_id}`,
+        description: `Company created successfully! Company ID: ${data[0].company_id}`,
       });
 
       // Refresh companies list
       await fetchCompanies();
 
-      return data as CompanyCreationResult;
+      return data[0] as CompanyCreationResult;
     } catch (error: any) {
       console.error('Error creating company:', error);
       toast({
