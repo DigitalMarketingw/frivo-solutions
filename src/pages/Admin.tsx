@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { AdminStatsCard } from '@/components/admin/AdminStatsCard';
@@ -108,73 +107,73 @@ const Admin = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto space-y-8">
           {/* Enhanced Admin Header */}
-          <div className="flex justify-between items-start">
-            <div className="space-y-6">
+          <div className="flex flex-col lg:flex-row justify-between items-start gap-6">
+            <div className="space-y-6 flex-1">
               <div className="flex items-center space-x-4">
                 <div className="p-4 bg-gradient-to-br from-primary/10 to-blue-500/10 rounded-2xl border border-primary/20">
                   <Crown className="h-10 w-10 text-primary" />
                 </div>
                 <div>
-                  <div className="flex items-center space-x-3 mb-2">
-                    <h1 className="text-5xl font-bold bg-gradient-to-r from-slate-900 via-primary to-blue-700 bg-clip-text text-transparent">
+                  <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3 mb-2">
+                    <h1 className="text-3xl sm:text-5xl font-bold bg-gradient-to-r from-slate-900 via-primary to-blue-700 bg-clip-text text-transparent">
                       Admin Dashboard
                     </h1>
-                    <Badge className="bg-gradient-to-r from-primary to-blue-600 text-white border-0 shadow-lg">
+                    <Badge className="bg-gradient-to-r from-primary to-blue-600 text-white border-0 shadow-lg w-fit">
                       <Sparkles className="h-3 w-3 mr-1" />
                       Premium
                     </Badge>
                   </div>
-                  <p className="text-xl text-slate-600">Complete platform management and analytics suite</p>
+                  <p className="text-lg sm:text-xl text-slate-600">Complete platform management and analytics suite</p>
                 </div>
               </div>
               
               {/* Enhanced Quick Stats Summary */}
               {stats && (
-                <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border-0">
-                  <div className="flex items-center space-x-8 text-sm">
-                    <div className="flex items-center space-x-3">
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-4 sm:p-6 border-0">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-8">
+                    <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3 text-center sm:text-left">
                       <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
                         <Users className="h-4 w-4 text-white" />
                       </div>
                       <div>
-                        <p className="text-2xl font-bold text-slate-900">{stats.total_users}</p>
-                        <p className="text-slate-600">Total Users</p>
+                        <p className="text-xl sm:text-2xl font-bold text-slate-900">{stats.total_users}</p>
+                        <p className="text-xs sm:text-sm text-slate-600">Total Users</p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-3">
+                    <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3 text-center sm:text-left">
                       <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center">
                         <Briefcase className="h-4 w-4 text-white" />
                       </div>
                       <div>
-                        <p className="text-2xl font-bold text-slate-900">{stats.total_jobs}</p>
-                        <p className="text-slate-600">Jobs Posted</p>
+                        <p className="text-xl sm:text-2xl font-bold text-slate-900">{stats.total_jobs}</p>
+                        <p className="text-xs sm:text-sm text-slate-600">Jobs Posted</p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-3">
+                    <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3 text-center sm:text-left">
                       <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
                         <FileText className="h-4 w-4 text-white" />
                       </div>
                       <div>
-                        <p className="text-2xl font-bold text-slate-900">{stats.total_applications}</p>
-                        <p className="text-slate-600">Applications</p>
+                        <p className="text-xl sm:text-2xl font-bold text-slate-900">{stats.total_applications}</p>
+                        <p className="text-xs sm:text-sm text-slate-600">Applications</p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-3">
+                    <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3 text-center sm:text-left">
                       <div className="w-8 h-8 bg-gradient-to-r from-amber-500 to-amber-600 rounded-lg flex items-center justify-center">
                         <TrendingUp className="h-4 w-4 text-white" />
                       </div>
                       <div>
-                        <p className="text-2xl font-bold text-slate-900">{stats.total_enrollments}</p>
-                        <p className="text-slate-600">Enrollments</p>
+                        <p className="text-xl sm:text-2xl font-bold text-slate-900">{stats.total_enrollments}</p>
+                        <p className="text-xs sm:text-sm text-slate-600">Enrollments</p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-3">
+                    <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3 text-center sm:text-left">
                       <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
                         <Building2 className="h-4 w-4 text-white" />
                       </div>
                       <div>
-                        <p className="text-2xl font-bold text-slate-900">{stats.total_companies || 0}</p>
-                        <p className="text-slate-600">Companies</p>
+                        <p className="text-xl sm:text-2xl font-bold text-slate-900">{stats.total_companies || 0}</p>
+                        <p className="text-xs sm:text-sm text-slate-600">Companies</p>
                       </div>
                     </div>
                   </div>
@@ -194,45 +193,47 @@ const Admin = () => {
           {/* Enhanced Stats Overview */}
           <AdminStatsCard stats={stats} loading={statsLoading} />
 
-          {/* Enhanced Main Admin Management Tabs - Updated to include Company Management */}
+          {/* Enhanced Main Admin Management Tabs - Updated with horizontal scrolling */}
           <Tabs defaultValue="jobs" className="space-y-8">
-            <TabsList className="grid w-full grid-cols-5 bg-white/80 backdrop-blur-sm shadow-xl border-0 rounded-2xl p-2 h-16">
-              <TabsTrigger 
-                value="jobs" 
-                className="flex items-center space-x-3 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 h-12"
-              >
-                <Briefcase className="h-4 w-4" />
-                <span className="font-medium">Jobs</span>
-              </TabsTrigger>
-              <TabsTrigger 
-                value="applications" 
-                className="flex items-center space-x-3 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 h-12"
-              >
-                <FileText className="h-4 w-4" />
-                <span className="font-medium">Applications</span>
-              </TabsTrigger>
-              <TabsTrigger 
-                value="users" 
-                className="flex items-center space-x-3 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 h-12"
-              >
-                <Users className="h-4 w-4" />
-                <span className="font-medium">Users</span>
-              </TabsTrigger>
-              <TabsTrigger 
-                value="companies" 
-                className="flex items-center space-x-3 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 h-12"
-              >
-                <Building2 className="h-4 w-4" />
-                <span className="font-medium">Companies</span>
-              </TabsTrigger>
-              <TabsTrigger 
-                value="analytics" 
-                className="flex items-center space-x-3 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 h-12"
-              >
-                <BarChart3 className="h-4 w-4" />
-                <span className="font-medium">Analytics</span>
-              </TabsTrigger>
-            </TabsList>
+            <div className="w-full overflow-x-auto">
+              <TabsList className="inline-flex h-14 items-center justify-start rounded-2xl bg-white/80 backdrop-blur-sm shadow-xl border-0 p-2 min-w-max">
+                <TabsTrigger 
+                  value="jobs" 
+                  className="flex items-center space-x-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 h-10 px-4 whitespace-nowrap"
+                >
+                  <Briefcase className="h-4 w-4" />
+                  <span className="font-medium">Jobs</span>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="applications" 
+                  className="flex items-center space-x-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 h-10 px-4 whitespace-nowrap"
+                >
+                  <FileText className="h-4 w-4" />
+                  <span className="font-medium">Applications</span>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="users" 
+                  className="flex items-center space-x-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 h-10 px-4 whitespace-nowrap"
+                >
+                  <Users className="h-4 w-4" />
+                  <span className="font-medium">Users</span>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="companies" 
+                  className="flex items-center space-x-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 h-10 px-4 whitespace-nowrap"
+                >
+                  <Building2 className="h-4 w-4" />
+                  <span className="font-medium">Companies</span>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="analytics" 
+                  className="flex items-center space-x-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 h-10 px-4 whitespace-nowrap"
+                >
+                  <BarChart3 className="h-4 w-4" />
+                  <span className="font-medium">Analytics</span>
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
             <TabsContent value="jobs" className="space-y-6">
               <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
