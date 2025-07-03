@@ -1,9 +1,8 @@
 
-
 -- Drop the existing function if it exists to start clean
 DROP FUNCTION IF EXISTS public.admin_create_company;
 
--- Create the admin_create_company function with fixed parameter names
+-- Create the admin_create_company function with explicit column references
 CREATE OR REPLACE FUNCTION public.admin_create_company(
   p_company_name TEXT,
   p_admin_full_name TEXT,
@@ -38,7 +37,7 @@ BEGIN
     RAISE EXCEPTION 'Access denied. Super admin role required.';
   END IF;
 
-  -- Generate a unique company ID
+  -- Generate a unique company ID with explicit table reference
   SELECT COALESCE(MAX(CAST(SUBSTRING(c.company_id FROM '[0-9]+') AS INTEGER)), 0) + 1
   INTO company_counter
   FROM public.companies c
@@ -74,4 +73,3 @@ BEGIN
     p_admin_full_name as admin_full_name;
 END;
 $$;
-
