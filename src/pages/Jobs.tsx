@@ -3,17 +3,16 @@ import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PaymentGate } from '@/components/PaymentGate';
 import { usePaymentStatus } from '@/hooks/usePaymentStatus';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Search, MapPin, Building, Calendar, Briefcase, DollarSign, Eye } from 'lucide-react';
-import { JobDetailModal } from '@/components/jobs/JobDetailModal';
+import { Search, DollarSign, Briefcase } from 'lucide-react';
+import { JobListItem } from '@/components/jobs/JobListItem';
+import { JobDetailsPanel } from '@/components/jobs/JobDetailsPanel';
 
 const Jobs = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -49,6 +48,13 @@ const Jobs = () => {
     const matchesField = selectedField === 'all' || job.field === selectedField;
     return matchesSearch && matchesField;
   });
+
+  // Auto-select first job when jobs load
+  useEffect(() => {
+    if (filteredJobs && filteredJobs.length > 0 && !selectedJobId) {
+      setSelectedJobId(filteredJobs[0].id);
+    }
+  }, [filteredJobs, selectedJobId]);
 
   const handleJobClick = (jobId: string) => {
     setSelectedJobId(jobId);
@@ -141,7 +147,7 @@ const Jobs = () => {
   return (
     <AppLayout>
       <div className="max-w-7xl mx-auto p-6">
-        <div className="mb-8">
+        <div className="mb-6">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent mb-4">
             Available Jobs
           </h1>
@@ -151,7 +157,7 @@ const Jobs = () => {
         </div>
 
         {/* Search and Filter Section */}
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-200/50 p-6 mb-8">
+        <div className="bg-white rounded-2xl shadow-lg border border-slate-200/50 p-6 mb-6">
           <div className="grid md:grid-cols-3 gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-5 w-5" />
@@ -189,135 +195,54 @@ const Jobs = () => {
           </div>
         </div>
 
-        {/* Jobs Grid */}
+        {/* Split Screen Layout */}
         {isLoading ? (
           <div className="flex justify-center items-center p-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
           </div>
         ) : (
-          <div className="grid gap-6">
-            {filteredJobs?.map((job) => (
-              <Card key={job.id} className="bg-white/80 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-                <CardHeader className="pb-4">
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-2">
-                      <CardTitle className="text-xl text-slate-900">{job.title}</CardTitle>
-                      <div className="flex items-center gap-4 text-slate-600">
-                        <div className="flex items-center gap-1">
-                          <Building className="h-4 w-4" />
-                          <span className="font-medium">{job.company}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <MapPin className="h-4 w-4" />
-                          <span>{job.location}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4" />
-                          <span>{new Date(job.created_at).toLocaleDateString()}</span>
-                        </div>
-                      </div>
-                      <Badge variant="outline" className="bg-gradient-to-r from-primary/10 to-blue-500/10 text-primary border-primary/20">
-                        {job.field}
-                      </Badge>
-                    </div>
-                  </div>
-                </CardHeader>
+          <div className="grid lg:grid-cols-5 gap-6 h-[calc(100vh-400px)] min-h-[600px]">
+            {/* Left Side - Job List */}
+            <div className="lg:col-span-2 space-y-4 overflow-hidden">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-slate-900">
+                  {filteredJobs?.length || 0} Jobs Found
+                </h2>
+              </div>
+              
+              <div className="space-y-3 overflow-y-auto h-full pr-2">
+                {filteredJobs?.map((job) => (
+                  <JobListItem
+                    key={job.id}
+                    job={job}
+                    isSelected={selectedJobId === job.id}
+                    onClick={() => handleJobClick(job.id)}
+                    userHasPaid={shouldCheckPayment && paymentStatus?.has_paid || false}
+                  />
+                ))}
                 
-                <CardContent className="space-y-4">
-                  <div>
-                    <p className="text-slate-700 line-clamp-3">{job.description}</p>
+                {filteredJobs?.length === 0 && (
+                  <div className="text-center py-12">
+                    <Briefcase className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+                    <h3 className="text-xl font-semibold text-slate-600 mb-2">No Jobs Found</h3>
+                    <p className="text-slate-500">
+                      Try adjusting your search criteria or check back later for new opportunities.
+                    </p>
                   </div>
-                  
-                  {job.requirements && Array.isArray(job.requirements) && job.requirements.length > 0 && (
-                    <div>
-                      <h4 className="font-semibold text-slate-900 mb-2">Requirements:</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {job.requirements.slice(0, 3).map((req: string, index: number) => (
-                          <Badge key={index} variant="secondary" className="text-xs">
-                            {req}
-                          </Badge>
-                        ))}
-                        {job.requirements.length > 3 && (
-                          <Badge variant="secondary" className="text-xs">
-                            +{job.requirements.length - 3} more
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  )}
+                )}
+              </div>
+            </div>
 
-                  {job.tags && job.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {job.tags.map((tag: string, index: number) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-
-                  <div className="flex justify-between items-center pt-4 border-t border-slate-200">
-                    <div className="flex items-center gap-2">
-                      <Briefcase className="h-4 w-4 text-slate-500" />
-                      <span className="text-sm text-slate-600">Full-time position</span>
-                    </div>
-                    
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        onClick={() => handleJobClick(job.id)}
-                        className="border-primary text-primary hover:bg-primary/10"
-                      >
-                        <Eye className="h-4 w-4 mr-2" />
-                        View Details
-                      </Button>
-                      {user ? (
-                        <Button
-                          onClick={() => handleApplyClick(job.id)}
-                          className="bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-700/90 shadow-lg hover:shadow-xl transition-all duration-300"
-                        >
-                          {shouldCheckPayment && paymentStatus?.has_paid ? 'Apply Now' : 'Apply Now ($499)'}
-                        </Button>
-                      ) : (
-                        <Button
-                          onClick={() => handleApplyClick(job.id)}
-                          className="bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-700/90 shadow-lg hover:shadow-xl transition-all duration-300"
-                        >
-                          Sign In to Apply
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-            
-            {filteredJobs?.length === 0 && (
-              <Card className="bg-gradient-to-br from-slate-50 to-blue-50/30 border-0 shadow-xl">
-                <CardContent className="p-12 text-center">
-                  <div className="w-20 h-20 bg-gradient-to-br from-primary/10 to-blue-500/10 rounded-3xl flex items-center justify-center mx-auto mb-8">
-                    <Briefcase className="h-10 w-10 text-primary" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-slate-900 mb-4">No Jobs Found</h3>
-                  <p className="text-slate-600 text-lg">
-                    Try adjusting your search criteria or check back later for new opportunities.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
+            {/* Right Side - Job Details */}
+            <div className="lg:col-span-3">
+              <JobDetailsPanel
+                jobId={selectedJobId}
+                onApply={handleApplyClick}
+                paymentStatus={paymentStatus}
+                paymentLoading={paymentLoading}
+              />
+            </div>
           </div>
-        )}
-
-        {/* Job Detail Modal */}
-        {selectedJobId && (
-          <JobDetailModal
-            jobId={selectedJobId}
-            isOpen={!!selectedJobId}
-            onClose={() => setSelectedJobId(null)}
-            onApply={handleApplyClick}
-            paymentStatus={paymentStatus}
-            paymentLoading={paymentLoading}
-          />
         )}
       </div>
     </AppLayout>
