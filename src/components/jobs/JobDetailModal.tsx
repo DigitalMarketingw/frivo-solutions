@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Building, MapPin, Calendar, Briefcase, DollarSign, Users } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface JobDetailModalProps {
   jobId: string;
@@ -25,6 +26,8 @@ export const JobDetailModal: React.FC<JobDetailModalProps> = ({
   paymentStatus,
   paymentLoading
 }) => {
+  const { user } = useAuth();
+  
   const { data: job, isLoading } = useQuery({
     queryKey: ['job-detail', jobId],
     queryFn: async () => {
@@ -53,6 +56,19 @@ export const JobDetailModal: React.FC<JobDetailModalProps> = ({
   }
 
   if (!job) return null;
+
+  const getApplyButtonText = () => {
+    if (!user) return 'Sign In to Apply';
+    if (paymentLoading) return 'Loading...';
+    if (paymentStatus?.has_paid) return 'Apply Now';
+    return 'Apply Now ($499)';
+  };
+
+  const getPaymentStatusText = () => {
+    if (!user) return 'Sign In Required';
+    if (paymentStatus?.has_paid) return 'Ready to Apply';
+    return 'Payment Required ($499)';
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -142,7 +158,7 @@ export const JobDetailModal: React.FC<JobDetailModalProps> = ({
           <div className="flex items-center gap-2 text-sm text-slate-600">
             <DollarSign className="h-4 w-4 text-green-600" />
             <span className="font-medium">
-              {paymentStatus?.has_paid ? 'Ready to Apply' : 'Payment Required ($499)'}
+              {getPaymentStatusText()}
             </span>
           </div>
           
@@ -155,7 +171,7 @@ export const JobDetailModal: React.FC<JobDetailModalProps> = ({
               disabled={paymentLoading}
               className="bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-700/90 shadow-lg hover:shadow-xl transition-all duration-300"
             >
-              {paymentLoading ? 'Loading...' : (paymentStatus?.has_paid ? 'Apply Now' : 'Apply Now ($499)')}
+              {getApplyButtonText()}
             </Button>
           </div>
         </div>

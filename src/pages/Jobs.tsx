@@ -12,7 +12,7 @@ import { PaymentGate } from '@/components/PaymentGate';
 import { usePaymentStatus } from '@/hooks/usePaymentStatus';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Search, MapPin, Building, Calendar, Briefcase, DollarSign, Lock, Eye } from 'lucide-react';
+import { Search, MapPin, Building, Calendar, Briefcase, DollarSign, Eye } from 'lucide-react';
 import { JobDetailModal } from '@/components/jobs/JobDetailModal';
 
 const Jobs = () => {
@@ -51,11 +51,6 @@ const Jobs = () => {
   });
 
   const handleJobClick = (jobId: string) => {
-    if (!user) {
-      // Redirect to auth with return URL
-      window.location.href = `/auth?returnUrl=${encodeURIComponent('/jobs')}`;
-      return;
-    }
     setSelectedJobId(jobId);
   };
 
@@ -133,11 +128,6 @@ const Jobs = () => {
     window.location.href = '/pricing';
   };
 
-  const truncateText = (text: string, maxLength: number) => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + '...';
-  };
-
   if (showPaymentGate) {
     return (
       <AppLayout>
@@ -157,11 +147,6 @@ const Jobs = () => {
           </h1>
           <p className="text-xl text-slate-600">
             Find your next career opportunity from our curated job listings
-            {!user && (
-              <span className="block text-sm text-amber-600 mt-2">
-                📋 Sign in to view full job details and apply for positions
-              </span>
-            )}
           </p>
         </div>
 
@@ -198,7 +183,7 @@ const Jobs = () => {
             <div className="flex items-center justify-center gap-2 text-sm text-slate-600 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg px-4 border border-green-200/50">
               <DollarSign className="h-4 w-4 text-green-600" />
               <span className="font-medium">
-                {user ? (shouldCheckPayment && paymentStatus?.has_paid ? 'Unlimited Applications' : 'Payment Required') : 'Sign In Required'}
+                {user ? (shouldCheckPayment && paymentStatus?.has_paid ? 'Unlimited Applications' : 'Payment Required') : 'Sign In to Apply'}
               </span>
             </div>
           </div>
@@ -240,24 +225,10 @@ const Jobs = () => {
                 
                 <CardContent className="space-y-4">
                   <div>
-                    {user ? (
-                      <p className="text-slate-700 line-clamp-3">{job.description}</p>
-                    ) : (
-                      <div>
-                        <p className="text-slate-700">
-                          {truncateText(job.description, 120)}
-                        </p>
-                        {job.description.length > 120 && (
-                          <div className="flex items-center gap-2 mt-2 text-sm text-amber-600">
-                            <Lock className="h-3 w-3" />
-                            <span>Sign in to view full description</span>
-                          </div>
-                        )}
-                      </div>
-                    )}
+                    <p className="text-slate-700 line-clamp-3">{job.description}</p>
                   </div>
                   
-                  {user && job.requirements && Array.isArray(job.requirements) && job.requirements.length > 0 && (
+                  {job.requirements && Array.isArray(job.requirements) && job.requirements.length > 0 && (
                     <div>
                       <h4 className="font-semibold text-slate-900 mb-2">Requirements:</h4>
                       <div className="flex flex-wrap gap-2">
@@ -275,7 +246,7 @@ const Jobs = () => {
                     </div>
                   )}
 
-                  {user && job.tags && job.tags.length > 0 && (
+                  {job.tags && job.tags.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {job.tags.map((tag: string, index: number) => (
                         <Badge key={index} variant="outline" className="text-xs">
@@ -292,29 +263,26 @@ const Jobs = () => {
                     </div>
                     
                     <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => handleJobClick(job.id)}
+                        className="border-primary text-primary hover:bg-primary/10"
+                      >
+                        <Eye className="h-4 w-4 mr-2" />
+                        View Details
+                      </Button>
                       {user ? (
-                        <>
-                          <Button
-                            variant="outline"
-                            onClick={() => handleJobClick(job.id)}
-                            className="border-primary text-primary hover:bg-primary/10"
-                          >
-                            <Eye className="h-4 w-4 mr-2" />
-                            View Details
-                          </Button>
-                          <Button
-                            onClick={() => handleApplyClick(job.id)}
-                            className="bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-700/90 shadow-lg hover:shadow-xl transition-all duration-300"
-                          >
-                            {shouldCheckPayment && paymentStatus?.has_paid ? 'Apply Now' : 'Apply Now ($499)'}
-                          </Button>
-                        </>
-                      ) : (
                         <Button
-                          onClick={() => handleJobClick(job.id)}
+                          onClick={() => handleApplyClick(job.id)}
                           className="bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-700/90 shadow-lg hover:shadow-xl transition-all duration-300"
                         >
-                          <Lock className="h-4 w-4 mr-2" />
+                          {shouldCheckPayment && paymentStatus?.has_paid ? 'Apply Now' : 'Apply Now ($499)'}
+                        </Button>
+                      ) : (
+                        <Button
+                          onClick={() => handleApplyClick(job.id)}
+                          className="bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-700/90 shadow-lg hover:shadow-xl transition-all duration-300"
+                        >
                           Sign In to Apply
                         </Button>
                       )}
