@@ -19,6 +19,8 @@ import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 import Pricing from "./pages/Pricing";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import CompanyRegister from "./pages/CompanyRegister";
+import CompanyDashboard from "./pages/CompanyDashboard";
 
 // Service Pages
 import StrategyConsulting from "./pages/services/StrategyConsulting";
@@ -47,6 +49,7 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/about" element={<About />} />
             <Route path="/jobs" element={<Jobs />} />
+            <Route path="/company/register" element={<CompanyRegister />} />
             
             {/* Service Pages */}
             <Route path="/services/strategy-consulting" element={<StrategyConsulting />} />
@@ -75,6 +78,11 @@ const App = () => (
                 <Dashboard />
               </ProtectedRoute>
             } />
+            <Route path="/company/dashboard" element={
+              <ProtectedRoute companyOnly>
+                <CompanyDashboard />
+              </ProtectedRoute>
+            } />
             <Route path="/profile" element={
               <ProtectedRoute>
                 <Profile />
@@ -86,7 +94,7 @@ const App = () => (
               </ProtectedRoute>
             } />
             <Route path="/admin" element={
-              <ProtectedRoute adminOnly>
+              <ProtectedRoute superAdminOnly>
                 <Admin />
               </ProtectedRoute>
             } />

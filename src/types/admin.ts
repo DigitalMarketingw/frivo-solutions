@@ -6,13 +6,16 @@ export interface AdminStats {
   active_jobs: number;
   pending_applications: number;
   admin_users: number;
+  company_users: number;
+  total_companies: number;
 }
 
 export interface User {
   id: string;
   full_name: string | null;
   phone: string | null;
-  role: 'user' | 'admin';
+  role: 'user' | 'admin' | 'company';
+  company_id?: string;
   created_at: string;
   updated_at: string;
 }

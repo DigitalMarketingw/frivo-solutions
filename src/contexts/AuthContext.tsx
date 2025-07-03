@@ -11,7 +11,8 @@ interface UserProfile {
   skills: string[];
   resume_url: string | null;
   employment_history: any[];
-  role: 'user' | 'admin';
+  role: 'user' | 'admin' | 'company';
+  company_id?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -25,6 +26,9 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+  isAdmin: boolean;
+  isCompany: boolean;
+  isSuperAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -46,6 +50,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+
+  // Computed properties for role checking
+  const isAdmin = useMemo(() => profile?.role === 'admin', [profile?.role]);
+  const isCompany = useMemo(() => profile?.role === 'company', [profile?.role]);
+  const isSuperAdmin = useMemo(() => profile?.role === 'admin', [profile?.role]);
 
   // Debounced profile fetch with request deduplication
   const fetchProfile = useCallback(async (userId: string, retryCount = 0) => {
@@ -101,7 +110,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             skills: Array.isArray(data.skills) ? data.skills.map((skill: any) => String(skill)) : [],
             resume_url: data.resume_url,
             employment_history: Array.isArray(data.employment_history) ? data.employment_history : [],
-            role: data.role as 'user' | 'admin',
+            role: data.role as 'user' | 'admin' | 'company',
+            company_id: data.company_id,
             created_at: data.created_at,
             updated_at: data.updated_at,
           };
@@ -286,7 +296,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signIn,
     signOut,
     refreshProfile,
-  }), [user, session, profile, loading, signUp, signIn, signOut, refreshProfile]);
+    isAdmin,
+    isCompany,
+    isSuperAdmin,
+  }), [user, session, profile, loading, signUp, signIn, signOut, refreshProfile, isAdmin, isCompany, isSuperAdmin]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
