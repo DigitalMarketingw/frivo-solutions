@@ -1,9 +1,11 @@
+
 import React, { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { AdminStatsCard } from '@/components/admin/AdminStatsCard';
 import { EnhancedJobManagement } from '@/components/admin/EnhancedJobManagement';
 import { AdminUserManagement } from '@/components/admin/AdminUserManagement';
 import { EnhancedApplicationManagement } from '@/components/admin/EnhancedApplicationManagement';
+import { AdminCompanyManagement } from '@/components/admin/AdminCompanyManagement';
 import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
 import { LiveStatusIndicator } from '@/components/admin/LiveStatusIndicator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -26,7 +28,8 @@ import {
   TrendingUp,
   Shield,
   Sparkles,
-  Crown
+  Crown,
+  Building2
 } from 'lucide-react';
 
 const Admin = () => {
@@ -165,6 +168,15 @@ const Admin = () => {
                         <p className="text-slate-600">Enrollments</p>
                       </div>
                     </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
+                        <Building2 className="h-4 w-4 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold text-slate-900">{stats.total_companies || 0}</p>
+                        <p className="text-slate-600">Companies</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
@@ -182,15 +194,15 @@ const Admin = () => {
           {/* Enhanced Stats Overview */}
           <AdminStatsCard stats={stats} loading={statsLoading} />
 
-          {/* Enhanced Main Admin Management Tabs */}
+          {/* Enhanced Main Admin Management Tabs - Updated to include Company Management */}
           <Tabs defaultValue="jobs" className="space-y-8">
-            <TabsList className="grid w-full grid-cols-4 bg-white/80 backdrop-blur-sm shadow-xl border-0 rounded-2xl p-2 h-16">
+            <TabsList className="grid w-full grid-cols-5 bg-white/80 backdrop-blur-sm shadow-xl border-0 rounded-2xl p-2 h-16">
               <TabsTrigger 
                 value="jobs" 
                 className="flex items-center space-x-3 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 h-12"
               >
                 <Briefcase className="h-4 w-4" />
-                <span className="font-medium">Job Management</span>
+                <span className="font-medium">Jobs</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="applications" 
@@ -204,7 +216,14 @@ const Admin = () => {
                 className="flex items-center space-x-3 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 h-12"
               >
                 <Users className="h-4 w-4" />
-                <span className="font-medium">User Management</span>
+                <span className="font-medium">Users</span>
+              </TabsTrigger>
+              <TabsTrigger 
+                value="companies" 
+                className="flex items-center space-x-3 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-blue-600 data-[state=active]:text-white data-[state=active]:shadow-lg rounded-xl transition-all duration-300 h-12"
+              >
+                <Building2 className="h-4 w-4" />
+                <span className="font-medium">Companies</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="analytics" 
@@ -292,6 +311,22 @@ const Admin = () => {
                     onPageSizeChange={handleUserPageSizeChange}
                     onUpdateUserRole={handleUpdateUserRole}
                   />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="companies" className="space-y-6">
+              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+                <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50/50 rounded-t-2xl">
+                  <CardTitle className="flex items-center space-x-3 text-2xl">
+                    <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl flex items-center justify-center">
+                      <Building2 className="h-5 w-5 text-white" />
+                    </div>
+                    <span>Company Management System</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <AdminCompanyManagement />
                 </CardContent>
               </Card>
             </TabsContent>
