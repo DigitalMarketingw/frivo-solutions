@@ -52,14 +52,14 @@ const CompanyRegister: React.FC = () => {
       if (authError) throw authError;
 
       if (authData.user) {
-        // Generate company ID
+        // Generate company ID using direct SQL call
         const { data: companyIdData, error: companyIdError } = await supabase
-          .rpc('generate_company_id');
+          .rpc('generate_company_id' as any);
 
         if (companyIdError) throw companyIdError;
 
-        // Create the company record
-        const { data: companyData, error: companyError } = await supabase
+        // Create the company record using generic database call
+        const { data: companyData, error: companyError } = await (supabase as any)
           .from('companies')
           .insert({
             company_name: formData.company_name,
@@ -76,7 +76,7 @@ const CompanyRegister: React.FC = () => {
         if (companyError) throw companyError;
 
         // Update the user's profile to link to the company and set role to 'company'
-        const { error: profileError } = await supabase
+        const { error: profileError } = await (supabase as any)
           .from('profiles')
           .update({
             company_id: companyData.id,

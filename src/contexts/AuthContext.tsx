@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -111,7 +110,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             resume_url: data.resume_url,
             employment_history: Array.isArray(data.employment_history) ? data.employment_history : [],
             role: data.role as 'user' | 'admin' | 'company',
-            company_id: data.company_id,
+            company_id: (data as any).company_id, // Type assertion for company_id
             created_at: data.created_at,
             updated_at: data.updated_at,
           };
