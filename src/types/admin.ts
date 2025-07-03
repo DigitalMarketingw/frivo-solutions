@@ -1,3 +1,4 @@
+
 export interface AdminStats {
   total_users: number;
   total_jobs: number;
@@ -30,6 +31,7 @@ export interface Job {
   description: string;
   requirements: any;
   tags: string[];
+  company_id?: string;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
