@@ -198,7 +198,7 @@ export const PublicHeader: React.FC = () => {
               <Link to="/auth">Sign In</Link>
             </Button>
             <Button variant="default" asChild className="bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-700/90 shadow-md hover:shadow-lg transition-all duration-200">
-              <Link to="/auth">Job Portal</Link>
+              <Link to="/jobs">Job Portal</Link>
             </Button>
           </div>
           
@@ -320,7 +320,7 @@ export const PublicHeader: React.FC = () => {
                       <Link to="/auth">Sign In</Link>
                     </Button>
                     <Button variant="default" asChild className="w-full bg-gradient-to-r from-primary to-blue-700 hover:from-primary/90 hover:to-blue-700/90 shadow-md hover:shadow-lg transition-all duration-200">
-                      <Link to="/auth">Job Portal</Link>
+                      <Link to="/jobs">Job Portal</Link>
                     </Button>
                   </div>
                 </div>
