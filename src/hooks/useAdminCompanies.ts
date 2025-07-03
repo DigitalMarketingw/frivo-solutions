@@ -55,17 +55,17 @@ export const useAdminCompanies = () => {
   const createCompany = useCallback(async (companyData: CreateCompanyData): Promise<CompanyCreationResult | null> => {
     setCreating(true);
     try {
-      // First, create the company using the admin function
+      // Call the function with parameters in the correct order: required first, then optional
       const { data, error } = await supabase.rpc('admin_create_company' as any, {
         company_name: companyData.company_name,
+        admin_full_name: companyData.admin_full_name,
+        admin_email: companyData.admin_email,
+        admin_password: companyData.admin_password,
         company_email: companyData.company_email,
         company_phone: companyData.company_phone,
         company_address: companyData.company_address,
         company_website: companyData.company_website,
         company_description: companyData.company_description,
-        admin_full_name: companyData.admin_full_name,
-        admin_email: companyData.admin_email,
-        admin_password: companyData.admin_password,
       });
 
       if (error) throw error;

@@ -1,15 +1,16 @@
 
--- Create the admin_create_company function
+
+-- Create the admin_create_company function with correct parameter order
 CREATE OR REPLACE FUNCTION public.admin_create_company(
   company_name TEXT,
+  admin_full_name TEXT,
+  admin_email TEXT,
+  admin_password TEXT,
   company_email TEXT DEFAULT NULL,
   company_phone TEXT DEFAULT NULL,
   company_address TEXT DEFAULT NULL,
   company_website TEXT DEFAULT NULL,
-  company_description TEXT DEFAULT NULL,
-  admin_full_name TEXT,
-  admin_email TEXT,
-  admin_password TEXT
+  company_description TEXT DEFAULT NULL
 )
 RETURNS TABLE(
   company_id TEXT,
@@ -88,3 +89,4 @@ AS $$
     'admin_users', (SELECT COUNT(*) FROM public.profiles WHERE role = 'admin')
   );
 $$;
+
