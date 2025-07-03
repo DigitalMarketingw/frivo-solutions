@@ -56,7 +56,7 @@ export const useAdminCompanies = () => {
     setCreating(true);
     try {
       // Call the function with parameters in the correct order: required first, then optional
-      const { data, error } = await supabase.rpc('admin_create_company', {
+      const { data, error } = await (supabase.rpc as any)('admin_create_company', {
         company_name: companyData.company_name,
         admin_full_name: companyData.admin_full_name,
         admin_email: companyData.admin_email,
