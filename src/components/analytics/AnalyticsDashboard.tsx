@@ -29,7 +29,7 @@ export const AnalyticsDashboard: React.FC = () => {
   const { data: analytics, isLoading, error, refetch } = useApplicationAnalytics({
     startDate: dateRange.from,
     endDate: dateRange.to,
-    jobField: selectedField || undefined,
+    jobField: selectedField === 'all' ? undefined : selectedField || undefined,
   });
 
   const { data: trends, refetch: refetchTrends } = useApplicationTrends();
@@ -141,7 +141,7 @@ export const AnalyticsDashboard: React.FC = () => {
               <SelectValue placeholder="All Fields" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Fields</SelectItem>
+              <SelectItem value="all">All Fields</SelectItem>
               {safeStats.field_breakdown.map((field: any) => (
                 <SelectItem key={field.field} value={field.field}>
                   {field.field}

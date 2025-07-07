@@ -39,7 +39,7 @@ export const useApplicationAnalytics = (filters: AnalyticsFilters = {}) => {
         const { data, error } = await supabase.rpc('get_application_stats', {
           start_date: filters.startDate?.toISOString(),
           end_date: filters.endDate?.toISOString(),
-          job_field: filters.jobField,
+          job_field: filters.jobField === 'all' ? undefined : filters.jobField,
         });
 
         if (error) {
