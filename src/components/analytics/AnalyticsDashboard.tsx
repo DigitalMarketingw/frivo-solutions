@@ -94,10 +94,18 @@ export const AnalyticsDashboard: React.FC = () => {
     conversion_rate: stats.conversion_rate || 0
   };
 
-  // Check if we have any meaningful data
+  // Check if we have any meaningful data (demo data should always pass this check)
   const hasData = safeStats.total_applications > 0 || 
                   safeStats.status_breakdown.length > 0 || 
                   safeStats.field_breakdown.length > 0;
+
+  console.log('Analytics dashboard data check:', {
+    analytics,
+    safeStats,
+    hasData,
+    isLoading,
+    error
+  });
 
   if (!hasData) {
     return (

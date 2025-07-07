@@ -35,6 +35,7 @@ export const useApplicationAnalytics = (filters: AnalyticsFilters = {}) => {
     queryKey: ['application-analytics', filters],
     queryFn: async (): Promise<AnalyticsData> => {
       try {
+        console.log('Fetching analytics data with filters:', filters);
         const { data, error } = await supabase.rpc('get_application_stats', {
           start_date: filters.startDate?.toISOString(),
           end_date: filters.endDate?.toISOString(),
@@ -42,20 +43,38 @@ export const useApplicationAnalytics = (filters: AnalyticsFilters = {}) => {
         });
 
         if (error) {
-          console.warn('Main analytics RPC failed, using demo data:', error);
+          console.warn('Analytics RPC failed:', error);
+          console.log('Using demo data due to RPC error');
           return getDemoAnalyticsData();
         }
         
+        console.log('Raw analytics data from RPC:', data);
         const result = data as unknown as AnalyticsData;
-        return {
+        
+        const processedData = {
           total_applications: result.total_applications || 0,
           status_breakdown: Array.isArray(result.status_breakdown) ? result.status_breakdown : [],
           field_breakdown: Array.isArray(result.field_breakdown) ? result.field_breakdown : [],
           daily_applications: Array.isArray(result.daily_applications) ? result.daily_applications : [],
           conversion_rate: result.conversion_rate || 0
         };
+        
+        console.log('Processed analytics data:', processedData);
+        
+        // If we have no meaningful data from the database, use demo data
+        const hasRealData = processedData.total_applications > 0 || 
+                           processedData.status_breakdown.length > 0 || 
+                           processedData.field_breakdown.length > 0;
+        
+        if (!hasRealData) {
+          console.log('No real data found, using demo data');
+          return getDemoAnalyticsData();
+        }
+        
+        return processedData;
       } catch (error) {
-        console.warn('Analytics query failed, using demo data:', error);
+        console.error('Analytics query failed:', error);
+        console.log('Using demo data due to error');
         return getDemoAnalyticsData();
       }
     },
