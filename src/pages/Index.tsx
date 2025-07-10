@@ -32,7 +32,7 @@ const Index = () => {
               {/* Main Heading */}
               <div className="space-y-6">
                 <h1 className="text-5xl lg:text-7xl font-bold leading-tight">
-                  <span className="text-slate-900">Welcum to</span>
+                  <span className="text-slate-900">Welcome to</span>
                   <br />
                   <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
                     Your Career
